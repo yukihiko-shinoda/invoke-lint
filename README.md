@@ -117,7 +117,8 @@ It also can dump coverage as XML or HTML format.
 
 ### `inv dist`
 
-Builds source and wheel packages into `dist/` directory by [build].
+Builds source and wheel packages into `dist/` directory by [build].  
+(Currently, not support in Windows)
 
 See:
 
