@@ -5,7 +5,9 @@ from pathlib import Path
 from setuptools.discovery import ConfigDiscovery
 from setuptools.dist import Distribution
 
-config_discovery = ConfigDiscovery(Distribution())
+distribution = Distribution()
+distribution.parse_config_files()
+config_discovery = ConfigDiscovery(distribution)
 config_discovery()
 project_root = Path(config_discovery.dist.src_root or os.curdir).resolve()
 SOURCE_DIRS = config_discovery.dist.packages
