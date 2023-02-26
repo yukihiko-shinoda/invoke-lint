@@ -1,0 +1,5 @@
+version: "3.9"
+services:
+  invoke-lint:
+    build: .
+    image: futureys/invoke-lint:latest

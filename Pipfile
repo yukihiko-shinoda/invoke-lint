@@ -1,0 +1,52 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+autoflake = "*"
+bandit = {version = "*", markers="python_version >= '3.7'"}
+black = {version = "*", markers="python_version >= '3.7'"}
+build = "*"
+bump2version = "*"
+cohesion = "*"
+# Hotfix for Pipenv's Bug:
+# - Pipenv should prioritize more cross-platform sys_platform condition between packages when lock
+#   · Issue #4101 · pypa/pipenv
+#   https://github.com/pypa/pipenv/issues/4101
+colorama = "*"
+# Pipenv can't crawl coverage==3.5.3:
+# - Command: "pipenv install --skip-lock" fails 
+#   since it tries to parse legacy package metadata and raise InstallError
+#   · Issue #5595 · pypa/pipenv
+#   https://github.com/pypa/pipenv/issues/5595
+coverage = ">=3.5.4"
+dlint = "*"
+docformatter = {extras = ["tomli"], version = "*"}
+dodgy = "*"
+# Since Pipenv can't lock for too much combinations to attempt lock:
+# pip._vendor.resolvelib.resolvers.ResolutionTooDeep: 2000000
+flake8 = {version = "==4.0.1", markers="python_version >= '3.6'"}
+# To use flake8 --radon-show-closures
+flake8-polyfill = "*"
+# Latest hacking depends on legacy version of flake8, and legacy hacking doesn't narrow flake8 version.
+# When unpin hacking, it has possibility to install too legacy version of hacking.
+hacking = {version = ">=5.0.0", markers="python_version >= '3.8'"}
+isort = "*"
+mypy = "*"
+pydocstyle = {version = "*", markers="python_version >= '3.6'"}
+pylint = "*"
+pytest = "*"
+pytest-mock = "*"
+pyvelocity = {version = "*", markers="python_version >= '3.9'"}
+radon = "*"
+tomli = {version = "*", markers="python_version >= '3.6'"}
+types-invoke = "*"
+types-setuptools = "*"
+xenon = "*"
+invokelint = {path = ".", editable = true}
+
+[packages]
+invoke = "*"
+# To import setuptools.discovery
+setuptools = ">=61.0.0"
