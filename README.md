@@ -190,11 +190,12 @@ Execute 'invoke --list' for guidance on using Invoke
 """
 from invoke import Collection
 
-from invokelint import _clean, dist, lint, style, test
+from invokelint import _clean, dist, lint, path, style, test
 
 ns = Collection()
 ns.add_collection(dist)
 ns.add_collection(lint)
+ns.add_collection(path)
 ns.add_collection(style)
 ns.add_collection(test)
 ```
@@ -215,7 +216,15 @@ inv --list
 
 ### 4. Setup target package
 
-This package reuses `setuptools` settings for package discovery for linting, formatting, and measuring coverage. Ensure it already set, or if not yet, follow official documentation of `setuptools`.
+This package reuses `setuptools` settings for package discovery for linting, formatting, and measuring coverage. You can check which package are discovered by `setuptools` and your project's settings, by following command:
+
+```console
+$ inv path
+Packages: ['invokelint', 'invokelint.path']
+Root packages: ['invokelint']
+```
+
+If result is not your expected, follow official documentation of `setuptools` to configure `pyproject.toml` (recommended), `setup.cfg`, or `setup.py`.
 
 See: [Package Discovery and Namespace Packages - setuptools latest documentation]
 
