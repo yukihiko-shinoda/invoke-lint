@@ -4,7 +4,7 @@ from typing import cast, List
 from invoke import Collection, Context, Result, task
 
 from invokelint.path import PYTHON_DIRS, SOURCE_DIRS, TASKS_PY, TEST_DIR
-from invokelint.run import run_all, run_in_order
+from invokelint.run import run_all, run_in_order, run_in_pty
 
 ns = Collection()
 
@@ -36,33 +36,33 @@ ns.add_task(radon)
 def bandit(context: Context) -> Result:
     """Lints code with bandit."""
     space = " "
-    context.run("bandit --recursive {}".format(space.join([str(p) for p in [*SOURCE_DIRS, TASKS_PY]])), pty=True)
-    return cast(Result, context.run("bandit --recursive --skip B101 {}".format(TEST_DIR), pty=True))
+    run_in_pty(context, "bandit --recursive {}".format(space.join([str(p) for p in [*SOURCE_DIRS, TASKS_PY]])))
+    return run_in_pty(context, "bandit --recursive --skip B101 {}".format(TEST_DIR))
 
 
 @task
 def dodgy(context: Context) -> Result:
     """Lints code with dodgy."""
-    return cast(Result, context.run("dodgy --ignore-paths csvinput", pty=True))
+    return run_in_pty(context, "dodgy --ignore-paths csvinput")
 
 
 @task
 def flake8(context: Context) -> Result:
     """Lints code with flake8."""
-    return cast(Result, context.run("flake8 {} {}".format("--radon-show-closures", " ".join(PYTHON_DIRS))))
+    return run_in_pty(context, "flake8 {} {}".format("--radon-show-closures", " ".join(PYTHON_DIRS)))
 
 
 @task
 def pydocstyle(context: Context) -> Result:
     """Lints code with pydocstyle."""
-    return cast(Result, context.run("pydocstyle .", pty=True))
+    return run_in_pty(context, "pydocstyle .")
 
 
 @task
 def xenon(context: Context) -> Result:
     """Checks code complexity."""
     command = ("xenon" " --max-absolute A" "--max-modules A" "--max-average A" "{}").format(" ".join(PYTHON_DIRS))
-    return cast(Result, context.run(command))
+    return run_in_pty(context, command)
 
 
 @task
@@ -82,13 +82,13 @@ ns.add_task(fast, default=True)
 @task
 def mypy(context: Context) -> Result:
     """Lints code with mypy."""
-    return cast(Result, context.run("mypy {}".format(" ".join(PYTHON_DIRS))))
+    return run_in_pty(context, "mypy {}".format(" ".join(PYTHON_DIRS)))
 
 
 @task
 def pylint(context: Context) -> Result:
     """Lints code with Pylint."""
-    return cast(Result, context.run("pylint {}".format(" ".join(PYTHON_DIRS))))
+    return run_in_pty(context, "pylint {}".format(" ".join(PYTHON_DIRS)))
 
 
 @task
