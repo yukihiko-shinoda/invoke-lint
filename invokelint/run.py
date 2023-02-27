@@ -1,7 +1,12 @@
 """Functions to run tasks."""
-from typing import Any, Callable, List
+import platform
+from typing import Any, Callable, cast, List
 
 from invoke import Context, Result, UnexpectedExit
+
+
+def run_in_pty(context: Context, command: str, **kwargs: Any) -> Result:
+    return cast(Result, context.run(command, pty=platform.system() != "Windows", **kwargs))
 
 
 def run_in_order(list_task: List[Callable[[Context], Result]], context: Context, *args: Any) -> List[Result]:

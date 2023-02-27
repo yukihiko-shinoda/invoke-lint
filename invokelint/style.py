@@ -1,12 +1,12 @@
 """Tasks of format."""
 from pathlib import Path
-from typing import Any, cast, Dict, List
+from typing import Any, Dict, List
 
 from invoke import Collection, Context, Result, task
 import tomli
 
 from invokelint.path import PYTHON_DIRS
-from invokelint.run import run_in_order
+from invokelint.run import run_in_order, run_in_pty
 
 ns = Collection()
 
@@ -23,9 +23,7 @@ def docformatter(context: Context, check: bool = False) -> Result:
     config = parsed_toml["tool"]["docformatter"]
     list_options = build_list_options_docformatter(config, check)
     docformatter_options = " {}".format(" ".join(list_options))
-    return cast(
-        Result, context.run("docformatter{} {}".format(docformatter_options, " ".join(PYTHON_DIRS)), warn=True)
-    )
+    return run_in_pty(context, "docformatter{} {}".format(docformatter_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
 # Reason: This is dataclass. pylint: disable=too-few-public-methods
@@ -55,19 +53,19 @@ def build_list_options_docformatter(config: Dict[str, Any], check: bool) -> List
 def autoflake(context: Context, check: bool = False) -> Result:
     """Runs autoflake."""
     autoflake_options = " --recursive {}".format("--check" if check else "--in-place")
-    return cast(Result, context.run("autoflake{} {}".format(autoflake_options, " ".join(PYTHON_DIRS)), warn=True))
+    return run_in_pty(context, "autoflake{} {}".format(autoflake_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
 def isort(context: Context, check: bool = False) -> Result:
     """Runs isort."""
     isort_options = " --check-only --diff" if check else ""
-    return cast(Result, context.run("isort{} {}".format(isort_options, " ".join(PYTHON_DIRS)), warn=True))
+    return run_in_pty(context, "isort{} {}".format(isort_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
 def black(context: Context, check: bool = False) -> Result:
     """Runs Black."""
     black_options = " --check --diff" if check else ""
-    return cast(Result, context.run("black{} {}".format(black_options, " ".join(PYTHON_DIRS)), warn=True))
+    return run_in_pty(context, "black{} {}".format(black_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
 @task(help={"check": "Checks if source is formatted without applying changes"})
