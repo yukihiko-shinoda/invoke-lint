@@ -15,7 +15,12 @@ ns = Collection()
 def fast(context: Context) -> Result:
     """Runs fast tests (not mark @pytest.mark.slow)."""
     pty = platform.system() == "Linux"
-    return cast(Result, context.run("pytest -m 'not slow' -vv", pty=pty))
+    # Windows cmd.exe requires to so surround "not slow" by double quote,
+    # otherwise, following error raised:
+    #   ERROR: file or directory not found: slow'
+    # - Answer: cmd - What does single-quoting do in Windows batch files? - Stack Overflow
+    #   https://stackoverflow.com/a/24181667/12721873
+    return cast(Result, context.run('pytest -m "not slow" -vv', pty=pty))
 
 
 ns.add_task(fast, default=True)

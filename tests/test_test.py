@@ -27,7 +27,12 @@ EXPECTED_STDOUT = dedent(
 
 def test_fast() -> None:
     """The test task should call pytest."""
-    expected_command = "pytest -m 'not slow' -vv"
+    # Windows cmd.exe requires to so surround "not slow" by double quote,
+    # otherwise, following error raised:
+    #   ERROR: file or directory not found: slow'
+    # - Answer: cmd - What does single-quoting do in Windows batch files? - Stack Overflow
+    #   https://stackoverflow.com/a/24181667/12721873
+    expected_command = 'pytest -m "not slow" -vv'
     expected_pty = platform.system() == "Linux"
     context = MockContext(run={expected_command: Result(EXPECTED_STDOUT)})
     check_result(fast(context), expected_command)
