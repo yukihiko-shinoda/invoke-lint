@@ -4,6 +4,7 @@ import pytest
 
 from invokelint.lint import (
     bandit,
+    cohesion,
     deep,
     dodgy,
     fast,
@@ -33,6 +34,17 @@ def test_radon(context: Context) -> None:
         "radon mi invokelint tasks.py tests",
     ]
     list_result = radon(context)
+    check_list_result(list_result, list_command_expected)
+
+
+def test_cohesion(context: Context) -> None:
+    """Function: cohesion() should run appropriate commands."""
+    list_command_expected = [
+        "cohesion --directory invokelint",
+        "cohesion --directory tasks.py",
+        "cohesion --directory tests",
+    ]
+    list_result = cohesion(context)
     check_list_result(list_result, list_command_expected)
 
 

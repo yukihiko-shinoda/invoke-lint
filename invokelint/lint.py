@@ -33,6 +33,21 @@ ns.add_task(radon)
 
 
 @task
+def cohesion(context: Context) -> List[Result]:
+    """Lints code with Cohesion."""
+    # 2021-10-24:
+    # Cohesion doesn't support multiple directories in 1 command.
+    # Only the last directory enables when supply multiple --directory options.
+    list_result = []
+    for directory in PYTHON_DIRS:
+        list_result.append(run_in_pty(context, "cohesion --directory {}".format(directory)))
+    return list_result
+
+
+ns.add_task(cohesion)
+
+
+@task
 def bandit(context: Context) -> Result:
     """Lints code with bandit."""
     space = " "
