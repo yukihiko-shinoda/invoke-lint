@@ -55,7 +55,7 @@ def flake8(context: Context) -> Result:
 @task
 def pydocstyle(context: Context) -> Result:
     """Lints code with pydocstyle."""
-    return run_in_pty(context, "pydocstyle .")
+    return run_in_pty(context, "pydocstyle {}".format(" ".join(PYTHON_DIRS)))
 
 
 @task
