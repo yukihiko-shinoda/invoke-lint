@@ -49,7 +49,7 @@ def test_flake8(context: Context) -> None:
 
 
 def test_pydocstyle(context: Context) -> None:
-    check_result(pydocstyle(context), "pydocstyle .")
+    check_result(pydocstyle(context), "pydocstyle invokelint tasks.py tests")
 
 
 def test_xenon(context: Context) -> None:
@@ -62,7 +62,7 @@ def test_fast(context: Context) -> None:
         "bandit --recursive --skip B101 tests",
         "dodgy --ignore-paths csvinput",
         "flake8 --radon-show-closures invokelint tasks.py tests",
-        "pydocstyle .",
+        "pydocstyle invokelint tasks.py tests",
         "xenon --max-absolute A--max-modules A--max-average Ainvokelint tasks.py tests",
     ]
     list_result = fast(context)
