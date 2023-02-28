@@ -43,7 +43,15 @@ ns.add_task(run_test_all)
 )
 def coverage(context: Context, publish: bool = False, xml: bool = False, html: bool = False) -> Result:
     """Runs all tests and report coverage (options for create xml / html available)."""
-    run_in_pty(context, "coverage run --source {} -m pytest".format(" ".join(SOURCE_DIRS)))
+    # Coverage.py Currently can't apply any options including --source when multiprocessing:
+    #   Options affecting multiprocessing must only be specified in a configuration file.
+    #   Remove --source from the command line.
+    #   Use 'coverage help' for help.
+    #   Full documentation is at https://coverage.readthedocs.io
+    # command = "coverage run --concurrency=multiprocessing --source {} -m pytest".format(" ".join(SOURCE_DIRS))
+    command = "coverage run --source {} -m pytest".format(" ".join(SOURCE_DIRS))
+    run_in_pty(context, command)
+    # result = run_in_pty(context, "coverage combine")
     result = run_in_pty(context, "coverage report -m")
     if publish:
         # Publish the results via coveralls
