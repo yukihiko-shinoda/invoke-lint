@@ -76,7 +76,7 @@ def pydocstyle(context: Context) -> Result:
 @task
 def xenon(context: Context) -> Result:
     """Checks code complexity."""
-    command = ("xenon" " --max-absolute A" "--max-modules A" "--max-average A" "{}").format(" ".join(PYTHON_DIRS))
+    command = ("xenon --max-absolute A --max-modules A --max-average A {}").format(" ".join(PYTHON_DIRS))
     return run_in_pty(context, command)
 
 

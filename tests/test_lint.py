@@ -65,7 +65,7 @@ def test_pydocstyle(context: Context) -> None:
 
 
 def test_xenon(context: Context) -> None:
-    check_result(xenon(context), "xenon --max-absolute A--max-modules A--max-average Ainvokelint tasks.py tests")
+    check_result(xenon(context), "xenon --max-absolute A --max-modules A --max-average A invokelint tasks.py tests")
 
 
 def test_fast(context: Context) -> None:
@@ -75,7 +75,7 @@ def test_fast(context: Context) -> None:
         "dodgy --ignore-paths csvinput",
         "flake8 --radon-show-closures invokelint tasks.py tests",
         "pydocstyle invokelint tasks.py tests",
-        "xenon --max-absolute A--max-modules A--max-average Ainvokelint tasks.py tests",
+        "xenon --max-absolute A --max-modules A --max-average A invokelint tasks.py tests",
     ]
     list_result = fast(context)
     check_list_result(list_result, list_command_expected)
