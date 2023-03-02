@@ -78,6 +78,8 @@ Runs following fast lints at once:
 4. [pydocstyle]
 5. [Xenon]
 
+The format task ([described later](#inv-style)) also run before run above lints. You can skip them by `--skip-format` option.
+
 ### `inv lint.deep`
 
 Runs following slow but detailed lints at once:
