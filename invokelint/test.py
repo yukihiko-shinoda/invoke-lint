@@ -4,7 +4,7 @@ import webbrowser
 
 from invoke import Collection, Context, Result, task
 
-from invokelint.path import SOURCE_DIRS
+from invokelint.path import PRODUCTION_PACKAGES
 from invokelint.run import run_in_pty
 
 ns = Collection()
@@ -49,7 +49,7 @@ def coverage(context: Context, publish: bool = False, xml: bool = False, html: b
     #   Use 'coverage help' for help.
     #   Full documentation is at https://coverage.readthedocs.io
     # command = "coverage run --concurrency=multiprocessing --source {} -m pytest".format(" ".join(SOURCE_DIRS))
-    command = "coverage run --source {} -m pytest".format(" ".join(SOURCE_DIRS))
+    command = "coverage run --source {} -m pytest".format(" ".join(PRODUCTION_PACKAGES))
     run_in_pty(context, command)
     # result = run_in_pty(context, "coverage combine")
     result = run_in_pty(context, "coverage report -m")

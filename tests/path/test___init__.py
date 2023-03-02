@@ -11,8 +11,12 @@ def test(context: Context, capsys: CaptureFixture[str]) -> None:
     """Function: debug() should print packages and root packages."""
     expected = dedent(
         """\
-            Packages: ['invokelint', 'invokelint.path']
+            Setuptools detected packages: ['invokelint', 'invokelint.path']
             Root packages: ['invokelint']
+            Setuptools detected Python modules: ['setup', 'tasks']
+            Existing test packages: ['tests']
+            Python file or directories to lint: ['invokelint', 'setup.py', 'tasks.py', 'tests']
+            Python file or directories to lint excluding test packages: ['invokelint', 'setup.py', 'tasks.py']
         """
     )
     debug(context)
