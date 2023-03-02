@@ -4,19 +4,19 @@ from invoke import Context
 from invokelint.style import fmt
 from tests.testlibraries import check_list_result
 
-PYTHON_DIR = "tasks.py setup.py tests"
+PYTHON_DIR = "invokelint setup.py tasks.py tests"
 
 LIST_COMMAND_EXPECTED_STYLE = [
-    f"docformatter --recursive --wrap-summaries 119 --wrap-descriptions 119 --in-place invokelint {PYTHON_DIR}",
-    f"isort invokelint {PYTHON_DIR}",
-    f"autoflake --recursive --in-place invokelint {PYTHON_DIR}",
-    f"black invokelint {PYTHON_DIR}",
+    f"docformatter --recursive --wrap-summaries 119 --wrap-descriptions 119 --in-place {PYTHON_DIR}",
+    f"isort {PYTHON_DIR}",
+    f"autoflake --recursive --in-place {PYTHON_DIR}",
+    f"black {PYTHON_DIR}",
 ]
 LIST_COMMAND_EXPECTED_STYLE_CHECK = [
-    f"docformatter --recursive --wrap-summaries 119 --wrap-descriptions 119 --check invokelint {PYTHON_DIR}",
-    f"isort --check-only --diff invokelint {PYTHON_DIR}",
-    f"autoflake --recursive --check invokelint {PYTHON_DIR}",
-    f"black --check --diff invokelint {PYTHON_DIR}",
+    f"docformatter --recursive --wrap-summaries 119 --wrap-descriptions 119 --check {PYTHON_DIR}",
+    f"isort --check-only --diff {PYTHON_DIR}",
+    f"autoflake --recursive --check {PYTHON_DIR}",
+    f"black --check --diff {PYTHON_DIR}",
 ]
 
 

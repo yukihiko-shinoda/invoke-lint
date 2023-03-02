@@ -61,7 +61,7 @@ EXPECTED_STDOUT_REPORT = dedent(
         invokelint/style.py         33      0   100%
         invokelint/test.py          28      0   100%
         ------------------------------------------------------
-        TOTAL                      149     11    93%
+        TOTAL                      149     11   100%
     """
 )
 EXPECTED_COMMAND_RUN = "coverage run --source invokelint -m pytest"

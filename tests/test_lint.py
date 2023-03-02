@@ -20,16 +20,16 @@ from invokelint.lint import (
 from tests.test_style import LIST_COMMAND_EXPECTED_STYLE
 from tests.testlibraries import check_list_result, check_result
 
-PYTHON_DIR = "tasks.py setup.py tests"
-COMMAND_EXPECTED_RADON_CC = f"radon cc invokelint {PYTHON_DIR}"
-COMMAND_EXPECTED_RADON_MI = f"radon mi invokelint {PYTHON_DIR}"
+PYTHON_DIR = "invokelint setup.py tasks.py tests"
+COMMAND_EXPECTED_RADON_CC = f"radon cc {PYTHON_DIR}"
+COMMAND_EXPECTED_RADON_MI = f"radon mi {PYTHON_DIR}"
 COMMAND_EXPECTED_BANDIT = "bandit --recursive --skip B101 tests"
 COMMAND_EXPECTED_DODGY = "dodgy --ignore-paths csvinput"
-COMMAND_EXPECTED_FLAKE8 = f"flake8 --radon-show-closures invokelint {PYTHON_DIR}"
-COMMAND_EXPECTED_PYDOCSTYLE = f"pydocstyle invokelint {PYTHON_DIR}"
-COMMAND_EXPECTED_XENON = f"xenon --max-absolute A --max-modules A --max-average A invokelint {PYTHON_DIR}"
-COMMAND_EXPECTED_MYPY = f"mypy invokelint {PYTHON_DIR}"
-COMMAND_EXPECTED_PYLINT = f"pylint invokelint {PYTHON_DIR}"
+COMMAND_EXPECTED_FLAKE8 = f"flake8 --radon-show-closures {PYTHON_DIR}"
+COMMAND_EXPECTED_PYDOCSTYLE = f"pydocstyle {PYTHON_DIR}"
+COMMAND_EXPECTED_XENON = f"xenon --max-absolute A --max-modules A --max-average A {PYTHON_DIR}"
+COMMAND_EXPECTED_MYPY = f"mypy {PYTHON_DIR}"
+COMMAND_EXPECTED_PYLINT = f"pylint {PYTHON_DIR}"
 
 
 def test_radon_cc(context: Context) -> None:
@@ -50,8 +50,8 @@ def test_cohesion(context: Context) -> None:
     """Function: cohesion() should run appropriate commands."""
     list_command_expected = [
         "cohesion --directory invokelint",
-        "cohesion --directory tasks.py",
         "cohesion --directory setup.py",
+        "cohesion --directory tasks.py",
         "cohesion --directory tests",
     ]
     list_result = cohesion(context)

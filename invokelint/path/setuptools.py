@@ -24,7 +24,8 @@ class Setuptools:
         if self.config_discovery.dist.py_modules:
             return cast(List[str], self.config_discovery.dist.py_modules)
         exclude = [module for module in FlatLayoutModuleFinder.DEFAULT_EXCLUDE if module not in modules_to_lint]
-        return cast(List[str], FlatLayoutModuleFinder.find(self.project_root, exclude))
+        # sorted(): Since Windows returns different order from Linux.
+        return cast(List[str], sorted(FlatLayoutModuleFinder.find(self.project_root, exclude)))
 
     @property
     def project_root(self) -> Path:
