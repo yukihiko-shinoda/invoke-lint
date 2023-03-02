@@ -5,6 +5,7 @@ from invoke import Collection, Context, Result, task
 
 from invokelint.path import PYTHON_DIRS, SOURCE_DIRS, TASKS_PY, TEST_DIR
 from invokelint.run import run_all, run_in_order, run_in_pty
+from invokelint.style import fmt
 
 ns = Collection()
 
@@ -80,10 +81,12 @@ def xenon(context: Context) -> Result:
     return run_in_pty(context, command)
 
 
-@task
-def fast(context: Context) -> List[Result]:
+@task(help={"skip_format": "Lints without format style."})
+def fast(context: Context, skip_format: bool = False) -> List[Result]:
     """Runs fast linting (bandit, dodgy, flake8, pydocstyle, xenon)."""
-    return run_in_order([bandit, dodgy, flake8, pydocstyle, xenon], context)
+    list_result = [] if skip_format else fmt(context)
+    list_result.extend(run_in_order([bandit, dodgy, flake8, pydocstyle, xenon], context))
+    return list_result
 
 
 ns.add_task(bandit)

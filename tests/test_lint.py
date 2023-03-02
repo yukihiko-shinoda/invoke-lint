@@ -17,6 +17,7 @@ from invokelint.lint import (
     radon_mi,
     xenon,
 )
+from tests.test_style import LIST_COMMAND_EXPECTED_STYLE
 from tests.testlibraries import check_list_result, check_result
 
 
@@ -78,6 +79,19 @@ def test_fast(context: Context) -> None:
         "xenon --max-absolute A --max-modules A --max-average A invokelint tasks.py tests",
     ]
     list_result = fast(context)
+    check_list_result(list_result, LIST_COMMAND_EXPECTED_STYLE + list_command_expected)
+
+
+def test_fast_skip_format(context: Context) -> None:
+    """Command should success and run appropriate commands."""
+    list_command_expected = [
+        "bandit --recursive --skip B101 tests",
+        "dodgy --ignore-paths csvinput",
+        "flake8 --radon-show-closures invokelint tasks.py tests",
+        "pydocstyle invokelint tasks.py tests",
+        "xenon --max-absolute A --max-modules A --max-average A invokelint tasks.py tests",
+    ]
+    list_result = fast(context, True)
     check_list_result(list_result, list_command_expected)
 
 
