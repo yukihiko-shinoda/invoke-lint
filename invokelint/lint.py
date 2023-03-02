@@ -3,7 +3,7 @@ from typing import cast, List
 
 from invoke import Collection, Context, Result, task
 
-from invokelint.path import PYTHON_DIRS, SOURCE_DIRS, TASKS_PY, TEST_DIR
+from invokelint.path import EXISTING_TEST_PACKAGES, PYTHON_DIRS, PYTHON_DIRS_EXCLUDING_TEST
 from invokelint.run import run_all, run_in_order, run_in_pty
 from invokelint.style import fmt
 
@@ -52,8 +52,8 @@ ns.add_task(cohesion)
 def bandit(context: Context) -> Result:
     """Lints code with bandit."""
     space = " "
-    run_in_pty(context, "bandit --recursive {}".format(space.join([str(p) for p in [*SOURCE_DIRS, TASKS_PY]])))
-    return run_in_pty(context, "bandit --recursive --skip B101 {}".format(TEST_DIR))
+    run_in_pty(context, "bandit --recursive {}".format(space.join(PYTHON_DIRS_EXCLUDING_TEST)))
+    return run_in_pty(context, "bandit --recursive --skip B101 {}".format(space.join(EXISTING_TEST_PACKAGES)))
 
 
 @task
