@@ -222,8 +222,12 @@ This package reuses `setuptools` settings for package discovery for linting, for
 
 ```console
 $ inv path
-Packages: ['invokelint', 'invokelint.path']
+Setuptools detected packages: ['invokelint', 'invokelint.path']
 Root packages: ['invokelint']
+Setuptools detected Python modules: ['setup', 'tasks']
+Existing test packages: ['tests']
+Python file or directories to lint: ['invokelint', 'setup.py', 'tasks.py', 'tests']
+Python file or directories to lint excluding test packages: ['invokelint', 'setup.py', 'tasks.py']
 ```
 
 If result is not your expected, follow official documentation of `setuptools` to configure `pyproject.toml` (recommended), `setup.cfg`, or `setup.py`.
