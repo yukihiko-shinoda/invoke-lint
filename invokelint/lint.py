@@ -5,6 +5,7 @@ from typing import Any, cast, List, TYPE_CHECKING
 from invoke import Collection, Context, Result, task
 
 from invokelint.path import EXISTING_TEST_PACKAGES, PYTHON_DIRS, PYTHON_DIRS_EXCLUDING_TEST
+from invokelint.ruff import execute
 from invokelint.run import run_all, run_in_order, run_in_pty
 from invokelint.style import fmt
 
@@ -52,16 +53,15 @@ def cohesion(context: Context) -> List[Result]:
 ns.add_task(cohesion)
 
 
-@task
-def ruff(context: Context) -> Result:
+@task(name="ruff")
+def ruff_task(context: Context) -> Result:
     """Lints code with Ruff."""
-    run_in_pty(context, "ruff {}".format(" ".join(PYTHON_DIRS_EXCLUDING_TEST)))
-    return run_in_pty(context, "ruff --ignore S101 {}".format(" ".join(EXISTING_TEST_PACKAGES)))
+    return execute(context)
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
 def call_ruff(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
-    return ruff(context)
+    return ruff_task(context)
 
 
 @task
@@ -122,16 +122,21 @@ def call_xenon(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
     return xenon(context)
 
 
-@task(help={"skip_format": "Lints without format style."})
-def fast(context: Context, *, skip_format: bool = False) -> List[Result]:
+@task(
+    help={
+        "skip_format": "Lints without format style.",
+        "ruff": "Fix ruff warnings",
+    },
+)
+def fast(context: Context, *, skip_format: bool = False, ruff: bool = False) -> List[Result]:
     """Runs fast linting (ruff, bandit, dodgy, flake8, pydocstyle, xenon)."""
-    list_result = [] if skip_format else fmt(context)
+    list_result = [] if skip_format else fmt(context, ruff=ruff)
     tasks = [call_ruff, call_bandit, call_dodgy, call_flake8, call_pydocstyle, call_xenon]
     list_result.extend(run_in_order(tasks, context))
     return list_result
 
 
-ns.add_task(ruff)
+ns.add_task(ruff_task)
 ns.add_task(bandit)
 ns.add_task(dodgy)
 ns.add_task(flake8)

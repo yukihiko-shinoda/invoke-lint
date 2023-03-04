@@ -21,6 +21,7 @@ LIST_COMMAND_EXPECTED_STYLE_CHECK = [
     f"isort --check-only --diff {PYTHON_DIR}",
     f"autoflake --recursive --check {PYTHON_DIR}",
     f"black --check --diff {PYTHON_DIR}",
+    "ruff --show-fixes --ignore S101 tests",
 ]
 
 
@@ -32,3 +33,11 @@ def test_style(context: "Context") -> None:
 def test_style_check(context: "Context") -> None:
     """Command should success and run appropriate commands."""
     check_list_result(fmt(context, check=True), LIST_COMMAND_EXPECTED_STYLE_CHECK)
+
+
+def test_style_ruff(context: "Context") -> None:
+    """Command should success and run appropriate commands."""
+    check_list_result(
+        fmt(context, ruff=True),
+        [*LIST_COMMAND_EXPECTED_STYLE, "ruff --fix --show-fixes --ignore S101 tests"],
+    )
