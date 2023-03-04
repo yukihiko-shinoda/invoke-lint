@@ -11,8 +11,11 @@ ns = Collection()
 def module_build_exists() -> bool:
     """To minimize try block."""
     try:
-        # Reason: Just check existence, use it via command line.
-        import build  # noqa: F401 pylint: disable=import-outside-toplevel,unused-import
+        # Reason:
+        #   F401: Just check existence, use it via command line.
+        #   RUF100: Ruff 0.0.254 started to report that unused: `F401`,
+        #           however Flake8 running in Python still requires `F401`.
+        import build  # noqa: F401,RUF100 pylint: disable=import-outside-toplevel,unused-import
     except ModuleNotFoundError:
         return False
     return True

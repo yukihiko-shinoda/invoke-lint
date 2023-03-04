@@ -53,56 +53,81 @@ ns.add_task(cohesion)
 
 
 @task
-# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def ruff(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def ruff(context: Context) -> Result:
     """Lints code with Ruff."""
     run_in_pty(context, "ruff {}".format(" ".join(PYTHON_DIRS_EXCLUDING_TEST)))
     return run_in_pty(context, "ruff --ignore S101 {}".format(" ".join(EXISTING_TEST_PACKAGES)))
 
 
+# Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
+def call_ruff(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+    return ruff(context)
+
+
 @task
-# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def bandit(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def bandit(context: Context) -> Result:
     """Lints code with bandit."""
     space = " "
     run_in_pty(context, "bandit --recursive {}".format(space.join(PYTHON_DIRS_EXCLUDING_TEST)))
     return run_in_pty(context, "bandit --recursive --skip B101 {}".format(space.join(EXISTING_TEST_PACKAGES)))
 
 
+# Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
+def call_bandit(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+    return bandit(context)
+
+
 @task
-# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def dodgy(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def dodgy(context: Context) -> Result:
     """Lints code with dodgy."""
     return run_in_pty(context, "dodgy --ignore-paths csvinput")
 
 
+# Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
+def call_dodgy(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+    return dodgy(context)
+
+
 @task
-# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def flake8(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def flake8(context: Context) -> Result:
     """Lints code with flake8."""
     return run_in_pty(context, "flake8 {} {}".format("--radon-show-closures", " ".join(PYTHON_DIRS)))
 
 
+# Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
+def call_flake8(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+    return flake8(context)
+
+
 @task
-# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def pydocstyle(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def pydocstyle(context: Context) -> Result:
     """Lints code with pydocstyle."""
     return run_in_pty(context, "pydocstyle {}".format(" ".join(PYTHON_DIRS)))
 
 
+# Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
+def call_pydocstyle(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+    return pydocstyle(context)
+
+
 @task
-# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def xenon(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def xenon(context: Context) -> Result:
     """Checks code complexity."""
     command = ("xenon --max-absolute A --max-modules A --max-average A {}").format(" ".join(PYTHON_DIRS))
     return run_in_pty(context, command)
+
+
+# Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
+def call_xenon(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+    return xenon(context)
 
 
 @task(help={"skip_format": "Lints without format style."})
 def fast(context: Context, *, skip_format: bool = False) -> List[Result]:
     """Runs fast linting (ruff, bandit, dodgy, flake8, pydocstyle, xenon)."""
     list_result = [] if skip_format else fmt(context)
-    list_result.extend(run_in_order([ruff, bandit, dodgy, flake8, pydocstyle, xenon], context))
+    tasks = [call_ruff, call_bandit, call_dodgy, call_flake8, call_pydocstyle, call_xenon]
+    list_result.extend(run_in_order(tasks, context))
     return list_result
 
 
@@ -116,22 +141,29 @@ ns.add_task(fast, default=True)
 
 
 @task
-# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def mypy(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def mypy(context: Context) -> Result:
     """Lints code with mypy."""
     return run_in_pty(context, "mypy {}".format(" ".join(PYTHON_DIRS)))
 
 
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def call_mypy(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+    return mypy(context)
+
+
 @task
-# Reason: Compatibility with semgrep task to be called from deep(). pylint: disable=unused-argument
-def pylint(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def pylint(context: Context) -> Result:
     """Lints code with Pylint."""
     return run_in_pty(context, "pylint {}".format(" ".join(PYTHON_DIRS)))
 
 
+# Reason: Compatibility with semgrep task to be called from deep(). pylint: disable=unused-argument
+def call_pylint(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+    return pylint(context)
+
+
 @task(help={"ci": "Run as CI mode."})
-# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
+def semgrep(context: Context, *, ci: bool = False) -> Result:
     """Lints code with Semgrep."""
     command = "ci" if ci else "scan"
     return run_in_pty(
@@ -140,12 +172,17 @@ def semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> Result:  # 
     )
 
 
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def call_semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
+    return semgrep(context)
+
+
 @task(help={"ci": "Run as CI mode."})
 def deep(context: Context, *, ci: bool = False) -> List[Result]:
     """Runs slow but detailed linting (mypy, Pylint, semgrep)."""
-    list_task: "List[TaskFunction]" = [mypy, pylint]
+    list_task: "List[TaskFunction]" = [call_mypy, call_pylint]
     if platform.system() != "Windows":
-        list_task.append(semgrep)
+        list_task.append(call_semgrep)
     return run_in_order(list_task, context, ci=ci)
 
 
