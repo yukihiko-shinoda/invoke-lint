@@ -27,6 +27,8 @@ keywords = [
     "pylint",
     "pytest",
     "radon",
+    "ruff",
+    "semgrep",
     "xenon",
 ]
 authors = [
