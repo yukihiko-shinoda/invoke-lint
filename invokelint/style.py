@@ -11,7 +11,8 @@ from invokelint.run import run_in_order, run_in_pty
 ns = Collection()
 
 
-def docformatter(context: Context, check: bool = False) -> Result:
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
     """Runs docformatter.
 
     This function includes hard coding of line length.
@@ -21,26 +22,29 @@ def docformatter(context: Context, check: bool = False) -> Result:
     """
     parsed_toml = tomli.loads(Path("pyproject.toml").read_text("UTF-8"))
     config = parsed_toml["tool"]["docformatter"]
-    list_options = build_list_options_docformatter(config, check)
+    list_options = build_list_options_docformatter(config, check=check)
     docformatter_options = " {}".format(" ".join(list_options))
     return run_in_pty(context, "docformatter{} {}".format(docformatter_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
 # Reason: This is dataclass. pylint: disable=too-few-public-methods
 class DocformatterOption:
-    def __init__(self, list_str: List[str], enable: bool) -> None:
+    def __init__(self, list_str: List[str], *, enable: bool) -> None:
         self.list_str = list_str
         self.enable = enable
 
 
-def build_list_options_docformatter(config: Dict[str, Any], check: bool) -> List[str]:
+def build_list_options_docformatter(config: Dict[str, Any], *, check: bool) -> List[str]:
     """Builds list of docformatter options."""
     docformatter_options = (
-        DocformatterOption(["--recursive"], "recursive" in config and config["recursive"]),
-        DocformatterOption(["--wrap-summaries", str(config["wrap-summaries"])], "wrap-summaries" in config),
-        DocformatterOption(["--wrap-descriptions", str(config["wrap-descriptions"])], "wrap-descriptions" in config),
-        DocformatterOption(["--check"], check),
-        DocformatterOption(["--in-place"], not check),
+        DocformatterOption(["--recursive"], enable="recursive" in config and config["recursive"]),
+        DocformatterOption(["--wrap-summaries", str(config["wrap-summaries"])], enable="wrap-summaries" in config),
+        DocformatterOption(
+            ["--wrap-descriptions", str(config["wrap-descriptions"])],
+            enable="wrap-descriptions" in config,
+        ),
+        DocformatterOption(["--check"], enable=check),
+        DocformatterOption(["--in-place"], enable=not check),
     )
     return [
         item
@@ -50,28 +54,31 @@ def build_list_options_docformatter(config: Dict[str, Any], check: bool) -> List
     ]
 
 
-def autoflake(context: Context, check: bool = False) -> Result:
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def autoflake(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
     """Runs autoflake."""
     autoflake_options = " --recursive {}".format("--check" if check else "--in-place")
     return run_in_pty(context, "autoflake{} {}".format(autoflake_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
-def isort(context: Context, check: bool = False) -> Result:
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def isort(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
     """Runs isort."""
     isort_options = " --check-only --diff" if check else ""
     return run_in_pty(context, "isort{} {}".format(isort_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
-def black(context: Context, check: bool = False) -> Result:
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def black(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
     """Runs Black."""
     black_options = " --check --diff" if check else ""
     return run_in_pty(context, "black{} {}".format(black_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
 @task(help={"check": "Checks if source is formatted without applying changes"})
-def fmt(context: Context, check: bool = False) -> List[Result]:
+def fmt(context: Context, *, check: bool = False) -> List[Result]:
     """Formats code by docformatter, isort, autoflake, and Black (option for only check available)."""
-    return run_in_order([docformatter, isort, autoflake, black], context, check)
+    return run_in_order([docformatter, isort, autoflake, black], context, check=check)
 
 
 ns.add_task(fmt, default=True)

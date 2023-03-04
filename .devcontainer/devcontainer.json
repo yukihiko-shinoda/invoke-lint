@@ -29,6 +29,7 @@
 		"vscode": {
 			"extensions": [
 				"ms-python.python",
+				"charliermarsh.ruff",
 				"bungcip.better-toml",
 				"streetsidesoftware.code-spell-checker"
 			],

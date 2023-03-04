@@ -13,10 +13,9 @@ def module_build_exists() -> bool:
     try:
         # Reason: Just check existence, use it via command line.
         import build  # noqa: F401 pylint: disable=import-outside-toplevel,unused-import
-
-        return True
     except ModuleNotFoundError:
         return False
+    return True
 
 
 @task(clean_all)

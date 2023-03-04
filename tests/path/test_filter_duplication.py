@@ -6,7 +6,7 @@ from invokelint.path.filter_duplication import _check_subpath, _update_list, fil
 
 
 @pytest.mark.parametrize(
-    "path_a, path_b, expected",
+    ("path_a", "path_b", "expected"),
     [
         ("foo.bar", "foo", 1),
         ("foo", "foo.bar", -1),

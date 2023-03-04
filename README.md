@@ -29,6 +29,7 @@ Supporting tools:
 
 Linters:
 
+- [Ruff]
 - [Bandit]
 - [dodgy]
 - [Flake8]
@@ -36,6 +37,7 @@ Linters:
 - [Xenon]
 - [Pylint]
 - [mypy]
+- [Semgrep]
 
 Formatters:
 
@@ -72,11 +74,12 @@ This doesn't pollute your comfortable namespaces of command line tools. Thanks t
 
 Runs following fast lints at once:
 
-1. [Bandit]
-2. [dodgy]
-3. [Flake8]
-4. [pydocstyle]
-5. [Xenon]
+1. [Ruff]
+2. [Bandit]
+3. [dodgy]
+4. [Flake8]
+5. [pydocstyle]
+6. [Xenon]
 
 The format task ([described later](#inv-style)) also run before run above lints. You can skip them by `--skip-format` option.
 
@@ -86,6 +89,7 @@ Runs following slow but detailed lints at once:
 
 1. [Pylint]
 2. [mypy]
+3. [Semgrep]
 
 ### `inv radon`
 
@@ -170,6 +174,8 @@ pydocstyle = {version = "*", markers="python_version >= '3.6'"}
 pylint = "*"
 pytest = "*"
 radon = "*"
+ruff = {version = "*", markers="python_version >= '3.7'"}
+semgrep = {version = "*", markers="python_version >= '3.6'"}
 tomli = {version = "*", markers="python_version >= '3.6'"}
 xenon = "*"
 ```
@@ -243,6 +249,7 @@ This package was created with [Cookiecutter] and the [yukihiko-shinoda/cookiecut
 [Invoke]: https://pypi.org/project/invoke/
 [dependency management tools]: https://packaging.python.org/en/latest/tutorials/managing-dependencies/
 [Pipenv]: https://pypi.org/project/pipenv/
+[Ruff]: https://pypi.org/project/ruff/
 [Bandit]: https://pypi.org/project/bandit/
 [dodgy]: https://pypi.org/project/dodgy/
 [Flake8]: https://pypi.org/project/flake8/
@@ -250,6 +257,7 @@ This package was created with [Cookiecutter] and the [yukihiko-shinoda/cookiecut
 [Xenon]: https://pypi.org/project/xenon/
 [Pylint]: https://pypi.org/project/pylint/
 [mypy]: https://pypi.org/project/mypy/
+[Semgrep]: https://pypi.org/project/semgrep/
 [radon]: https://pypi.org/project/radon/
 [docformatter]: https://pypi.org/project/docformatter/
 [isort]: https://pypi.org/project/isort/
