@@ -1,10 +1,11 @@
 """Functions to run tasks."""
 import platform
-from typing import Any, Callable, cast, List, Protocol, TYPE_CHECKING
+from typing import Any, Callable, cast, List, TYPE_CHECKING
 
 from invoke import Context, Result, UnexpectedExit
 
 if TYPE_CHECKING:
+    from typing import Protocol
 
     class TaskFunction(Protocol):
         def __call__(self, context: Context, **kwargs: Any) -> Result:  # pragma: no cover
