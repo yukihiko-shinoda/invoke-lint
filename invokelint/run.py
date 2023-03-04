@@ -17,12 +17,7 @@ def run_in_pty(context: Context, command: str, **kwargs: Any) -> Result:
     return cast(Result, context.run(command, pty=platform.system() != "Windows", **kwargs))
 
 
-def run_in_order(
-    list_task: "List[TaskFunction]",
-    context: Context,
-    *args: Any,
-    **kwargs: Any,
-) -> List[Result]:
+def run_in_order(list_task: "List[TaskFunction]", context: Context, *args: Any, **kwargs: Any) -> List[Result]:
     """Runs tasks in order, stop subsequent tasks when task fail."""
     list_result = []
     for each_task in list_task:
