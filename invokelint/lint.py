@@ -1,12 +1,15 @@
 """Tasks of lint."""
 import platform
-from typing import Any, cast, List
+from typing import Any, cast, List, TYPE_CHECKING
 
 from invoke import Collection, Context, Result, task
 
 from invokelint.path import EXISTING_TEST_PACKAGES, PYTHON_DIRS, PYTHON_DIRS_EXCLUDING_TEST
-from invokelint.run import run_all, run_in_order, run_in_pty, TaskFunction
+from invokelint.run import run_all, run_in_order, run_in_pty
 from invokelint.style import fmt
+
+if TYPE_CHECKING:
+    from invokelint.run import TaskFunction
 
 ns = Collection()
 
@@ -140,7 +143,7 @@ def semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> Result:  # 
 @task(help={"ci": "Run as CI mode."})
 def deep(context: Context, *, ci: bool = False) -> List[Result]:
     """Runs slow but detailed linting (mypy, Pylint, semgrep)."""
-    list_task: List[TaskFunction] = [mypy, pylint]
+    list_task: "List[TaskFunction]" = [mypy, pylint]
     if platform.system() != "Windows":
         list_task.append(semgrep)
     return run_in_order(list_task, context, ci=ci)
