@@ -1,5 +1,4 @@
 """Tasks of lint."""
-from pathlib import Path
 from typing import cast, List
 
 from invoke import Collection, Context, Result, task
@@ -53,11 +52,7 @@ ns.add_task(cohesion)
 def bandit(context: Context) -> Result:
     """Lints code with bandit."""
     space = " "
-    # Converts to absolute path to prevent bandit warning:
-    # - Unable to find qualified name · Issue #907 · PyCQA/bandit
-    #   https://github.com/PyCQA/bandit/issues/907
-    absolute_paths = [space.join(str(Path(path).absolute().resolve()) for path in PYTHON_DIRS_EXCLUDING_TEST)]
-    run_in_pty(context, "bandit --recursive {}".format(absolute_paths))
+    run_in_pty(context, "bandit --recursive {}".format(space.join(PYTHON_DIRS_EXCLUDING_TEST)))
     return run_in_pty(context, "bandit --recursive --skip B101 {}".format(space.join(EXISTING_TEST_PACKAGES)))
 
 
