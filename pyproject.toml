@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "invokelint"
-version = "0.3.2"
+version = "0.4.0"
 description = "Invokes Python dev tools at once."
 readme = "README.md"
 # Dependency: setuptools>=61.0.0 requires Python 3.7
