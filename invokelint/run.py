@@ -1,21 +1,28 @@
 """Functions to run tasks."""
 import platform
-from typing import Any, Callable, cast, List
+from typing import Any, Callable, cast, List, Protocol
 
 from invoke import Context, Result, UnexpectedExit
 
 
 # Reason: Specification.
-def run_in_pty(context: Context, command: str, **kwargs: Any) -> Result:  # noqa: ANN401
+def run_in_pty(context: Context, command: str, **kwargs: Any) -> Result:
     return cast(Result, context.run(command, pty=platform.system() != "Windows", **kwargs))
 
 
+class TaskFunction(Protocol):
+    def __call__(self, context: Context, **kwargs: Any) -> Result:  # pragma: no cover
+        # fakeself gets swallowed by the class method binding logic
+        # so this will match functions that have bar and the free arguments.
+        ...
+
+
 def run_in_order(
-    list_task: List[Callable[[Context], Result]],
+    list_task: List[TaskFunction],
     context: Context,
     # Reason: Specification.
-    *args: Any,  # noqa: ANN401
-    **kwargs: Any,  # noqa: ANN401
+    *args: Any,
+    **kwargs: Any,
 ) -> List[Result]:
     """Runs tasks in order, stop subsequent tasks when task fail."""
     list_result = []

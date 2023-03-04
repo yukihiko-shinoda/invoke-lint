@@ -11,7 +11,8 @@ from invokelint.run import run_in_order, run_in_pty
 ns = Collection()
 
 
-def docformatter(context: Context, *, check: bool = False) -> Result:
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
     """Runs docformatter.
 
     This function includes hard coding of line length.
@@ -53,19 +54,22 @@ def build_list_options_docformatter(config: Dict[str, Any], *, check: bool) -> L
     ]
 
 
-def autoflake(context: Context, *, check: bool = False) -> Result:
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def autoflake(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
     """Runs autoflake."""
     autoflake_options = " --recursive {}".format("--check" if check else "--in-place")
     return run_in_pty(context, "autoflake{} {}".format(autoflake_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
-def isort(context: Context, *, check: bool = False) -> Result:
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def isort(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
     """Runs isort."""
     isort_options = " --check-only --diff" if check else ""
     return run_in_pty(context, "isort{} {}".format(isort_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
-def black(context: Context, *, check: bool = False) -> Result:
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def black(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
     """Runs Black."""
     black_options = " --check --diff" if check else ""
     return run_in_pty(context, "black{} {}".format(black_options, " ".join(PYTHON_DIRS)), warn=True)

@@ -32,7 +32,7 @@ def _package_build_not_exists(mocker: "MockerFixture") -> Generator[None, None, 
     orig_import = __import__
 
     # Reason: To follow specification of original function.
-    def import_mock(name: str, *args: Any) -> "ModuleType":  # noqa: ANN401
+    def import_mock(name: str, *args: Any) -> "ModuleType":
         if name == "build":
             raise ModuleNotFoundError(name)
         return orig_import(name, *args)

@@ -1,4 +1,6 @@
 """Tests for `lint` package."""
+import platform
+import sys
 from typing import TYPE_CHECKING
 
 import pytest
@@ -126,13 +128,21 @@ def test_pylint(context: "Context") -> None:
 
 
 @pytest.mark.slow()
+# - semgrep does not work on windows 10 · Issue #4295 · returntocorp/semgrep
+#   https://github.com/returntocorp/semgrep/issues/4295
+# - No module found: resource (ModuelNotFoundError) · Issue #7146 · returntocorp/semgrep
+#   https://github.com/returntocorp/semgrep/issues/7146
+@pytest.mark.skipif(sys.platform == "win32", reason="Semgrep deosn't support Windows.")
 def test_semgrep(context: "Context") -> None:
+    """Command should success and run appropriate commands."""
     check_result(semgrep(context), COMMAND_EXPECTED_SEMGREP)
 
 
 @pytest.mark.slow()
 def test_deep(context: "Context") -> None:
     """Command should success and run appropriate commands."""
-    list_command_expected = [COMMAND_EXPECTED_MYPY, COMMAND_EXPECTED_PYLINT, COMMAND_EXPECTED_SEMGREP]
+    list_command_expected = [COMMAND_EXPECTED_MYPY, COMMAND_EXPECTED_PYLINT]
+    if platform.system() != "Windows":
+        list_command_expected.append(COMMAND_EXPECTED_SEMGREP)
     list_result = deep(context)
     check_list_result(list_result, list_command_expected)
