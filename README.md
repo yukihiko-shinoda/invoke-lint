@@ -103,8 +103,10 @@ Formats code by following tools at once:
 2. [isort]
 3. [autoflake]
 4. [Black]
+5. [Ruff] (optional)
 
-It also can only check by `inv style --check` .
+* `inv style --check` can only check.
+* `inv style --ruff` can fix Ruff warnings at once.
 
 ### `inv test`
 

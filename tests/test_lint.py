@@ -18,7 +18,7 @@ from invokelint.lint import (
     radon,
     radon_cc,
     radon_mi,
-    ruff,
+    ruff_task,
     semgrep,
     xenon,
 )
@@ -72,7 +72,7 @@ def test_cohesion(context: "Context") -> None:
 
 
 def test_ruff(context: "Context") -> None:
-    check_result(ruff(context), COMMAND_EXPECTED_RUFF)
+    check_result(ruff_task(context), COMMAND_EXPECTED_RUFF)
 
 
 def test_bandit(context: "Context") -> None:

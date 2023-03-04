@@ -1,11 +1,13 @@
 """Tasks of format."""
+from contextlib import suppress
 from pathlib import Path
 from typing import Any, Dict, List
 
-from invoke import Collection, Context, Result, task
+from invoke import Collection, Context, Result, task, UnexpectedExit
 import tomli
 
 from invokelint.path import PYTHON_DIRS
+from invokelint.ruff import execute
 from invokelint.run import run_in_order, run_in_pty
 
 ns = Collection()
@@ -75,10 +77,27 @@ def black(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  #
     return run_in_pty(context, "black{} {}".format(black_options, " ".join(PYTHON_DIRS)), warn=True)
 
 
-@task(help={"check": "Checks if source is formatted without applying changes"})
-def fmt(context: Context, *, check: bool = False) -> List[Result]:
+# Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
+def call_ruff(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
+    if check:
+        return execute(context, show_fixes=True)
+    with suppress(UnexpectedExit):
+        execute(context, show_fixes=True)
+    return execute(context, fix=True, show_fixes=True)
+
+
+@task(
+    help={
+        "check": "Checks if source is formatted without applying changes",
+        "ruff": "Fix ruff warnings",
+    },
+)
+def fmt(context: Context, *, check: bool = False, ruff: bool = False) -> List[Result]:
     """Formats code by docformatter, isort, autoflake, and Black (option for only check available)."""
-    return run_in_order([docformatter, isort, autoflake, black], context, check=check)
+    tasks = [docformatter, isort, autoflake, black]
+    if check or ruff:
+        tasks.append(call_ruff)
+    return run_in_order(tasks, context, check=check)
 
 
 ns.add_task(fmt, default=True)
