@@ -1,8 +1,12 @@
 """Tests for `style` package."""
-from invoke import Context
+
+from typing import TYPE_CHECKING
 
 from invokelint.style import fmt
 from tests.testlibraries import check_list_result
+
+if TYPE_CHECKING:
+    from invoke import Context
 
 PYTHON_DIR = "invokelint setup.py tasks.py tests"
 
@@ -20,11 +24,11 @@ LIST_COMMAND_EXPECTED_STYLE_CHECK = [
 ]
 
 
-def test_style(context: Context) -> None:
+def test_style(context: "Context") -> None:
     """Command should success and run appropriate commands."""
     check_list_result(fmt(context), LIST_COMMAND_EXPECTED_STYLE)
 
 
-def test_style_check(context: Context) -> None:
+def test_style_check(context: "Context") -> None:
     """Command should success and run appropriate commands."""
-    check_list_result(fmt(context, True), LIST_COMMAND_EXPECTED_STYLE_CHECK)
+    check_list_result(fmt(context, check=True), LIST_COMMAND_EXPECTED_STYLE_CHECK)

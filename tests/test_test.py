@@ -2,12 +2,15 @@
 import platform
 import re
 from textwrap import dedent
+from typing import TYPE_CHECKING
 
 from invoke import MockContext, Result
-from pytest_mock import MockFixture
 
 from invokelint.test import coverage, fast, run_test_all
 from tests.testlibraries import check_result
+
+if TYPE_CHECKING:
+    from pytest_mock import MockFixture
 
 EXPECTED_STDOUT = dedent(
     """\
@@ -21,7 +24,7 @@ EXPECTED_STDOUT = dedent(
         tests/test_style.py ..                               [ 88%]
         tests/test_test.py ....                              [100%]
         ================== 17 passed in 12.61s ====================
-    """
+    """,
 )
 
 
@@ -62,19 +65,19 @@ EXPECTED_STDOUT_REPORT = dedent(
         invokelint/test.py          28      0   100%
         ------------------------------------------------------
         TOTAL                      149     11   100%
-    """
+    """,
 )
 EXPECTED_COMMAND_RUN = "coverage run --source invokelint -m pytest"
 EXPECTED_COMMAND_REPORT = "coverage report -m"
 
 
-def test_coverage(mocker: MockFixture) -> None:
+def test_coverage(mocker: "MockFixture") -> None:
     """The test task should call coverage."""
     context = MockContext(
         run={
             EXPECTED_COMMAND_RUN: Result(EXPECTED_STDOUT),
             EXPECTED_COMMAND_REPORT: Result(EXPECTED_STDOUT_REPORT),
-        }
+        },
     )
     expected_pty = platform.system() == "Linux"
     check_result(coverage(context), EXPECTED_COMMAND_REPORT)
@@ -86,7 +89,7 @@ def test_coverage(mocker: MockFixture) -> None:
     context.run.assert_has_calls(calls)  # type: ignore[attr-defined]
 
 
-def test_coverage_publish(mocker: MockFixture) -> None:
+def test_coverage_publish(mocker: "MockFixture") -> None:
     """The test task should call coveralls."""
     expected_command_publish = "coveralls"
     context = MockContext(
@@ -94,7 +97,7 @@ def test_coverage_publish(mocker: MockFixture) -> None:
             EXPECTED_COMMAND_RUN: Result(EXPECTED_STDOUT),
             EXPECTED_COMMAND_REPORT: Result(EXPECTED_STDOUT_REPORT),
             expected_command_publish: Result(EXPECTED_STDOUT_REPORT),
-        }
+        },
     )
     expected_pty = platform.system() == "Linux"
     check_result(coverage(context, publish=True), expected_command_publish)
@@ -107,7 +110,7 @@ def test_coverage_publish(mocker: MockFixture) -> None:
     context.run.assert_has_calls(calls)  # type: ignore[attr-defined]
 
 
-def test_coverage_xml_html(mocker: MockFixture) -> None:
+def test_coverage_xml_html(mocker: "MockFixture") -> None:
     """The test task should call coverage xml, coverage html."""
     expected_command_xml = "coverage xml"
     expected_command_html = "coverage html"
@@ -120,7 +123,7 @@ def test_coverage_xml_html(mocker: MockFixture) -> None:
             EXPECTED_COMMAND_REPORT: Result(EXPECTED_STDOUT_REPORT),
             expected_command_xml: Result(EXPECTED_STDOUT_REPORT),
             expected_command_html: Result(EXPECTED_STDOUT_REPORT),
-        }
+        },
     )
     check_result(coverage(context, xml=True, html=True), expected_command_html)
     calls = [

@@ -40,6 +40,8 @@ pytest = "*"
 pytest-mock = "*"
 pyvelocity = {version = "*", markers="python_version >= '3.9'"}
 radon = "*"
+ruff = {version = "*", markers="python_version >= '3.7'"}
+semgrep = {version = "*", markers="python_version >= '3.6'"}
 tomli = {version = "*", markers="python_version >= '3.6'"}
 types-invoke = "*"
 types-setuptools = "*"
@@ -47,6 +49,10 @@ xenon = "*"
 invokelint = {path = ".", editable = true}
 
 [packages]
+# To support unicode to the Windows console by echo().
+# - Utilities — Click Documentation (8.2.x)
+#   https://click.palletsprojects.com/en/latest/utils/
+click = "*"
 invoke = "*"
 # To import setuptools.discovery
 setuptools = ">=61.0.0"

@@ -1,15 +1,19 @@
 """Configuration of pytest."""
-from types import ModuleType
-from typing import Any, Generator
+from typing import Any, Generator, TYPE_CHECKING
 
 from invoke import Config, Context
 import pytest
-from pytest_mock import MockerFixture
+
+if TYPE_CHECKING:
+    from types import ModuleType
+
+    from pytest_mock import MockerFixture
+
 
 collect_ignore = ["setup.py"]
 
 
-@pytest.fixture
+@pytest.fixture()
 def context() -> Context:
     defaults = Config.global_defaults()  # type: ignore[no-untyped-call]
     defaults["run"]["pty"] = True
@@ -17,8 +21,8 @@ def context() -> Context:
     return Context(config=Config(defaults=defaults))
 
 
-@pytest.fixture
-def package_build_not_exists(mocker: MockerFixture) -> Generator[None, None, None]:
+@pytest.fixture()
+def _package_build_not_exists(mocker: "MockerFixture") -> Generator[None, None, None]:
     """See:
 
     - Answer: python - How to mock an import - Stack Overflow
@@ -27,9 +31,10 @@ def package_build_not_exists(mocker: MockerFixture) -> Generator[None, None, Non
     # Store original __import__
     orig_import = __import__
 
-    def import_mock(name: str, *args: Any) -> ModuleType:
+    # Reason: To follow specification of original function.
+    def import_mock(name: str, *args: Any) -> "ModuleType":  # noqa: ANN401
         if name == "build":
-            raise ModuleNotFoundError("No module named 'build'")
+            raise ModuleNotFoundError(name)
         return orig_import(name, *args)
 
     with mocker.patch("builtins.__import__", side_effect=import_mock):

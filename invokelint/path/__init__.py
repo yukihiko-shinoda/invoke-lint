@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from typing import List
 
+import click
 from invoke import Collection, Context, task
 
 from invokelint.path.filter_duplication import filter_duplication
@@ -70,12 +71,12 @@ ns = Collection()
 @task
 def debug(_context: Context) -> None:
     """Builds source and wheel packages into dist/ directory."""
-    print(f"Setuptools detected packages: {setuptools.packages}")
-    print(f"Root packages: {PRODUCTION_PACKAGES}")
-    print(f"Setuptools detected Python modules: {SETUPTOOLS_PYTHON_MODULES}")
-    print(f"Existing test packages: {EXISTING_TEST_PACKAGES}")
-    print(f"Python file or directories to lint: {PYTHON_DIRS}")
-    print(f"Python file or directories to lint excluding test packages: {PYTHON_DIRS_EXCLUDING_TEST}")
+    click.echo(f"Setuptools detected packages: {setuptools.packages}")
+    click.echo(f"Root packages: {PRODUCTION_PACKAGES}")
+    click.echo(f"Setuptools detected Python modules: {SETUPTOOLS_PYTHON_MODULES}")
+    click.echo(f"Existing test packages: {EXISTING_TEST_PACKAGES}")
+    click.echo(f"Python file or directories to lint: {PYTHON_DIRS}")
+    click.echo(f"Python file or directories to lint excluding test packages: {PYTHON_DIRS_EXCLUDING_TEST}")
 
 
 ns.add_task(debug, default=True)

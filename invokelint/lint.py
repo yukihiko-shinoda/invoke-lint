@@ -1,5 +1,5 @@
 """Tasks of lint."""
-from typing import cast, List
+from typing import Any, cast, List
 
 from invoke import Collection, Context, Result, task
 
@@ -49,6 +49,13 @@ ns.add_task(cohesion)
 
 
 @task
+def ruff(context: Context) -> Result:
+    """Lints code with Ruff."""
+    run_in_pty(context, "ruff {}".format(" ".join(PYTHON_DIRS_EXCLUDING_TEST)))
+    return run_in_pty(context, "ruff --ignore S101 {}".format(" ".join(EXISTING_TEST_PACKAGES)))
+
+
+@task
 def bandit(context: Context) -> Result:
     """Lints code with bandit."""
     space = " "
@@ -82,13 +89,14 @@ def xenon(context: Context) -> Result:
 
 
 @task(help={"skip_format": "Lints without format style."})
-def fast(context: Context, skip_format: bool = False) -> List[Result]:
-    """Runs fast linting (bandit, dodgy, flake8, pydocstyle, xenon)."""
+def fast(context: Context, *, skip_format: bool = False) -> List[Result]:
+    """Runs fast linting (ruff, bandit, dodgy, flake8, pydocstyle, xenon)."""
     list_result = [] if skip_format else fmt(context)
-    list_result.extend(run_in_order([bandit, dodgy, flake8, pydocstyle, xenon], context))
+    list_result.extend(run_in_order([ruff, bandit, dodgy, flake8, pydocstyle, xenon], context))
     return list_result
 
 
+ns.add_task(ruff)
 ns.add_task(bandit)
 ns.add_task(dodgy)
 ns.add_task(flake8)
@@ -98,23 +106,36 @@ ns.add_task(fast, default=True)
 
 
 @task
-def mypy(context: Context) -> Result:
+# Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
+def mypy(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001 ANN401
     """Lints code with mypy."""
     return run_in_pty(context, "mypy {}".format(" ".join(PYTHON_DIRS)))
 
 
 @task
-def pylint(context: Context) -> Result:
+# Reason: Compatibility with semgrep task to be called from deep(). pylint: disable=unused-argument
+def pylint(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001 ANN401
     """Lints code with Pylint."""
     return run_in_pty(context, "pylint {}".format(" ".join(PYTHON_DIRS)))
 
 
-@task
-def deep(context: Context) -> List[Result]:
-    """Runs slow but detailed linting (mypy, Pylint)."""
-    return run_in_order([mypy, pylint], context)
+@task(help={"ci": "Run as CI mode."})
+def semgrep(context: Context, *, ci: bool = False) -> Result:
+    """Lints code with Semgrep."""
+    command = "ci" if ci else "scan"
+    return run_in_pty(
+        context,
+        "semgrep {} --config auto --include {}".format(command, " --include ".join(PYTHON_DIRS)),
+    )
+
+
+@task(help={"ci": "Run as CI mode."})
+def deep(context: Context, *, ci: bool = False) -> List[Result]:
+    """Runs slow but detailed linting (mypy, Pylint, semgrep)."""
+    return run_in_order([mypy, pylint, semgrep], context, ci=ci)
 
 
 ns.add_task(mypy)
 ns.add_task(pylint)
+ns.add_task(semgrep)
 ns.add_task(deep)

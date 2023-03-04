@@ -5,14 +5,22 @@ from typing import Any, Callable, cast, List
 from invoke import Context, Result, UnexpectedExit
 
 
-def run_in_pty(context: Context, command: str, **kwargs: Any) -> Result:
+# Reason: Specification.
+def run_in_pty(context: Context, command: str, **kwargs: Any) -> Result:  # noqa: ANN401
     return cast(Result, context.run(command, pty=platform.system() != "Windows", **kwargs))
 
 
-def run_in_order(list_task: List[Callable[[Context], Result]], context: Context, *args: Any) -> List[Result]:
+def run_in_order(
+    list_task: List[Callable[[Context], Result]],
+    context: Context,
+    # Reason: Specification.
+    *args: Any,  # noqa: ANN401
+    **kwargs: Any,  # noqa: ANN401
+) -> List[Result]:
+    """Runs tasks in order, stop subsequent tasks when task fail."""
     list_result = []
     for each_task in list_task:
-        list_result.append(each_task(context, *args))
+        list_result.append(each_task(context, *args, **kwargs))
     return list_result
 
 

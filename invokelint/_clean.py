@@ -1,4 +1,5 @@
 """Tasks of clean."""
+from contextlib import suppress
 from pathlib import Path
 import shutil
 import sys
@@ -47,11 +48,9 @@ def _delete_file(file: Path) -> None:
 
 
 def _delete_file_legacy(file: Path) -> None:  # pragma: no cover
-    try:
-        file.unlink()
     # Reason: The command doesn't expects file exists.
-    except FileNotFoundError:
-        pass
+    with suppress(FileNotFoundError):
+        file.unlink()
 
 
 @task
