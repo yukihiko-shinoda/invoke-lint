@@ -4,7 +4,7 @@ import webbrowser
 
 from invoke import Collection, Context, Result, task
 
-from invokelint.path import PRODUCTION_PACKAGES
+from invokelint.path import PRODUCTION_PACKAGES, PYTHON_DIRS_EXCLUDING_TEST
 from invokelint.run import run_in_pty
 
 ns = Collection()
@@ -33,25 +33,39 @@ def run_test_all(context: Context) -> Result:
 ns.add_task(run_test_all)
 
 
-@task(
-    help={
-        "publish": "Publish the result via coveralls",
-        "xml": "Export report as xml format",
-        "html": "Export report as html format and open it in browser",
-    },
-    aliases=("cov",),
-)
-def coverage(context: Context, *, publish: bool = False, xml: bool = False, html: bool = False) -> Result:
-    """Runs all tests and report coverage (options for create xml / html available)."""
+def build_coverage_run_command(*, is_all: bool = False) -> str:
+    """To seel complexity of building Coverage.py run command."""
+    targets = PYTHON_DIRS_EXCLUDING_TEST if is_all else PRODUCTION_PACKAGES
     # Coverage.py Currently can't apply any options including --source when multiprocessing:
     #   Options affecting multiprocessing must only be specified in a configuration file.
     #   Remove --source from the command line.
     #   Use 'coverage help' for help.
     #   Full documentation is at https://coverage.readthedocs.io
     # Reason: Note. pylint: disable=line-too-long
-    # command = "coverage run --concurrency=multiprocessing --source {} -m pytest".format(",".join(SOURCE_DIRS))  # noqa: ERA001 E501
-    command = "coverage run --source {} -m pytest".format(",".join(PRODUCTION_PACKAGES))
-    run_in_pty(context, command)
+    # command = "coverage run --concurrency=multiprocessing --source {} -m pytest".format(",".join(targets))  # noqa: ERA001 E501
+    return "coverage run --source {} -m pytest".format(",".join(Path(target).stem for target in targets))
+
+
+@task(
+    help={
+        "all": "Target all python files excluding tests.",
+        "publish": "Publish the result via coveralls",
+        "xml": "Export report as xml format",
+        "html": "Export report as html format and open it in browser",
+    },
+    aliases=("cov",),
+)
+def coverage(
+    context: Context,
+    *,
+    # Reason: To name command line option.
+    all: bool = False,  # noqa: A002  pylint: disable=redefined-builtin
+    publish: bool = False,
+    xml: bool = False,
+    html: bool = False,
+) -> Result:
+    """Runs all tests and report coverage (options for create xml / html available)."""
+    run_in_pty(context, build_coverage_run_command(is_all=all))
     # Reason: Note.
     # result = run_in_pty(context, "coverage combine")  # noqa: ERA001
     result = run_in_pty(context, "coverage report -m")
