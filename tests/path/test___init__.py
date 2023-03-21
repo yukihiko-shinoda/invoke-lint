@@ -24,4 +24,4 @@ def test(context: "Context", capsys: "pytest.CaptureFixture[str]") -> None:
     debug(context)
     captured = capsys.readouterr()
     assert captured.out == expected
-    assert captured.err == ""
+    assert not captured.err
