@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from invoke import MockContext, Result
 
-from invokelint.test import coverage, fast, run_test_all
+from invokelint.test import build_coverage_run_command, coverage, fast, run_test_all
 from tests.testlibraries import check_result
 
 if TYPE_CHECKING:
@@ -69,6 +69,10 @@ EXPECTED_STDOUT_REPORT = dedent(
 )
 EXPECTED_COMMAND_RUN = "coverage run --source invokelint -m pytest"
 EXPECTED_COMMAND_REPORT = "coverage report -m"
+
+
+def test_build_coverage_run_command() -> None:
+    assert build_coverage_run_command(is_all=True) == "coverage run --source invokelint,setup,tasks -m pytest"
 
 
 def test_coverage(mocker: "MockFixture") -> None:
