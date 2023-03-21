@@ -49,8 +49,8 @@ def coverage(context: Context, *, publish: bool = False, xml: bool = False, html
     #   Use 'coverage help' for help.
     #   Full documentation is at https://coverage.readthedocs.io
     # Reason: Note. pylint: disable=line-too-long
-    # command = "coverage run --concurrency=multiprocessing --source {} -m pytest".format(" ".join(SOURCE_DIRS))  # noqa: ERA001 E501
-    command = "coverage run --source {} -m pytest".format(" ".join(PRODUCTION_PACKAGES))
+    # command = "coverage run --concurrency=multiprocessing --source {} -m pytest".format(",".join(SOURCE_DIRS))  # noqa: ERA001 E501
+    command = "coverage run --source {} -m pytest".format(",".join(PRODUCTION_PACKAGES))
     run_in_pty(context, command)
     # Reason: Note.
     # result = run_in_pty(context, "coverage combine")  # noqa: ERA001
