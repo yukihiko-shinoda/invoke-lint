@@ -68,7 +68,7 @@ EXPECTED_STDOUT_REPORT = dedent(
     """,
 )
 EXPECTED_COMMAND_RUN = "coverage run --source invokelint -m pytest"
-EXPECTED_COMMAND_REPORT = "coverage report -m"
+EXPECTED_COMMAND_REPORT = "coverage report --show-missing"
 
 
 def test_build_coverage_run_command() -> None:

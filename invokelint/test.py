@@ -68,7 +68,7 @@ def coverage(
     run_in_pty(context, build_coverage_run_command(is_all=all))
     # Reason: Note.
     # result = run_in_pty(context, "coverage combine")  # noqa: ERA001
-    result = run_in_pty(context, "coverage report -m")
+    result = run_in_pty(context, "coverage report --show-missing")
     if publish:
         # Publish the results via coveralls
         return run_in_pty(context, "coveralls")
