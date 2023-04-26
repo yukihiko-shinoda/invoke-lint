@@ -22,7 +22,7 @@ from invokelint.lint import (
     semgrep,
     xenon,
 )
-from tests.test_style import LIST_COMMAND_EXPECTED_STYLE
+from tests.test_style import LIST_COMMAND_EXPECTED_STYLE, LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF
 from tests.testlibraries import check_list_result, check_result
 
 if TYPE_CHECKING:
@@ -109,6 +109,12 @@ def test_fast(context: "Context") -> None:
     """Command should success and run appropriate commands."""
     list_result = fast(context)
     check_list_result(list_result, LIST_COMMAND_EXPECTED_STYLE + LIST_COMMAND_EXPECTED)
+
+
+def test_fast_ruff(context: "Context") -> None:
+    """Command should success and run appropriate commands."""
+    list_result = fast(context, ruff=True)
+    check_list_result(list_result, LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF + LIST_COMMAND_EXPECTED)
 
 
 def test_fast_skip_format(context: "Context") -> None:

@@ -89,13 +89,13 @@ def call_ruff(context: Context, *, check: bool = False, **kwargs: Any) -> Result
 @task(
     help={
         "check": "Checks if source is formatted without applying changes",
-        "ruff": "Fix ruff warnings",
+        "ruff": "Leave ruff warnings",
     },
 )
 def fmt(context: Context, *, check: bool = False, ruff: bool = False) -> List[Result]:
     """Formats code by docformatter, isort, autoflake, and Black (option for only check available)."""
     tasks = [docformatter, isort, autoflake, black]
-    if check or ruff:
+    if check or not ruff:
         tasks.append(call_ruff)
     return run_in_order(tasks, context, check=check)
 
