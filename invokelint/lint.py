@@ -125,7 +125,7 @@ def call_xenon(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
 @task(
     help={
         "skip_format": "Lints without format style.",
-        "ruff": "Fix ruff warnings",
+        "ruff": "Leave ruff warnings",
     },
 )
 def fast(context: Context, *, skip_format: bool = False, ruff: bool = False) -> List[Result]:
