@@ -29,14 +29,14 @@ Supporting tools:
 
 Linters:
 
+- [Xenon]
 - [Ruff]
 - [Bandit]
 - [dodgy]
 - [Flake8]
 - [pydocstyle]
-- [Xenon]
-- [Pylint]
 - [mypy]
+- [Pylint]
 - [Semgrep]
 
 Formatters:
@@ -87,12 +87,12 @@ Formats code by following tools at once:
 
 Runs following fast lints at once:
 
-1. [Ruff]
-2. [Bandit]
-3. [dodgy]
-4. [Flake8]
-5. [pydocstyle]
-6. [Xenon]
+1. [Xenon]
+2. [Ruff]
+3. [Bandit]
+4. [dodgy]
+5. [Flake8]
+6. [pydocstyle]
 
 The format task ([described later](#inv-style)) also run before run above lints. You can skip them by `--skip-format` option.
 
@@ -100,8 +100,8 @@ The format task ([described later](#inv-style)) also run before run above lints.
 
 Runs following slow but detailed lints at once:
 
-1. [Pylint]
-2. [mypy]
+1. [mypy]
+2. [Pylint]
 3. [Semgrep]
 
 ### `inv radon`

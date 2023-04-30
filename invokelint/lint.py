@@ -129,9 +129,12 @@ def call_xenon(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
     },
 )
 def fast(context: Context, *, skip_format: bool = False, ruff: bool = False) -> List[Result]:
-    """Runs fast linting (ruff, bandit, dodgy, flake8, pydocstyle, xenon)."""
+    """Runs fast linting (xenon, ruff, bandit, dodgy, flake8, pydocstyle).
+
+    Xenon is prioritized since it effects fundamental coding structure.
+    """
     list_result = [] if skip_format else fmt(context, ruff=ruff)
-    tasks = [call_ruff, call_bandit, call_dodgy, call_flake8, call_pydocstyle, call_xenon]
+    tasks = [call_xenon, call_ruff, call_bandit, call_dodgy, call_flake8, call_pydocstyle]
     list_result.extend(run_in_order(tasks, context))
     return list_result
 
