@@ -70,6 +70,19 @@ This doesn't pollute your comfortable namespaces of command line tools. Thanks t
 
 (Note that the namespaces of following commands can be changed as you like. See: [Quickstart](#quickstart))
 
+### `inv style`
+
+Formats code by following tools at once:
+
+1. [docformatter]
+2. [isort]
+3. [autoflake]
+4. [Black]
+5. [Ruff]
+
+- `inv style --check` can only check.
+- `inv style --ruff` can leave Ruff warnings.
+
 ### `inv lint`
 
 Runs following fast lints at once:
@@ -94,19 +107,6 @@ Runs following slow but detailed lints at once:
 ### `inv radon`
 
 Reports [radon] both code complexity and maintainability index.
-
-### `inv style`
-
-Formats code by following tools at once:
-
-1. [docformatter]
-2. [isort]
-3. [autoflake]
-4. [Black]
-5. [Ruff] (optional)
-
-* `inv style --check` can only check.
-* `inv style --ruff` can fix Ruff warnings at once.
 
 ### `inv test`
 
