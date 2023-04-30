@@ -29,14 +29,14 @@ Supporting tools:
 
 Linters:
 
+- [Xenon]
 - [Ruff]
 - [Bandit]
 - [dodgy]
 - [Flake8]
 - [pydocstyle]
-- [Xenon]
-- [Pylint]
 - [mypy]
+- [Pylint]
 - [Semgrep]
 
 Formatters:
@@ -70,31 +70,6 @@ This doesn't pollute your comfortable namespaces of command line tools. Thanks t
 
 (Note that the namespaces of following commands can be changed as you like. See: [Quickstart](#quickstart))
 
-### `inv lint`
-
-Runs following fast lints at once:
-
-1. [Ruff]
-2. [Bandit]
-3. [dodgy]
-4. [Flake8]
-5. [pydocstyle]
-6. [Xenon]
-
-The format task ([described later](#inv-style)) also run before run above lints. You can skip them by `--skip-format` option.
-
-### `inv lint.deep`
-
-Runs following slow but detailed lints at once:
-
-1. [Pylint]
-2. [mypy]
-3. [Semgrep]
-
-### `inv radon`
-
-Reports [radon] both code complexity and maintainability index.
-
 ### `inv style`
 
 Formats code by following tools at once:
@@ -103,10 +78,35 @@ Formats code by following tools at once:
 2. [isort]
 3. [autoflake]
 4. [Black]
-5. [Ruff] (optional)
+5. [Ruff]
 
-* `inv style --check` can only check.
-* `inv style --ruff` can fix Ruff warnings at once.
+- `inv style --check` can only check.
+- `inv style --ruff` can leave Ruff warnings.
+
+### `inv lint`
+
+Runs following fast lints at once:
+
+1. [Xenon]
+2. [Ruff]
+3. [Bandit]
+4. [dodgy]
+5. [Flake8]
+6. [pydocstyle]
+
+The format task ([described later](#inv-style)) also run before run above lints. You can skip them by `--skip-format` option.
+
+### `inv lint.deep`
+
+Runs following slow but detailed lints at once:
+
+1. [mypy]
+2. [Pylint]
+3. [Semgrep]
+
+### `inv radon`
+
+Reports [radon] both code complexity and maintainability index.
 
 ### `inv test`
 
@@ -158,12 +158,14 @@ build = "*"
 #   https://github.com/pypa/pipenv/issues/4101
 colorama = "*"
 coverage = ">=3.5.4"
-dlint = "*"
+# The dlint less than 0.14.0 limits max version of flake8.
+dlint = ">=0.14.0"
 docformatter = {extras = ["tomli"], version = "*"}
 dodgy = "*"
 # Since Pipenv can't lock for too much combinations to attempt lock:
 # pip._vendor.resolvelib.resolvers.ResolutionTooDeep: 2000000
-flake8 = {version = "==4.0.1", markers="python_version >= '3.6'"}
+# The hacking depends flake8 ~=5.0.1 or ~=4.0.1.
+flake8 = {version = "<=6.0.0>=5.0.1,==4.0.1", markers="python_version >= '3.6'"}
 # To use flake8 --radon-show-closures
 flake8-polyfill = "*"
 # Latest hacking depends on legacy version of flake8, and legacy hacking doesn't narrow flake8 version.

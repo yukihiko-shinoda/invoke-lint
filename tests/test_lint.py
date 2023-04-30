@@ -96,12 +96,12 @@ def test_xenon(context: "Context") -> None:
 
 
 LIST_COMMAND_EXPECTED = [
+    COMMAND_EXPECTED_XENON,
     COMMAND_EXPECTED_RUFF,
     COMMAND_EXPECTED_BANDIT,
     COMMAND_EXPECTED_DODGY,
     COMMAND_EXPECTED_FLAKE8,
     COMMAND_EXPECTED_PYDOCSTYLE,
-    COMMAND_EXPECTED_XENON,
 ]
 
 
@@ -136,9 +136,9 @@ def test_pylint(context: "Context") -> None:
 @pytest.mark.slow()
 # - semgrep does not work on windows 10 · Issue #4295 · returntocorp/semgrep
 #   https://github.com/returntocorp/semgrep/issues/4295
-# - No module found: resource (ModuelNotFoundError) · Issue #7146 · returntocorp/semgrep
+# - No module found: resource (ModuleNotFoundError) · Issue #7146 · returntocorp/semgrep
 #   https://github.com/returntocorp/semgrep/issues/7146
-@pytest.mark.skipif(sys.platform == "win32", reason="Semgrep deosn't support Windows.")
+@pytest.mark.skipif(sys.platform == "win32", reason="Semgrep doesn't support Windows.")
 def test_semgrep(context: "Context") -> None:
     """Command should success and run appropriate commands."""
     check_result(semgrep(context), COMMAND_EXPECTED_SEMGREP)
