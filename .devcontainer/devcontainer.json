@@ -28,8 +28,13 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
+				"GitHub.copilot",
 				"ms-python.python",
 				"charliermarsh.ruff",
+				"ms-python.flake8",
+				"ms-python.pylint",
+				"ms-python.isort",
+				"wk-j.save-and-run",
 				"bungcip.better-toml",
 				"streetsidesoftware.code-spell-checker"
 			],
@@ -46,7 +51,32 @@
 				// This setting forcibly generate __pycache__.
 				// "python.testing.pytestEnabled": true,
 				"[python]": {
-					"editor.formatOnSave": true
+					"editor.formatOnSave": true,
+					"editor.codeActionsOnSave": {
+						"source.fixAll": true,
+						"source.organizeImports": true
+					}
+				},
+				"ruff.organizeImports": false,
+				"emeraldwalk.runonsave": {
+					"commands": [
+						{
+							"match": ".*\\.py",
+							"cmd": "pipenv run autoflake --in-place ${file}"
+						},
+						{
+							"match": ".*\\.py",
+							"cmd": "pipenv run docformatter --in-place ${file}"
+						}
+					]
+				},
+				"cSpell.customDictionaries": {
+					"project-words": {
+					  "name": "project-words",
+					  "path": "${workspaceRoot}/project-words.txt",
+					  "description": "Words used in this project",
+					  "addWords": true
+					}
 				}
 			}
 		}
