@@ -62,6 +62,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
+    "click",
     "invoke",
     # To import setuptools.discovery
     "setuptools>=61.0.0",
