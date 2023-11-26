@@ -1,5 +1,5 @@
 """Configuration of pytest."""
-from typing import Any, Generator, TYPE_CHECKING
+from typing import Any, Generator, List, TYPE_CHECKING
 
 from invoke import Config, Context
 import pytest
@@ -22,7 +22,7 @@ def context() -> Context:
 
 
 @pytest.fixture()
-def _package_not_exists(mocker: "MockerFixture", package_names: list[str]) -> Generator[None, None, None]:
+def _package_not_exists(mocker: "MockerFixture", package_names: List[str]) -> Generator[None, None, None]:
     """See:
 
     - Answer: python - How to mock an import - Stack Overflow
