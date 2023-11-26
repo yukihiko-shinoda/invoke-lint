@@ -46,6 +46,7 @@ semgrep = {version = "*", markers="python_version >= '3.6'"}
 tomli = {version = "*", markers="python_version >= '3.6'"}
 types-invoke = "*"
 types-setuptools = "*"
+wheel = "*"
 xenon = "*"
 invokelint = {path = ".", editable = true}
 
