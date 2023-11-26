@@ -176,7 +176,7 @@ def semgrep(context: Context, *, ci: bool = False) -> Result:
     command = "ci" if ci else "scan"
     return run_in_pty(
         context,
-        "semgrep {} --config auto --include {}".format(command, " --include ".join(PYTHON_DIRS)),
+        "semgrep {} --oss-only --config auto --include {}".format(command, " --include ".join(PYTHON_DIRS)),
     )
 
 

@@ -41,7 +41,7 @@ COMMAND_EXPECTED_XENON = f"xenon --max-absolute A --max-modules A --max-average 
 COMMAND_EXPECTED_MYPY = f"mypy {PYTHON_DIR}"
 COMMAND_EXPECTED_PYLINT = f"pylint {PYTHON_DIR}"
 COMMAND_EXPECTED_SEMGREP = (
-    f"semgrep scan --config auto {' '.join([f'--include {code}' for code in PYTHON_DIR.split(' ')])}"
+    f"semgrep scan --oss-only --config auto {' '.join([f'--include {code}' for code in PYTHON_DIR.split(' ')])}"
 )
 
 
