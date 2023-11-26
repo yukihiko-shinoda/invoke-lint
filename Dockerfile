@@ -7,6 +7,6 @@ ENV PIPENV_VENV_IN_PROJECT=1
 WORKDIR /workspace
 COPY . /workspace
 RUN pip --no-cache-dir install pipenv==2023.11.15 \
- && pipenv install --skip-lock --dev
+ && pipenv install --dev
 ENTRYPOINT [ "pipenv", "run" ]
 CMD ["pytest"]
