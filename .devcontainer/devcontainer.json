@@ -5,8 +5,8 @@
 	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
 	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
 	"dockerComposeFile": [
-		"../docker-compose.yml",
-		"docker-compose.yml"
+		"../compose.yml",
+		"compose.yml"
 	],
 	// The 'service' property is the name of the service for the container that VS Code should
 	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
@@ -30,24 +30,17 @@
 			"extensions": [
 				"GitHub.copilot",
 				"ms-python.python",
-				"charliermarsh.ruff",
 				"ms-python.flake8",
-				"ms-python.pylint",
 				"ms-python.isort",
+				"ms-python.mypy-type-checker",
+				"ms-python.pylint",
+				"charliermarsh.ruff",
 				"wk-j.save-and-run",
 				"bungcip.better-toml",
 				"streetsidesoftware.code-spell-checker"
 			],
 			"settings": {
 				"python.formatting.provider": "black",
-				"python.linting.enabled": true,
-				"python.linting.lintOnSave": true,
-				"python.linting.banditEnabled": true,
-				"python.linting.flake8Enabled": true,
-				"python.linting.mypyEnabled": true,
-				"python.linting.pydocstyleEnabled": true,
-				// VS Code displays Pylint warning: import-error that not reported in Pylint by executing CLI.
-				// "python.linting.pylintEnabled": true,
 				// This setting forcibly generate __pycache__.
 				// "python.testing.pytestEnabled": true,
 				"[python]": {

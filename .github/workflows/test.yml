@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: [ '3.11', '3.10', '3.9', '3.8', '3.7' ]
+        python-version: [ '3.12', '3.11', '3.10', '3.9', '3.8', '3.7' ]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install pipenv
-      - run: python -m pipenv install --python ${{ matrix.python-version }} --skip-lock --dev
+      - run: python -m pipenv install --python ${{ matrix.python-version }} --dev
       # Invoke currently seems not support PowerShell,
       # production code of this package doesn't depends on cmd, however test depends on cmd.
       # - GitHub Actions default shell on Windows runners is changing to PowerShell | GitHub Changelog
@@ -36,9 +36,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - run: python -m pip install pipenv
-      - run: python -m pipenv install --skip-lock --dev
+      - run: python -m pipenv install --dev
       - run: python -m pipenv run invoke style --check
   check_lint_fast:
     runs-on: ubuntu-latest
@@ -46,9 +46,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - run: python -m pip install pipenv
-      - run: python -m pipenv install --skip-lock --dev
+      - run: python -m pipenv install --dev
       - run: python -m pipenv run invoke lint
   check_lint_deep:
     runs-on: ubuntu-latest
@@ -56,7 +56,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - run: python -m pip install pipenv
-      - run: python -m pipenv install --skip-lock --dev
+      - run: python -m pipenv install --dev
       - run: python -m pipenv run invoke lint.deep

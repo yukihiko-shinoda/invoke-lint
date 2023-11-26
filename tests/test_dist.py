@@ -4,17 +4,24 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from invokelint.dist import dist, module_build_exists
+from invokelint.dist import dist, module_exists
 from tests.testlibraries import check_result
 
 if TYPE_CHECKING:
     from invoke import Context
 
 
-@pytest.mark.usefixtures("_package_build_not_exists")
-def test_module_build_exists() -> None:
-    """Function: module_build_exists() should return False if fail to import build module."""
-    assert not module_build_exists()
+@pytest.mark.usefixtures("_package_not_exists")
+@pytest.mark.parametrize(
+    ("package_names", "parameter", "expect"),
+    [
+        ([], "build", True),
+        (["build"], "build", False),
+    ],
+)
+def test_module_exists(parameter: str, *, expect: bool) -> None:
+    """Function: module_exists() should return False if fail to import build module."""
+    assert module_exists(parameter) == expect
 
 
 @pytest.mark.slow()
@@ -23,6 +30,14 @@ def test_dist_build(context: "Context") -> None:
 
 
 @pytest.mark.slow()
-@pytest.mark.usefixtures("_package_build_not_exists")
+@pytest.mark.usefixtures("_package_not_exists")
+@pytest.mark.parametrize("package_names", [["build"]])
 def test_dist_setup_py(context: "Context") -> None:
     check_result(dist(context), "python setup.py bdist_wheel")
+
+
+@pytest.mark.usefixtures("_package_not_exists")
+@pytest.mark.parametrize("package_names", [["build", "wheel"]])
+def test_dist_error(context: "Context") -> None:
+    with pytest.raises(ModuleNotFoundError, match="Neither build nor wheel module exists."):
+        check_result(dist(context), "python setup.py bdist_wheel")
