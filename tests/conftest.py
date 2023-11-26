@@ -22,7 +22,7 @@ def context() -> Context:
 
 
 @pytest.fixture()
-def _package_build_not_exists(mocker: "MockerFixture") -> Generator[None, None, None]:
+def _package_not_exists(mocker: "MockerFixture", package_names: list[str]) -> Generator[None, None, None]:
     """See:
 
     - Answer: python - How to mock an import - Stack Overflow
@@ -33,7 +33,7 @@ def _package_build_not_exists(mocker: "MockerFixture") -> Generator[None, None, 
 
     # Reason: To follow specification of original function.
     def import_mock(name: str, *args: Any) -> "ModuleType":
-        if name == "build":
+        if name in package_names:
             raise ModuleNotFoundError(name)
         return orig_import(name, *args)
 
