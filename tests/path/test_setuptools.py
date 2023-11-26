@@ -8,7 +8,7 @@ class TestSetuptools:
     """Tests for Setuptools."""
 
     def test_project_root(self) -> None:
-        assert Setuptools().project_root == Path(".").absolute().resolve()
+        assert Setuptools().project_root == Path().absolute().resolve()
 
     def test_find_py_modules(self) -> None:
         expected = ["invokelint"]
