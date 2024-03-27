@@ -1,4 +1,5 @@
 """Tests for path modules."""
+
 from textwrap import dedent
 from typing import TYPE_CHECKING
 

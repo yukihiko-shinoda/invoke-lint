@@ -1,4 +1,5 @@
 """Tests for `lint` package."""
+
 import platform
 import sys
 from typing import TYPE_CHECKING
@@ -32,7 +33,7 @@ PYTHON_DIR = "invokelint setup.py tasks.py tests"
 TEST_DIR = "tests"
 COMMAND_EXPECTED_RADON_CC = f"radon cc {PYTHON_DIR}"
 COMMAND_EXPECTED_RADON_MI = f"radon mi {PYTHON_DIR}"
-COMMAND_EXPECTED_RUFF = f"ruff --ignore S101 {TEST_DIR}"
+COMMAND_EXPECTED_RUFF_CHECK = f"ruff check --ignore S101 {TEST_DIR}"
 COMMAND_EXPECTED_BANDIT = "bandit --recursive --skip B101 tests"
 COMMAND_EXPECTED_DODGY = "dodgy --ignore-paths csvinput"
 COMMAND_EXPECTED_FLAKE8 = f"flake8 --radon-show-closures {PYTHON_DIR}"
@@ -72,7 +73,7 @@ def test_cohesion(context: "Context") -> None:
 
 
 def test_ruff(context: "Context") -> None:
-    check_result(ruff_task(context), COMMAND_EXPECTED_RUFF)
+    check_result(ruff_task(context), COMMAND_EXPECTED_RUFF_CHECK)
 
 
 def test_bandit(context: "Context") -> None:
@@ -97,7 +98,7 @@ def test_xenon(context: "Context") -> None:
 
 LIST_COMMAND_EXPECTED = [
     COMMAND_EXPECTED_XENON,
-    COMMAND_EXPECTED_RUFF,
+    COMMAND_EXPECTED_RUFF_CHECK,
     COMMAND_EXPECTED_BANDIT,
     COMMAND_EXPECTED_DODGY,
     COMMAND_EXPECTED_FLAKE8,

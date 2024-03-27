@@ -1,4 +1,5 @@
 """Tests for `test` package."""
+
 import platform
 import re
 from textwrap import dedent

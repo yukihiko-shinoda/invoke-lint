@@ -1,4 +1,5 @@
 """Tasks of test."""
+
 from pathlib import Path
 import webbrowser
 

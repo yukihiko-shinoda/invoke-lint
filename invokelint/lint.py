@@ -1,11 +1,12 @@
 """Tasks of lint."""
+
 import platform
 from typing import Any, cast, List, TYPE_CHECKING
 
 from invoke import Collection, Context, Result, task
 
 from invokelint.path import EXISTING_TEST_PACKAGES, PYTHON_DIRS, PYTHON_DIRS_EXCLUDING_TEST
-from invokelint.ruff import execute
+from invokelint import ruff as ruff_commands
 from invokelint.run import run_all, run_in_order, run_in_pty
 from invokelint.style import fmt
 
@@ -56,7 +57,7 @@ ns.add_task(cohesion)
 @task(name="ruff")
 def ruff_task(context: Context) -> Result:
     """Lints code with Ruff."""
-    return execute(context)
+    return ruff_commands.chk(context)
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument

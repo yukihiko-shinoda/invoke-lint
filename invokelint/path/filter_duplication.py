@@ -1,4 +1,5 @@
 """Filter duplicated paths."""
+
 from typing import List
 
 

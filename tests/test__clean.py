@@ -1,4 +1,5 @@
 """Tests for `clean` package."""
+
 import sys
 from typing import TYPE_CHECKING
 

@@ -1,4 +1,5 @@
 """Functions to run tasks."""
+
 import platform
 from typing import Any, Callable, cast, List, TYPE_CHECKING
 

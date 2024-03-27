@@ -1,4 +1,5 @@
 """Tests for setuptools module."""
+
 from pathlib import Path
 
 from invokelint.path.setuptools import Setuptools
