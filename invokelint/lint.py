@@ -1,4 +1,5 @@
 """Tasks of lint."""
+
 import platform
 from typing import Any, cast, List, TYPE_CHECKING
 

@@ -1,4 +1,5 @@
 """Configuration of pytest."""
+
 from typing import Any, Generator, List, TYPE_CHECKING
 
 from invoke import Config, Context

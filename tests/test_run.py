@@ -1,4 +1,5 @@
 """Tests for `run` package."""
+
 import sys
 from typing import cast, List, TYPE_CHECKING
 

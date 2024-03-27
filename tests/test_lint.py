@@ -1,4 +1,5 @@
 """Tests for `lint` package."""
+
 import platform
 import sys
 from typing import TYPE_CHECKING

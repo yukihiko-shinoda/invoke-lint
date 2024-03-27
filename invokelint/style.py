@@ -1,4 +1,5 @@
 """Tasks of format."""
+
 from contextlib import suppress
 from typing import Any, List
 

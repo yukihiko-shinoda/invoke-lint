@@ -1,4 +1,5 @@
 """Tasks of build."""
+
 import builtins
 
 from invoke import Collection, Context, Result, task
