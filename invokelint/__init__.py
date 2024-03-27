@@ -2,6 +2,6 @@
 
 __author__ = """Yukihiko Shinoda"""
 __email__ = "yuk.hik.future@gmail.com"
-__version__ = "0.8.2"
+__version__ = "0.9.0"
 
 __all__ = ["dist", "lint", "style", "test"]
