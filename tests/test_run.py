@@ -40,7 +40,7 @@ def test_create_file_linux(tmp_path: "Path", context: Context) -> None:
         check_created_file(tmp_path, context)
 
 
-@pytest.mark.skipif(sys.platform != "win32", reason="Code: context.cd() works only in Linux.")
+@pytest.mark.skipif(sys.platform != "win32", reason="Code: cd /d works only in Windows.")
 def test_create_file_windows(tmp_path: "Path", context: Context) -> None:
     """see:
 
@@ -71,7 +71,7 @@ def test_run_all_linux(tmp_path: "Path", context: Context) -> None:
     check_run_all(list_expected_message, excinfo.value, tmp_path)
 
 
-@pytest.mark.skipif(sys.platform != "win32", reason="Code: context.cd() works only in Linux.")
+@pytest.mark.skipif(sys.platform != "win32", reason="Code: cd /d works only in Windows.")
 def test_run_all_windows(tmp_path: "Path", context: Context) -> None:
     """All commands should be run even one of them failed.
 
