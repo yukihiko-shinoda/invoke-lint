@@ -157,6 +157,11 @@ build = "*"
 #   · Issue #4101 · pypa/pipenv
 #   https://github.com/pypa/pipenv/issues/4101
 colorama = "*"
+# Pipenv can't crawl coverage==3.5.3:
+# - Command: "pipenv install --skip-lock" fails 
+#   since it tries to parse legacy package metadata and raise InstallError
+#   · Issue #5595 · pypa/pipenv
+#   https://github.com/pypa/pipenv/issues/5595#issuecomment-1454769781
 coverage = ">=3.5.4"
 # The dlint less than 0.14.0 limits max version of flake8.
 dlint = ">=0.14.0"
@@ -164,8 +169,8 @@ docformatter = {extras = ["tomli"], version = "*"}
 dodgy = "*"
 # Since Pipenv can't lock for too much combinations to attempt lock:
 # pip._vendor.resolvelib.resolvers.ResolutionTooDeep: 2000000
-# The hacking depends flake8 ~=5.0.1 or ~=4.0.1.
-flake8 = {version = "<=6.0.0>=5.0.1,==4.0.1", markers="python_version >= '3.6'"}
+# The hacking depends flake8 ~=6.1.0 or ~=5.0.1 or ~=4.0.1.
+flake8 = {version = "!=6.0.0,!=5.0.0,>=4.0.1", markers="python_version >= '3.6'"}
 # To use flake8 --radon-show-closures
 flake8-polyfill = "*"
 # Latest hacking depends on legacy version of flake8, and legacy hacking doesn't narrow flake8 version.

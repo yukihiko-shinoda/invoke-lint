@@ -19,7 +19,7 @@ colorama = "*"
 # - Command: "pipenv install --skip-lock" fails 
 #   since it tries to parse legacy package metadata and raise InstallError
 #   · Issue #5595 · pypa/pipenv
-#   https://github.com/pypa/pipenv/issues/5595
+#   https://github.com/pypa/pipenv/issues/5595#issuecomment-1454769781
 coverage = ">=3.5.4"
 dlint = "*"
 docformatter = {extras = ["tomli"], version = "*"}

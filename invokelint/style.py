@@ -76,7 +76,6 @@ def fmt(context: Context, *, check: bool = False, ruff: bool = False, by_ruff: b
         tasks.extend([isort, black])
     if check or not ruff:
         tasks.append(call_ruff_check)
-    print(check)  # noqa: T201
     return run_in_order(tasks, context, check=check)
 
 
