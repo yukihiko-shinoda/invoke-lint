@@ -57,7 +57,11 @@ def call_ruff_check(context: Context, *, check: bool = False, **kwargs: Any) -> 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
 def call_ruff_fmt(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
-    return ruff_commands.fmt(context, check=check, diff=True)
+    if check:
+        return ruff_commands.fmt(context, diff=check)
+    with suppress(UnexpectedExit):
+        ruff_commands.fmt(context, diff=True)
+    return ruff_commands.fmt(context)
 
 
 @task(

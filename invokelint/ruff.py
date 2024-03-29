@@ -21,11 +21,9 @@ def chk(context: "Context", *, fix: bool = False, show_fixes: bool = False) -> "
     return run_in_pty(context, "ruff check{} --ignore S101 {}".format(options, " ".join(EXISTING_TEST_PACKAGES)))
 
 
-def fmt(context: "Context", *, check: bool = False, diff: bool = False) -> "Result":
+def fmt(context: "Context", *, diff: bool = False) -> "Result":
     """Lints code with Ruff."""
     list_options = []
-    if check:
-        list_options.append("--check")
     if diff:
         list_options.append("--diff")
     options = " " + " ".join(list_options) if list_options else ""
