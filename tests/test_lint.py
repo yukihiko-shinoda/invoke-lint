@@ -23,7 +23,11 @@ from invokelint.lint import (
     semgrep,
     xenon,
 )
-from tests.test_style import LIST_COMMAND_EXPECTED_STYLE, LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF
+from tests.test_style import (
+    LIST_COMMAND_EXPECTED_STYLE,
+    LIST_COMMAND_EXPECTED_STYLE_BY_RUFF,
+    LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF,
+)
 from tests.testlibraries import check_list_result, check_result
 
 if TYPE_CHECKING:
@@ -122,6 +126,12 @@ def test_fast_skip_format(context: "Context") -> None:
     """Command should success and run appropriate commands."""
     list_result = fast(context, skip_format=True)
     check_list_result(list_result, LIST_COMMAND_EXPECTED)
+
+
+def test_fast_by_ruff(context: "Context") -> None:
+    """Command should success and run appropriate commands."""
+    list_result = fast(context, by_ruff=True)
+    check_list_result(list_result, LIST_COMMAND_EXPECTED_STYLE_BY_RUFF + LIST_COMMAND_EXPECTED)
 
 
 @pytest.mark.slow()
