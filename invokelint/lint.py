@@ -1,11 +1,11 @@
 """Tasks of lint."""
 
 import platform
-from typing import Any, cast, List, TYPE_CHECKING
+from typing import Any, List, TYPE_CHECKING
 
 from invoke import Collection, Context, Result, task
 
-from invokelint.path import EXISTING_TEST_PACKAGES, PYTHON_DIRS, PYTHON_DIRS_EXCLUDING_TEST
+from invokelint.path import PYTHON_DIRS
 from invokelint import ruff as ruff_commands
 from invokelint.run import run_all, run_in_order, run_in_pty
 from invokelint.style import fmt
@@ -17,15 +17,15 @@ ns = Collection()
 
 
 @task
-def radon_cc(context: Context) -> Result:
+def radon_cc(context: Context) -> List[Result]:
     """Reports code complexity."""
-    return cast(Result, context.run("radon cc {}".format(" ".join(PYTHON_DIRS))))
+    return [context.run("radon cc {}".format(" ".join(PYTHON_DIRS)))]
 
 
 @task
-def radon_mi(context: Context) -> Result:
+def radon_mi(context: Context) -> List[Result]:
     """Reports maintainability index."""
-    return cast(Result, context.run("radon mi {}".format(" ".join(PYTHON_DIRS))))
+    return [context.run("radon mi {}".format(" ".join(PYTHON_DIRS)))]
 
 
 @task
@@ -55,71 +55,69 @@ ns.add_task(cohesion)
 
 
 @task(name="ruff")
-def ruff_task(context: Context) -> Result:
+def ruff_task(context: Context) -> List[Result]:
     """Lints code with Ruff."""
     return ruff_commands.chk(context)
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_ruff(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_ruff(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     return ruff_task(context)
 
 
 @task
-def bandit(context: Context) -> Result:
+def bandit(context: Context) -> List[Result]:
     """Lints code with bandit."""
-    space = " "
-    run_in_pty(context, "bandit --recursive {}".format(space.join(PYTHON_DIRS_EXCLUDING_TEST)))
-    return run_in_pty(context, "bandit --recursive --skip B101 {}".format(space.join(EXISTING_TEST_PACKAGES)))
+    return [run_in_pty(context, "bandit --configfile pyproject.toml --recursive {}".format(" ".join(PYTHON_DIRS)))]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_bandit(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_bandit(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     return bandit(context)
 
 
 @task
-def dodgy(context: Context) -> Result:
+def dodgy(context: Context) -> List[Result]:
     """Lints code with dodgy."""
-    return run_in_pty(context, "dodgy --ignore-paths csvinput")
+    return [run_in_pty(context, "dodgy --ignore-paths csvinput")]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_dodgy(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_dodgy(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     return dodgy(context)
 
 
 @task
-def flake8(context: Context) -> Result:
+def flake8(context: Context) -> List[Result]:
     """Lints code with flake8."""
-    return run_in_pty(context, "flake8 {} {}".format("--radon-show-closures", " ".join(PYTHON_DIRS)))
+    return [run_in_pty(context, "flake8 {} {}".format("--radon-show-closures", " ".join(PYTHON_DIRS)))]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_flake8(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_flake8(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     return flake8(context)
 
 
 @task
-def pydocstyle(context: Context) -> Result:
+def pydocstyle(context: Context) -> List[Result]:
     """Lints code with pydocstyle."""
-    return run_in_pty(context, "pydocstyle {}".format(" ".join(PYTHON_DIRS)))
+    return [run_in_pty(context, "pydocstyle {}".format(" ".join(PYTHON_DIRS)))]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_pydocstyle(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_pydocstyle(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     return pydocstyle(context)
 
 
 @task
-def xenon(context: Context) -> Result:
+def xenon(context: Context) -> List[Result]:
     """Checks code complexity."""
     command = ("xenon --max-absolute A --max-modules A --max-average A {}").format(" ".join(PYTHON_DIRS))
-    return run_in_pty(context, command)
+    return [run_in_pty(context, command)]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_xenon(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_xenon(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     return xenon(context)
 
 
@@ -127,14 +125,15 @@ def call_xenon(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
     help={
         "skip_format": "Lints without format style.",
         "ruff": "Leave ruff warnings",
+        "by_ruff": "Formats code by ruff",
     },
 )
-def fast(context: Context, *, skip_format: bool = False, ruff: bool = False) -> List[Result]:
+def fast(context: Context, *, skip_format: bool = False, ruff: bool = False, by_ruff: bool = False) -> List[Result]:
     """Runs fast linting (xenon, ruff, bandit, dodgy, flake8, pydocstyle).
 
     Xenon is prioritized since it effects fundamental coding structure.
     """
-    list_result = [] if skip_format else fmt(context, ruff=ruff)
+    list_result = [] if skip_format else fmt(context, ruff=ruff, by_ruff=by_ruff)
     tasks = [call_xenon, call_ruff, call_bandit, call_dodgy, call_flake8, call_pydocstyle]
     list_result.extend(run_in_order(tasks, context))
     return list_result
@@ -150,39 +149,37 @@ ns.add_task(fast, default=True)
 
 
 @task
-def mypy(context: Context) -> Result:
+def mypy(context: Context) -> List[Result]:
     """Lints code with mypy."""
-    return run_in_pty(context, "mypy {}".format(" ".join(PYTHON_DIRS)))
+    return [run_in_pty(context, "mypy {}".format(" ".join(PYTHON_DIRS)))]
 
 
 # Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def call_mypy(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_mypy(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     return mypy(context)
 
 
 @task
-def pylint(context: Context) -> Result:
+def pylint(context: Context) -> List[Result]:
     """Lints code with Pylint."""
-    return run_in_pty(context, "pylint {}".format(" ".join(PYTHON_DIRS)))
+    return [run_in_pty(context, "pylint {}".format(" ".join(PYTHON_DIRS)))]
 
 
 # Reason: Compatibility with semgrep task to be called from deep(). pylint: disable=unused-argument
-def call_pylint(context: Context, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_pylint(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     return pylint(context)
 
 
 @task(help={"ci": "Run as CI mode."})
-def semgrep(context: Context, *, ci: bool = False) -> Result:
+def semgrep(context: Context, *, ci: bool = False) -> List[Result]:
     """Lints code with Semgrep."""
     command = "ci" if ci else "scan"
-    return run_in_pty(
-        context,
-        "semgrep {} --oss-only --config auto --include {}".format(command, " --include ".join(PYTHON_DIRS)),
-    )
+    full_command = "semgrep {} --oss-only --config auto --include {}".format(command, " --include ".join(PYTHON_DIRS))
+    return [run_in_pty(context, full_command)]
 
 
 # Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def call_semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     return semgrep(context)
 
 

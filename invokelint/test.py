@@ -1,6 +1,7 @@
 """Tasks of test."""
 
 from pathlib import Path
+from typing import List
 import webbrowser
 
 from invoke import Collection, Context, Result, task
@@ -64,20 +65,22 @@ def coverage(
     publish: bool = False,
     xml: bool = False,
     html: bool = False,
-) -> Result:
+) -> List[Result]:
     """Runs all tests and report coverage (options for create xml / html available)."""
     run_in_pty(context, build_coverage_run_command(is_all=all))
+    result = []
     # Reason: Note.
     # result = run_in_pty(context, "coverage combine")  # noqa: ERA001
-    result = run_in_pty(context, "coverage report --show-missing")
+    result.append(run_in_pty(context, "coverage report --show-missing"))
     if publish:
         # Publish the results via coveralls
-        return run_in_pty(context, "coveralls")
+        result.append(run_in_pty(context, "coveralls"))
+        return result
     # Build a local report
     if xml:
-        result = run_in_pty(context, "coverage xml")
+        result.append(run_in_pty(context, "coverage xml"))
     if html:
-        result = run_in_pty(context, "coverage html")
+        result.append(run_in_pty(context, "coverage html"))
         # as_url() with relative path raises following error:
         #   ValueError: relative path can't be expressed as a file URI
         # Path.absolute() for Python 3.9 or less in Windows.

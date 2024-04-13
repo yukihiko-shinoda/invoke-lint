@@ -18,25 +18,29 @@ ns = Collection()
 
 
 @task
-def dist(context: Context) -> Result:
+def dist(context: Context) -> List[Result]:
     """Cleans up files from package building."""
-    run_in_pty(context, "rm -fr build/")
-    run_in_pty(context, "rm -fr dist/")
-    run_in_pty(context, "rm -fr .eggs/")
-    run_in_pty(context, "find . -name '*.egg-info' -exec rm -fr {} +")
-    return run_in_pty(context, "find . -name '*.egg' -exec rm -f {} +")
+    return [
+        run_in_pty(context, "rm -fr build/"),
+        run_in_pty(context, "rm -fr dist/"),
+        run_in_pty(context, "rm -fr .eggs/"),
+        run_in_pty(context, "find . -name '*.egg-info' -exec rm -fr {} +"),
+        run_in_pty(context, "find . -name '*.egg' -exec rm -f {} +"),
+    ]
 
 
 ns.add_task(dist)
 
 
 @task
-def python(context: Context) -> Result:
+def python(context: Context) -> List[Result]:
     """Cleans up python file artifacts."""
-    run_in_pty(context, "find . -name '*.pyc' -exec rm -f {} +")
-    run_in_pty(context, "find . -name '*.pyo' -exec rm -f {} +")
-    run_in_pty(context, "find . -name '*~' -exec rm -f {} +")
-    return run_in_pty(context, "find . -name '__pycache__' -exec rm -fr {} +")
+    return [
+        run_in_pty(context, "find . -name '*.pyc' -exec rm -f {} +"),
+        run_in_pty(context, "find . -name '*.pyo' -exec rm -f {} +"),
+        run_in_pty(context, "find . -name '*~' -exec rm -f {} +"),
+        run_in_pty(context, "find . -name '__pycache__' -exec rm -fr {} +"),
+    ]
 
 
 ns.add_task(python)
@@ -55,11 +59,11 @@ def _delete_file_legacy(file: Path) -> None:  # pragma: no cover
 
 
 @task
-def tests(_context: Context) -> Result:
+def tests(_context: Context) -> List[Result]:
     """Cleans up files from testing."""
     _delete_file(COVERAGE_FILE)
     shutil.rmtree(COVERAGE_DIR, ignore_errors=True)
-    return Result()
+    return [Result()]
 
 
 ns.add_task(tests)

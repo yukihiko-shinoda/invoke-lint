@@ -21,15 +21,18 @@ LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF = [
 ]
 LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF_BY_RUFF = [
     *LIST_COMMAND_EXPECTED_STYLE_COMMON,
+    f"ruff format --diff {PYTHON_DIR}",
     f"ruff format {PYTHON_DIR}",
+    f"ruff check --show-fixes {PYTHON_DIR}",
 ]
 LIST_COMMAND_EXPECTED_STYLE = [
     *LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF,
-    "ruff check --fix --show-fixes --ignore S101 tests",
+    f"ruff check --show-fixes {PYTHON_DIR}",
+    f"ruff check --fix --show-fixes {PYTHON_DIR}",
 ]
 LIST_COMMAND_EXPECTED_STYLE_BY_RUFF = [
     *LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF_BY_RUFF,
-    "ruff check --fix --show-fixes --ignore S101 tests",
+    f"ruff check --fix --show-fixes {PYTHON_DIR}",
 ]
 LIST_COMMAND_EXPECTED_STYLE_CHECK_COMMON = [
     f"docformatter --recursive --check {PYTHON_DIR}",
@@ -39,12 +42,12 @@ LIST_COMMAND_EXPECTED_STYLE_CHECK = [
     *LIST_COMMAND_EXPECTED_STYLE_CHECK_COMMON,
     f"isort --check-only --diff {PYTHON_DIR}",
     f"black --check --diff {PYTHON_DIR}",
-    "ruff check --show-fixes --ignore S101 tests",
+    f"ruff check --show-fixes {PYTHON_DIR}",
 ]
 LIST_COMMAND_EXPECTED_STYLE_CHECK_BY_RUFF = [
     *LIST_COMMAND_EXPECTED_STYLE_CHECK_COMMON,
     f"ruff format --diff {PYTHON_DIR}",
-    "ruff check --show-fixes --ignore S101 tests",
+    f"ruff check --show-fixes {PYTHON_DIR}",
 ]
 
 

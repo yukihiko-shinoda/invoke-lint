@@ -249,6 +249,26 @@ If result is not your expected, follow official documentation of `setuptools` to
 
 See: [Package Discovery and Namespace Packages - setuptools latest documentation]
 
+<!-- markdownlint-disable no-trailing-punctuation -->
+## How do I...
+<!-- markdownlint-enable no-trailing-punctuation -->
+
+### Suppress [`B101: assert_used`] in Bandit and [`assert (S101)`] in Ruff only in test files?
+
+Set below configuration in `pyproject.toml`:
+
+```toml
+[tool.bandit.assert_used]
+skips = ["tests/*"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+```
+
+Note that invoke-lint executes [Bandit] with option `--configfile=pyproject.toml`, so upper configuration will be applied.
+
+See: [Configuration — Bandit documentation]
+
 ## Credits
 
 This package was created with [Cookiecutter] and the [yukihiko-shinoda/cookiecutter-pypackage] project template.
@@ -280,3 +300,6 @@ This package was created with [Cookiecutter] and the [yukihiko-shinoda/cookiecut
 [Building and Distributing Packages with Setuptools - setuptools latest documentation]: https://setuptools.pypa.io/en/latest/setuptools.html
 [Package Discovery and Namespace Packages - setuptools latest documentation]: https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
 [Constructing namespaces — Invoke documentation]: https://docs.pyinvoke.org/en/latest/concepts/namespaces.html#nesting-collections
+[`B101: assert_used`]: https://bandit.readthedocs.io/en/latest/plugins/b101_assert_used.html
+[`assert (S101)`]: https://docs.astral.sh/ruff/rules/assert/
+[Configuration — Bandit documentation]: https://bandit.readthedocs.io/en/latest/config.html#scanning-behavior
