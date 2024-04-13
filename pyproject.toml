@@ -82,10 +82,7 @@ repository = "https://github.com/yukihiko-shinoda/invoke-lint"
 zip-safe = false
 
 [tool.bandit.assert_used]
-skips = [
-    "*_test.py",
-    "*/test_*.py",
-]
+skips = ["tests/*"]
 
 # @see https://black.readthedocs.io/en/stable/pyproject_toml.html#configuration-format
 [tool.black]

@@ -5,7 +5,7 @@ from typing import Any, cast, List, TYPE_CHECKING
 
 from invoke import Collection, Context, Result, task
 
-from invokelint.path import EXISTING_TEST_PACKAGES, PYTHON_DIRS, PYTHON_DIRS_EXCLUDING_TEST
+from invokelint.path import PYTHON_DIRS
 from invokelint import ruff as ruff_commands
 from invokelint.run import run_all, run_in_order, run_in_pty
 from invokelint.style import fmt
@@ -68,11 +68,7 @@ def call_ruff(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
 @task
 def bandit(context: Context) -> list[Result]:
     """Lints code with bandit."""
-    space = " "
-    result = []
-    result.append(run_in_pty(context, "bandit --recursive {}".format(space.join(PYTHON_DIRS_EXCLUDING_TEST))))
-    result.append(run_in_pty(context, "bandit --recursive --skip B101 {}".format(space.join(EXISTING_TEST_PACKAGES))))
-    return result
+    return [run_in_pty(context, "bandit --configfile pyproject.toml --recursive {}".format(" ".join(PYTHON_DIRS)))]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument

@@ -39,10 +39,7 @@ PYTHON_DIR = f"{PYTHON_DIR_EXCLUDING_TEST} {TEST_DIR}"
 COMMAND_EXPECTED_RADON_CC = f"radon cc {PYTHON_DIR}"
 COMMAND_EXPECTED_RADON_MI = f"radon mi {PYTHON_DIR}"
 COMMAND_EXPECTED_RUFF_CHECK = f"ruff check {PYTHON_DIR}"
-LIST_COMMAND_EXPECTED_BANDIT = [
-    f"bandit --recursive {PYTHON_DIR_EXCLUDING_TEST}",
-    f"bandit --recursive --skip B101 {TEST_DIR}",
-]
+COMMAND_EXPECTED_BANDIT = f"bandit --configfile pyproject.toml --recursive {PYTHON_DIR}"
 COMMAND_EXPECTED_DODGY = "dodgy --ignore-paths csvinput"
 COMMAND_EXPECTED_FLAKE8 = f"flake8 --radon-show-closures {PYTHON_DIR}"
 COMMAND_EXPECTED_PYDOCSTYLE = f"pydocstyle {PYTHON_DIR}"
@@ -85,7 +82,7 @@ def test_ruff(context: "Context") -> None:
 
 
 def test_bandit(context: "Context") -> None:
-    check_list_result(bandit(context), LIST_COMMAND_EXPECTED_BANDIT)
+    check_list_result(bandit(context), [COMMAND_EXPECTED_BANDIT])
 
 
 def test_dodgy(context: "Context") -> None:
@@ -107,7 +104,7 @@ def test_xenon(context: "Context") -> None:
 LIST_COMMAND_EXPECTED = [
     COMMAND_EXPECTED_XENON,
     COMMAND_EXPECTED_RUFF_CHECK,
-    *LIST_COMMAND_EXPECTED_BANDIT,
+    COMMAND_EXPECTED_BANDIT,
     COMMAND_EXPECTED_DODGY,
     COMMAND_EXPECTED_FLAKE8,
     COMMAND_EXPECTED_PYDOCSTYLE,
