@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from typing import Protocol
 
     class TaskFunction(Protocol):
-        def __call__(self, context: Context, **kwargs: Any) -> Result:  # pragma: no cover
+        def __call__(self, context: Context, **kwargs: Any) -> list[Result]:  # pragma: no cover
             # fakeself gets swallowed by the class method binding logic
             # so this will match functions that have bar and the free arguments.
             ...
@@ -23,17 +23,17 @@ def run_in_order(list_task: "List[TaskFunction]", context: Context, *args: Any, 
     """Runs tasks in order, stop subsequent tasks when task fail."""
     list_result = []
     for each_task in list_task:
-        list_result.append(each_task(context, *args, **kwargs))
+        list_result.extend(each_task(context, *args, **kwargs))
     return list_result
 
 
-def run_all(list_task: List[Callable[[Context], Result]], context: Context) -> List[Result]:
+def run_all(list_task: list[Callable[[Context], list[Result]]], context: Context) -> List[Result]:
     """Runs all commands even if failure."""
     list_unexpected_exit = []
     list_result = []
     for each_task in list_task:
         try:
-            list_result.append(each_task(context))
+            list_result.extend(each_task(context))
         except UnexpectedExit as error:
             list_unexpected_exit.append(error)
     if list_unexpected_exit:

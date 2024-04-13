@@ -28,17 +28,24 @@ from tests.test_style import (
     LIST_COMMAND_EXPECTED_STYLE_BY_RUFF,
     LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF,
 )
-from tests.testlibraries import check_list_result, check_result
+from tests.testlibraries import check_list_result
 
 if TYPE_CHECKING:
     from invoke import Context
 
-PYTHON_DIR = "invokelint setup.py tasks.py tests"
+PYTHON_DIR_EXCLUDING_TEST = "invokelint setup.py tasks.py"
 TEST_DIR = "tests"
+PYTHON_DIR = f"{PYTHON_DIR_EXCLUDING_TEST} {TEST_DIR}"
 COMMAND_EXPECTED_RADON_CC = f"radon cc {PYTHON_DIR}"
 COMMAND_EXPECTED_RADON_MI = f"radon mi {PYTHON_DIR}"
-COMMAND_EXPECTED_RUFF_CHECK = f"ruff check --ignore S101 {TEST_DIR}"
-COMMAND_EXPECTED_BANDIT = "bandit --recursive --skip B101 tests"
+LIST_COMMAND_EXPECTED_RUFF_CHECK = [
+    f"ruff check {PYTHON_DIR_EXCLUDING_TEST}",
+    f"ruff check --ignore S101 {TEST_DIR}",
+]
+LIST_COMMAND_EXPECTED_BANDIT = [
+    f"bandit --recursive {PYTHON_DIR_EXCLUDING_TEST}",
+    f"bandit --recursive --skip B101 {TEST_DIR}",
+]
 COMMAND_EXPECTED_DODGY = "dodgy --ignore-paths csvinput"
 COMMAND_EXPECTED_FLAKE8 = f"flake8 --radon-show-closures {PYTHON_DIR}"
 COMMAND_EXPECTED_PYDOCSTYLE = f"pydocstyle {PYTHON_DIR}"
@@ -51,11 +58,11 @@ COMMAND_EXPECTED_SEMGREP = (
 
 
 def test_radon_cc(context: "Context") -> None:
-    check_result(radon_cc(context), COMMAND_EXPECTED_RADON_CC)
+    check_list_result(radon_cc(context), [COMMAND_EXPECTED_RADON_CC])
 
 
 def test_radon_mi(context: "Context") -> None:
-    check_result(radon_mi(context), COMMAND_EXPECTED_RADON_MI)
+    check_list_result(radon_mi(context), [COMMAND_EXPECTED_RADON_MI])
 
 
 def test_radon(context: "Context") -> None:
@@ -77,33 +84,33 @@ def test_cohesion(context: "Context") -> None:
 
 
 def test_ruff(context: "Context") -> None:
-    check_result(ruff_task(context), COMMAND_EXPECTED_RUFF_CHECK)
+    check_list_result(ruff_task(context), LIST_COMMAND_EXPECTED_RUFF_CHECK)
 
 
 def test_bandit(context: "Context") -> None:
-    check_result(bandit(context), COMMAND_EXPECTED_BANDIT)
+    check_list_result(bandit(context), LIST_COMMAND_EXPECTED_BANDIT)
 
 
 def test_dodgy(context: "Context") -> None:
-    check_result(dodgy(context), COMMAND_EXPECTED_DODGY)
+    check_list_result(dodgy(context), [COMMAND_EXPECTED_DODGY])
 
 
 def test_flake8(context: "Context") -> None:
-    check_result(flake8(context), COMMAND_EXPECTED_FLAKE8)
+    check_list_result(flake8(context), [COMMAND_EXPECTED_FLAKE8])
 
 
 def test_pydocstyle(context: "Context") -> None:
-    check_result(pydocstyle(context), COMMAND_EXPECTED_PYDOCSTYLE)
+    check_list_result(pydocstyle(context), [COMMAND_EXPECTED_PYDOCSTYLE])
 
 
 def test_xenon(context: "Context") -> None:
-    check_result(xenon(context), COMMAND_EXPECTED_XENON)
+    check_list_result(xenon(context), [COMMAND_EXPECTED_XENON])
 
 
 LIST_COMMAND_EXPECTED = [
     COMMAND_EXPECTED_XENON,
-    COMMAND_EXPECTED_RUFF_CHECK,
-    COMMAND_EXPECTED_BANDIT,
+    *LIST_COMMAND_EXPECTED_RUFF_CHECK,
+    *LIST_COMMAND_EXPECTED_BANDIT,
     COMMAND_EXPECTED_DODGY,
     COMMAND_EXPECTED_FLAKE8,
     COMMAND_EXPECTED_PYDOCSTYLE,
@@ -136,12 +143,12 @@ def test_fast_by_ruff(context: "Context") -> None:
 
 @pytest.mark.slow()
 def test_mypy(context: "Context") -> None:
-    check_result(mypy(context), COMMAND_EXPECTED_MYPY)
+    check_list_result(mypy(context), [COMMAND_EXPECTED_MYPY])
 
 
 @pytest.mark.slow()
 def test_pylint(context: "Context") -> None:
-    check_result(pylint(context), COMMAND_EXPECTED_PYLINT)
+    check_list_result(pylint(context), [COMMAND_EXPECTED_PYLINT])
 
 
 @pytest.mark.slow()
@@ -152,7 +159,7 @@ def test_pylint(context: "Context") -> None:
 @pytest.mark.skipif(sys.platform == "win32", reason="Semgrep doesn't support Windows.")
 def test_semgrep(context: "Context") -> None:
     """Command should success and run appropriate commands."""
-    check_result(semgrep(context), COMMAND_EXPECTED_SEMGREP)
+    check_list_result(semgrep(context), [COMMAND_EXPECTED_SEMGREP])
 
 
 @pytest.mark.slow()

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from invoke import MockContext, Result
 
 from invokelint.test import build_coverage_run_command, coverage, fast, run_test_all
-from tests.testlibraries import check_result
+from tests.testlibraries import check_list_result, check_result
 
 if TYPE_CHECKING:
     from pytest_mock import MockFixture
@@ -85,7 +85,7 @@ def test_coverage(mocker: "MockFixture") -> None:
         },
     )
     expected_pty = platform.system() == "Linux"
-    check_result(coverage(context), EXPECTED_COMMAND_REPORT)
+    check_list_result(coverage(context), [EXPECTED_COMMAND_REPORT])
     calls = [
         mocker.call(EXPECTED_COMMAND_RUN, pty=expected_pty),
         mocker.call(EXPECTED_COMMAND_REPORT, pty=expected_pty),
@@ -105,7 +105,7 @@ def test_coverage_publish(mocker: "MockFixture") -> None:
         },
     )
     expected_pty = platform.system() == "Linux"
-    check_result(coverage(context, publish=True), expected_command_publish)
+    check_list_result(coverage(context, publish=True), [EXPECTED_COMMAND_REPORT, expected_command_publish])
     calls = [
         mocker.call(EXPECTED_COMMAND_RUN, pty=expected_pty),
         mocker.call(EXPECTED_COMMAND_REPORT, pty=expected_pty),
@@ -130,7 +130,10 @@ def test_coverage_xml_html(mocker: "MockFixture") -> None:
             expected_command_html: Result(EXPECTED_STDOUT_REPORT),
         },
     )
-    check_result(coverage(context, xml=True, html=True), expected_command_html)
+    check_list_result(
+        coverage(context, xml=True, html=True),
+        [EXPECTED_COMMAND_REPORT, expected_command_xml, expected_command_html],
+    )
     calls = [
         mocker.call(EXPECTED_COMMAND_RUN, pty=expected_pty),
         mocker.call(EXPECTED_COMMAND_REPORT, pty=expected_pty),

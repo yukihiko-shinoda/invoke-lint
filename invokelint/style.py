@@ -1,9 +1,8 @@
 """Tasks of format."""
 
-from contextlib import suppress
 from typing import Any, List
 
-from invoke import Collection, Context, Result, task, UnexpectedExit
+from invoke import Collection, Context, Result, task
 
 from invokelint.path import PYTHON_DIRS
 from invokelint import ruff as ruff_commands
@@ -13,7 +12,7 @@ ns = Collection()
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
+def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     """Runs docformatter.
 
     This function includes hard coding of line length.
@@ -22,46 +21,48 @@ def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> Res
     https://github.com/PyCQA/docformatter/pull/77
     """
     docformatter_options = " --recursive {}".format("--check" if check else "--in-place")
-    return run_in_pty(context, "docformatter{} {}".format(docformatter_options, " ".join(PYTHON_DIRS)), warn=True)
+    return [run_in_pty(context, "docformatter{} {}".format(docformatter_options, " ".join(PYTHON_DIRS)), warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def autoflake(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
+def autoflake(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     """Runs autoflake."""
     autoflake_options = " --recursive {}".format("--check" if check else "--in-place")
-    return run_in_pty(context, "autoflake{} {}".format(autoflake_options, " ".join(PYTHON_DIRS)), warn=True)
+    return [run_in_pty(context, "autoflake{} {}".format(autoflake_options, " ".join(PYTHON_DIRS)), warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def isort(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
+def isort(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     """Runs isort."""
     isort_options = " --check-only --diff" if check else ""
-    return run_in_pty(context, "isort{} {}".format(isort_options, " ".join(PYTHON_DIRS)), warn=True)
+    return [run_in_pty(context, "isort{} {}".format(isort_options, " ".join(PYTHON_DIRS)), warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def black(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
+def black(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     """Runs Black."""
     black_options = " --check --diff" if check else ""
-    return run_in_pty(context, "black{} {}".format(black_options, " ".join(PYTHON_DIRS)), warn=True)
+    return [run_in_pty(context, "black{} {}".format(black_options, " ".join(PYTHON_DIRS)), warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def call_ruff_check(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_ruff_check(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     if check:
         return ruff_commands.chk(context, show_fixes=True)
-    with suppress(UnexpectedExit):
-        ruff_commands.chk(context, show_fixes=True)
-    return ruff_commands.chk(context, fix=True, show_fixes=True)
+    result = []
+    result.extend(ruff_commands.chk(context, show_fixes=True, warn=True))
+    result.extend(ruff_commands.chk(context, fix=True, show_fixes=True))
+    return result
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def call_ruff_fmt(context: Context, *, check: bool = False, **kwargs: Any) -> Result:  # noqa: ARG001
+def call_ruff_fmt(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     if check:
         return ruff_commands.fmt(context, diff=check)
-    with suppress(UnexpectedExit):
-        ruff_commands.fmt(context, diff=True)
-    return ruff_commands.fmt(context)
+    result = []
+    result.extend(ruff_commands.fmt(context, diff=True, warn=True))
+    result.extend(ruff_commands.fmt(context))
+    return result
 
 
 @task(
