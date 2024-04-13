@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from typing import Protocol
 
     class TaskFunction(Protocol):
-        def __call__(self, context: Context, **kwargs: Any) -> list[Result]:  # pragma: no cover
+        def __call__(self, context: Context, **kwargs: Any) -> List[Result]:  # pragma: no cover
             # fakeself gets swallowed by the class method binding logic
             # so this will match functions that have bar and the free arguments.
             ...
@@ -27,7 +27,7 @@ def run_in_order(list_task: "List[TaskFunction]", context: Context, *args: Any, 
     return list_result
 
 
-def run_all(list_task: list[Callable[[Context], list[Result]]], context: Context) -> List[Result]:
+def run_all(list_task: List[Callable[[Context], List[Result]]], context: Context) -> List[Result]:
     """Runs all commands even if failure."""
     list_unexpected_exit = []
     list_result = []

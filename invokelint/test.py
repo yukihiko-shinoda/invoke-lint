@@ -1,6 +1,7 @@
 """Tasks of test."""
 
 from pathlib import Path
+from typing import List
 import webbrowser
 
 from invoke import Collection, Context, Result, task
@@ -64,7 +65,7 @@ def coverage(
     publish: bool = False,
     xml: bool = False,
     html: bool = False,
-) -> list[Result]:
+) -> List[Result]:
     """Runs all tests and report coverage (options for create xml / html available)."""
     run_in_pty(context, build_coverage_run_command(is_all=all))
     result = []

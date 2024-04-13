@@ -1,7 +1,7 @@
 """Tests for `run` package."""
 
 import sys
-from typing import cast, List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 
 from invoke import Context, Result, task, UnexpectedExit
 import pytest
@@ -13,21 +13,22 @@ if TYPE_CHECKING:
 
 
 @task
-def fail(context: Context) -> list[Result]:
+def fail(context: Context) -> List[Result]:
     if sys.platform == "win32":
-        return cast(Result, context.run("exit /b 1", pty=False))
-    return [cast(Result, context.run("exit 1"))]
+        return [context.run("exit /b 1", pty=False)]
+    return [context.run("exit 1")]
 
 
 @task
-def create_file(context: Context) -> list[Result]:
+def create_file(context: Context) -> List[Result]:
     """Stub for testing run_all()."""
     file_name = "test.txt"
     if sys.platform == "win32":
-        result = [cast(Result, context.run("copy /b NUL {}".format(file_name), pty=False))]
-        result.append(context.run("dir", pty=False))
-        return result
-    return [cast(Result, context.run("touch {}".format(file_name)))]
+        return [
+            context.run("copy /b NUL {}".format(file_name), pty=False),
+            context.run("dir", pty=False),
+        ]
+    return [context.run("touch {}".format(file_name))]
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="Code: context.cd() works only in Linux.")
@@ -38,7 +39,7 @@ def test_create_file_linux(tmp_path: "Path", context: Context) -> None:
       https://github.com/pyinvoke/invoke/issues/755
     """
     with context.cd(str(tmp_path.resolve())):
-        check_created_file(tmp_path, context)
+        check_created_file(tmp_path, context, 1)
 
 
 @pytest.mark.skipif(sys.platform != "win32", reason="Code: cd /d works only in Windows.")
@@ -49,13 +50,14 @@ def test_create_file_windows(tmp_path: "Path", context: Context) -> None:
       https://github.com/pyinvoke/invoke/issues/755
     """
     with context.prefix("cd /d {}".format(str(tmp_path.resolve()))):
-        check_created_file(tmp_path, context)
+        check_created_file(tmp_path, context, 2)
 
 
-def check_created_file(tmp_path: "Path", context: Context) -> None:
+def check_created_file(tmp_path: "Path", context: Context, expected_length: int) -> None:
     list_result = create_file(context)
-    assert len(list_result) == 1
-    assert list_result[0].return_code == 0
+    assert len(list_result) == expected_length
+    for result in list_result:
+        assert result.return_code == 0
     assert (tmp_path / "test.txt").exists()
 
 

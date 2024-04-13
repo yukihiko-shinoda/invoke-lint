@@ -12,7 +12,7 @@ ns = Collection()
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
+def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     """Runs docformatter.
 
     This function includes hard coding of line length.
@@ -25,28 +25,28 @@ def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> lis
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def autoflake(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
+def autoflake(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     """Runs autoflake."""
     autoflake_options = " --recursive {}".format("--check" if check else "--in-place")
     return [run_in_pty(context, "autoflake{} {}".format(autoflake_options, " ".join(PYTHON_DIRS)), warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def isort(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
+def isort(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     """Runs isort."""
     isort_options = " --check-only --diff" if check else ""
     return [run_in_pty(context, "isort{} {}".format(isort_options, " ".join(PYTHON_DIRS)), warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def black(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
+def black(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     """Runs Black."""
     black_options = " --check --diff" if check else ""
     return [run_in_pty(context, "black{} {}".format(black_options, " ".join(PYTHON_DIRS)), warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def call_ruff_check(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
+def call_ruff_check(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     if check:
         return ruff_commands.chk(context, show_fixes=True)
     result = []
@@ -56,7 +56,7 @@ def call_ruff_check(context: Context, *, check: bool = False, **kwargs: Any) -> 
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def call_ruff_fmt(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
+def call_ruff_fmt(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
     if check:
         return ruff_commands.fmt(context, diff=check)
     result = []

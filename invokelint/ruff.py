@@ -1,6 +1,6 @@
 """To unify executing ruff from style and from lint."""
 
-from typing import TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 
 from invokelint.path import PYTHON_DIRS
 from invokelint.run import run_in_pty
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from invoke import Context, Result
 
 
-def chk(context: "Context", *, fix: bool = False, show_fixes: bool = False, warn: bool = False) -> list["Result"]:
+def chk(context: "Context", *, fix: bool = False, show_fixes: bool = False, warn: bool = False) -> List["Result"]:
     """Lints code with Ruff."""
     list_options = []
     if fix:
@@ -20,7 +20,7 @@ def chk(context: "Context", *, fix: bool = False, show_fixes: bool = False, warn
     return [run_in_pty(context, "ruff check{} {}".format(options, " ".join(PYTHON_DIRS)), warn=warn)]
 
 
-def fmt(context: "Context", *, diff: bool = False, warn: bool = False) -> list["Result"]:
+def fmt(context: "Context", *, diff: bool = False, warn: bool = False) -> List["Result"]:
     """Lints code with Ruff."""
     list_options = []
     if diff:

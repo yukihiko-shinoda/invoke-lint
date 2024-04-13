@@ -18,7 +18,7 @@ ns = Collection()
 
 
 @task
-def dist(context: Context) -> list[Result]:
+def dist(context: Context) -> List[Result]:
     """Cleans up files from package building."""
     return [
         run_in_pty(context, "rm -fr build/"),
@@ -33,7 +33,7 @@ ns.add_task(dist)
 
 
 @task
-def python(context: Context) -> list[Result]:
+def python(context: Context) -> List[Result]:
     """Cleans up python file artifacts."""
     return [
         run_in_pty(context, "find . -name '*.pyc' -exec rm -f {} +"),
@@ -59,7 +59,7 @@ def _delete_file_legacy(file: Path) -> None:  # pragma: no cover
 
 
 @task
-def tests(_context: Context) -> list[Result]:
+def tests(_context: Context) -> List[Result]:
     """Cleans up files from testing."""
     _delete_file(COVERAGE_FILE)
     shutil.rmtree(COVERAGE_DIR, ignore_errors=True)
