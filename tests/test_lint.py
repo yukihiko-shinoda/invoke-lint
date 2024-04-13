@@ -38,10 +38,7 @@ TEST_DIR = "tests"
 PYTHON_DIR = f"{PYTHON_DIR_EXCLUDING_TEST} {TEST_DIR}"
 COMMAND_EXPECTED_RADON_CC = f"radon cc {PYTHON_DIR}"
 COMMAND_EXPECTED_RADON_MI = f"radon mi {PYTHON_DIR}"
-LIST_COMMAND_EXPECTED_RUFF_CHECK = [
-    f"ruff check {PYTHON_DIR_EXCLUDING_TEST}",
-    f"ruff check --ignore S101 {TEST_DIR}",
-]
+COMMAND_EXPECTED_RUFF_CHECK = f"ruff check {PYTHON_DIR}"
 LIST_COMMAND_EXPECTED_BANDIT = [
     f"bandit --recursive {PYTHON_DIR_EXCLUDING_TEST}",
     f"bandit --recursive --skip B101 {TEST_DIR}",
@@ -84,7 +81,7 @@ def test_cohesion(context: "Context") -> None:
 
 
 def test_ruff(context: "Context") -> None:
-    check_list_result(ruff_task(context), LIST_COMMAND_EXPECTED_RUFF_CHECK)
+    check_list_result(ruff_task(context), [COMMAND_EXPECTED_RUFF_CHECK])
 
 
 def test_bandit(context: "Context") -> None:
@@ -109,7 +106,7 @@ def test_xenon(context: "Context") -> None:
 
 LIST_COMMAND_EXPECTED = [
     COMMAND_EXPECTED_XENON,
-    *LIST_COMMAND_EXPECTED_RUFF_CHECK,
+    COMMAND_EXPECTED_RUFF_CHECK,
     *LIST_COMMAND_EXPECTED_BANDIT,
     COMMAND_EXPECTED_DODGY,
     COMMAND_EXPECTED_FLAKE8,

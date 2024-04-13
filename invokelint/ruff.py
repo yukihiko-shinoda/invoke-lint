@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING
 
-from invokelint.path import EXISTING_TEST_PACKAGES, PYTHON_DIRS, PYTHON_DIRS_EXCLUDING_TEST
+from invokelint.path import PYTHON_DIRS
 from invokelint.run import run_in_pty
 
 if TYPE_CHECKING:
@@ -17,12 +17,7 @@ def chk(context: "Context", *, fix: bool = False, show_fixes: bool = False, warn
     if show_fixes:
         list_options.append("--show-fixes")
     options = " " + " ".join(list_options) if list_options else ""
-    result = []
-    command = "ruff check{} {}".format(options, " ".join(PYTHON_DIRS_EXCLUDING_TEST))
-    result.append(run_in_pty(context, command, warn=warn))
-    command = "ruff check{} --ignore S101 {}".format(options, " ".join(EXISTING_TEST_PACKAGES))
-    result.append(run_in_pty(context, command, warn=warn))
-    return result
+    return [run_in_pty(context, "ruff check{} {}".format(options, " ".join(PYTHON_DIRS)), warn=warn)]
 
 
 def fmt(context: "Context", *, diff: bool = False, warn: bool = False) -> list["Result"]:
