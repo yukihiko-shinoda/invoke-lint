@@ -8,7 +8,7 @@ autoflake = "*"
 bandit = {version = "*", markers="python_version >= '3.7'"}
 black = {version = "*", markers="python_version >= '3.7'"}
 build = "*"
-bump2version = "*"
+bump-my-version = "*"
 cohesion = "*"
 # Hotfix for Pipenv's Bug:
 # - Pipenv should prioritize more cross-platform sys_platform condition between packages when lock
@@ -30,6 +30,8 @@ dodgy = "*"
 flake8 = {version = "!=6.0.0,!=5.0.0,>=4.0.1", markers="python_version >= '3.6'"}
 # To use flake8 --radon-show-closures
 flake8-polyfill = "*"
+# To use pyproject.toml for Flake8 configuration
+Flake8-pyproject = "*"
 # Latest hacking depends on legacy version of flake8, and legacy hacking doesn't narrow flake8 version.
 # When unpin hacking, it has possibility to install too legacy version of hacking.
 hacking = {version = ">=5.0.0", markers="python_version >= '3.8'"}
