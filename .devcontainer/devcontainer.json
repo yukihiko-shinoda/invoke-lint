@@ -27,27 +27,28 @@
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
-			"extensions": [
-				"GitHub.copilot",
-				"ms-python.python",
-				"ms-python.flake8",
-				"ms-python.isort",
-				"ms-python.mypy-type-checker",
-				"ms-python.pylint",
-				"charliermarsh.ruff",
-				"wk-j.save-and-run",
-				"bungcip.better-toml",
-				"streetsidesoftware.code-spell-checker"
-			],
+			// Set *default* container specific settings.json values on container create.
 			"settings": {
 				"python.formatting.provider": "black",
+				"python.linting.enabled": true,
+				"python.linting.lintOnSave": true,
+				"python.linting.banditEnabled": true,
+				"python.linting.banditArgs": [
+					"--configfile",
+					"pyproject.toml"
+				],
+				"python.linting.flake8Enabled": true,
+				"python.linting.mypyEnabled": true,
+				"python.linting.pydocstyleEnabled": true,
+				// VS Code displays Pylint warning: import-error that not reported in Pylint by executing CLI.
+				// "python.linting.pylintEnabled": true,
 				// This setting forcibly generate __pycache__.
 				// "python.testing.pytestEnabled": true,
 				"[python]": {
 					"editor.formatOnSave": true,
 					"editor.codeActionsOnSave": {
-						"source.fixAll": true,
-						"source.organizeImports": true
+						"source.fixAll": "explicit",
+						"source.organizeImports": "explicit"
 					}
 				},
 				"ruff.organizeImports": false,
@@ -55,23 +56,38 @@
 					"commands": [
 						{
 							"match": ".*\\.py",
-							"cmd": "pipenv run autoflake --in-place ${file}"
+							"cmd": "uv run autoflake --in-place ${file}"
 						},
 						{
 							"match": ".*\\.py",
-							"cmd": "pipenv run docformatter --in-place ${file}"
+							"cmd": "uv run docformatter --in-place ${file}"
 						}
 					]
 				},
 				"cSpell.customDictionaries": {
 					"project-words": {
-					  "name": "project-words",
-					  "path": "${workspaceRoot}/project-words.txt",
-					  "description": "Words used in this project",
-					  "addWords": true
+					"name": "project-words",
+					"path": "${workspaceRoot}/project-words.txt",
+					"description": "Words used in this project",
+					"addWords": true
 					}
-				}
-			}
+				},
+				"files.autoGuessEncoding": true
+				// This setting forcibly generate __pycache__.
+				// "python.testing.pytestEnabled": true,
+			},
+			"extensions": [
+				"GitHub.copilot",
+				"streetsidesoftware.code-spell-checker",
+				"tamasfe.even-better-toml",
+				"charliermarsh.ruff",
+				"ms-python.python",
+				"ms-python.flake8",
+				"ms-python.isort",
+				"ms-python.mypy-type-checker",
+				"ms-python.pylint",
+				"wk-j.save-and-run"
+			]
 		}
 	}
 	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
