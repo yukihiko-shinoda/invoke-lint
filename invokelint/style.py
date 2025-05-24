@@ -65,20 +65,33 @@ def call_ruff_fmt(context: Context, *, check: bool = False, **kwargs: Any) -> Li
     return result
 
 
+def is_ruff(*, by_ruff: bool, no_ruff: bool) -> bool:
+    """Determines if Ruff should be used for formatting."""
+    if by_ruff and no_ruff:
+        msg = "Cannot use both 'by_ruff' and 'no_ruff' options together."
+        raise ValueError(msg)
+    return by_ruff or not no_ruff
+
+
 @task(
     help={
         "check": "Checks if source is formatted without applying changes",
-        "ruff": "Leave ruff warnings",
-        "by_ruff": "Formats code by ruff",
+        "ruff": "Leave Ruff warnings",
+        "by_ruff": "Formats code by Ruff (default)",
+        "no_ruff": "Formats code without Ruff",
     },
 )
-def fmt(context: Context, *, check: bool = False, ruff: bool = False, by_ruff: bool = False) -> List[Result]:
+def fmt(
+    context: Context,
+    *,
+    check: bool = False,
+    ruff: bool = False,
+    by_ruff: bool = False,
+    no_ruff: bool = False,
+) -> List[Result]:
     """Formats code by docformatter, isort, autoflake, and Black (option for only check available)."""
-    tasks = [docformatter, autoflake]
-    if by_ruff:
-        tasks.append(call_ruff_fmt)
-    else:
-        tasks.extend([isort, black])
+    tasks = [docformatter]
+    tasks.extend([call_ruff_fmt] if is_ruff(by_ruff=by_ruff, no_ruff=no_ruff) else [autoflake, isort, black])
     if check or not ruff:
         tasks.append(call_ruff_check)
     return run_in_order(tasks, context, check=check)

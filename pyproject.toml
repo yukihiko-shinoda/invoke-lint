@@ -148,6 +148,7 @@ skips = ["tests/*"]
 # @see https://black.readthedocs.io/en/stable/pyproject_toml.html#configuration-format
 [tool.black]
 line-length = 119
+target-version = ["py37", "py38", "py39", "py310", "py311", "py312", "py313"]
 
 [tool.bumpversion]
 current_version = "0.11.0"
@@ -178,6 +179,7 @@ exclude_lines = [
 
 [tool.docformatter]
 recursive = true
+pre_summary_space = true
 wrap-descriptions = 119
 wrap-summaries = 119
 
@@ -281,7 +283,7 @@ select = [
     "E",  # pycodestyle
     "W",  # pycodestyle
     "C90",  # mccabe
-    # "I",  # isort
+    "I",  # isort
     "N",  # pep8-naming
     # "D",  # pydocstyle
     "UP",  # pyupgrade
