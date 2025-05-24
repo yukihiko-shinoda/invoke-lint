@@ -53,6 +53,9 @@ dev = [
     "semgrep;python_version>='3.9' or python_version>='3.6' and platform_system=='Linux'",
     "types-invoke",
     "types-setuptools",
+    # To test invoke dist without package: `build`
+    # since no packages depends on wheel when lock dependencies with Python 3.7.
+    "wheel; python_version <= '3.7'",
     "xenon",
 ]
 
