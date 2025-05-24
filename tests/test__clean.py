@@ -20,7 +20,7 @@ def test_clean_all(context: "Context") -> None:
         "rm -fr dist/",
         "rm -fr .eggs/",
         "find . -name '*.egg-info' -exec rm -fr {} +",
-        "find . -name '*.egg' -exec rm -f {} +",
+        "find . -name '*.egg' -not -path '*/.venv/*' -exec rm -f {} +",
         "find . -name '*.pyc' -exec rm -f {} +",
         "find . -name '*.pyo' -exec rm -f {} +",
         "find . -name '*~' -exec rm -f {} +",

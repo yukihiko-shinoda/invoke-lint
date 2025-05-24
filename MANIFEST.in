@@ -1,2 +1,1 @@
-include invokelint/py.typed
 recursive-include docs *

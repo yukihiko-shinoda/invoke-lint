@@ -186,7 +186,7 @@ def call_semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> List[R
 @task(help={"ci": "Run as CI mode."})
 def deep(context: Context, *, ci: bool = False) -> List[Result]:
     """Runs slow but detailed linting (mypy, Pylint, semgrep)."""
-    list_task: "List[TaskFunction]" = [call_mypy, call_pylint]
+    list_task: List[TaskFunction] = [call_mypy, call_pylint]
     if platform.system() != "Windows":
         list_task.append(call_semgrep)
     return run_in_order(list_task, context, ci=ci)

@@ -1,11 +1,13 @@
-FROM python:3.7.16-slim-bullseye
+FROM python:3.7.17-slim-bullseye
 # setuptools 65.3.0 can't lock package defined its dependencies by pyproject.toml
-RUN pip install --no-cache-dir --upgrade pip==23.3.1 setuptools==68.0.0
-# see: https://pythonspeed.com/articles/activate-virtualenv-dockerfile/
-ENV PIPENV_VENV_IN_PROJECT=1
+RUN pip install --no-cache-dir --upgrade pip==24.0 setuptools==68.0.0
+# The uv command also errors out when installing semgrep:
+# - Getting semgrep-core in pipenv · Issue #2929 · semgrep/semgrep
+#   https://github.com/semgrep/semgrep/issues/2929#issuecomment-818994969
+ENV SEMGREP_SKIP_BIN=true
 WORKDIR /workspace
+COPY pyproject.toml /workspace
+RUN pip install --no-cache-dir --ignore-requires-python uv==0.7.8 && uv sync
 COPY . /workspace
-RUN pip --no-cache-dir install pipenv==2023.10.03 \
- && pipenv install --dev
-ENTRYPOINT [ "pipenv", "run" ]
-CMD ["pytest"]
+ENTRYPOINT [ "uv", "run" ]
+CMD ["inv", "test.coverage"]

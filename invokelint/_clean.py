@@ -25,7 +25,7 @@ def dist(context: Context) -> List[Result]:
         run_in_pty(context, "rm -fr dist/"),
         run_in_pty(context, "rm -fr .eggs/"),
         run_in_pty(context, "find . -name '*.egg-info' -exec rm -fr {} +"),
-        run_in_pty(context, "find . -name '*.egg' -exec rm -f {} +"),
+        run_in_pty(context, "find . -name '*.egg' -not -path '*/.venv/*' -exec rm -f {} +"),
     ]
 
 
