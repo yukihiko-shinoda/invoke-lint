@@ -54,8 +54,7 @@ dev = [
     "types-invoke",
     "types-setuptools",
     # To test invoke dist without package: `build`
-    # since no packages depends on wheel when lock dependencies with Python 3.7.
-    "wheel; python_version <= '3.7'",
+    "wheel",
     "xenon",
 ]
 
