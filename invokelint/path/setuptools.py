@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import cast, List
+from typing import List, cast
 
 from setuptools.discovery import ConfigDiscovery, FlatLayoutModuleFinder
 from setuptools.dist import Distribution

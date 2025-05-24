@@ -1,8 +1,8 @@
 """Tasks of test."""
 
+import webbrowser
 from pathlib import Path
 from typing import List
-import webbrowser
 
 from invoke import Collection, Context, Result, task
 

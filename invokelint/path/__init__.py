@@ -1,7 +1,7 @@
 """Paths."""
 
-from collections import OrderedDict
 import os
+from collections import OrderedDict
 from pathlib import Path
 from typing import List
 
