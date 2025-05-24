@@ -220,21 +220,26 @@ module = "setuptools.discovery"
 ignore_missing_imports = true
 
 [tool.pydocstyle]
-# To add Google convention
-# see:
-# - Error Codes — pydocstyle 6.1.1 documentation
-#   http://www.pydocstyle.org/en/stable/error_codes.html#default-conventions
-add_select = ["D212", "D214", "D410", "D411", "D415", "D416", "D417"]
-# D400: First line may ends with ":" for expression.
-# D402: First line may ends with function signature for expression.
-# D415: First line may ends with ":" for expression.
-# D101: Docstring may be missed in public class since docstring-min-length is set.
-# D102: Docstring may be missed in public method since docstring-min-length is set.
-# D103: Docstring may be missed in public function since docstring-min-length is set.
-# D105: Docstring may be missed in magic method since docstring-min-length is set.
-# D105: Docstring may be missed in public nested class since docstring-min-length is set.
-# D107: Docstring may be missed in __init__ method since docstring-min-length is set.
-add_ignore = ["D400", "D401", "D402", "D415", "D101", "D102", "D103", "D105", "D106", "D107"]
+convention = "google"
+add_ignore = [
+    # Reason: Docstring may be missed in public class since docstring-min-length is set.
+    "D101",  # Missing docstring in public class
+    # Reason: Docstring may be missed in public method since docstring-min-length is set.
+    "D102",  # Missing docstring in public method
+    # Reason: Docstring may be missed in public function since docstring-min-length is set.
+    "D103",  # Missing docstring in public function
+    # Reason: Docstring may be missed in magic method since docstring-min-length is set.
+    "D105",  # Missing docstring in magic method
+    # Reason: Docstring may be missed in public nested class since docstring-min-length is set.
+    "D106",  # Missing docstring in public nested class
+    # Reason: Docstring may be missed in __init__ method since docstring-min-length is set.
+    "D107",  # Missing docstring in __init__
+    # Reason: First line may ends with function signature for expression.
+    "D402",  # First line should not be the function’s “signature”
+    # Reason: First line may ends with ":" for expression.
+    "D415",  # First line should end with a period, question mark, or exclamation point
+]
+
 
 [tool.pylint.basic]
 docstring-min-length = "7"
@@ -274,7 +279,7 @@ select = [
     "C90",  # mccabe
     "I",  # isort
     "N",  # pep8-naming
-    # "D",  # pydocstyle
+    "D",  # pydocstyle
     "UP",  # pyupgrade
     "YTT",  # flake8-2020
     "ANN",  # flake8-annotations
@@ -316,6 +321,23 @@ select = [
     "RUF",  # Ruff-specific rules
 ]
 ignore = [
+    # lint.pydocstyle
+    # Reason: Docstring may be missed in public class since docstring-min-length is set.
+    "D101",  # Missing docstring in public class
+    # Reason: Docstring may be missed in public method since docstring-min-length is set.
+    "D102",  # Missing docstring in public method
+    # Reason: Docstring may be missed in public function since docstring-min-length is set.
+    "D103",  # Missing docstring in public function
+    # Reason: Docstring may be missed in magic method since docstring-min-length is set.
+    "D105",  # Missing docstring in magic method
+    # Reason: Docstring may be missed in public nested class since docstring-min-length is set.
+    "D106",  # Missing docstring in public nested class
+    # Reason: Docstring may be missed in __init__ method since docstring-min-length is set.
+    "D107",  # Missing docstring in __init__
+    # Reason: First line may ends with function signature for expression.
+    "D402",  # First line should not be the function’s “signature”
+    # Reason: First line may ends with ":" for expression.
+    "D415",  # First line should end with a period, question mark, or exclamation point
     "UP032",  # [*] Use f-string instead of `format` call
     "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed, These warnings are disabled by default
 ]
@@ -331,3 +353,6 @@ fixable = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
