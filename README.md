@@ -5,6 +5,7 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/935364d296051fb926c8/test_coverage)](https://codeclimate.com/github/yukihiko-shinoda/invoke-lint/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/935364d296051fb926c8/maintainability)](https://codeclimate.com/github/yukihiko-shinoda/invoke-lint/maintainability)
 [![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/yukihiko-shinoda/invoke-lint)](https://codeclimate.com/github/yukihiko-shinoda/invoke-lint)
+[![Dependabot](https://flat.badgen.net/github/dependabot/yukihiko-shinoda/invoke-lint?icon=dependabot)](https://github.com/yukihiko-shinoda/invoke-lint/security/dependabot)
 [![Python versions](https://img.shields.io/pypi/pyversions/invokelint.svg)](https://pypi.org/project/invokelint)
 [![Twitter URL](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fyukihiko-shinoda%2Finvoke-lint)](http://twitter.com/share?text=Invoke%20Lint&url=https://pypi.org/project/invokelint/&hashtags=python)
 
@@ -139,61 +140,66 @@ See:
 
 It's better to use one of [dependency management tools] to resolve dependencies of many dev tools.
 
-For example, in case when use [Pipenv], `Pipfile`:
+For example, in case when use [uv], `pyproject.toml`:
 
 ```toml
-[[source]]
-url = "https://pypi.org/simple"
-verify_ssl = true
-name = "pypi"
-
-[dev-packages]
-autoflake = "*"
-bandit = {version = "*", markers="python_version >= '3.7'"}
-black = {version = "*", markers="python_version >= '3.7'"}
-build = "*"
-# Hotfix for Pipenv's Bug:
-# - Pipenv should prioritize more cross-platform sys_platform condition between packages when lock
-#   · Issue #4101 · pypa/pipenv
-#   https://github.com/pypa/pipenv/issues/4101
-colorama = "*"
-# Pipenv can't crawl coverage==3.5.3:
-# - Command: "pipenv install --skip-lock" fails 
-#   since it tries to parse legacy package metadata and raise InstallError
-#   · Issue #5595 · pypa/pipenv
-#   https://github.com/pypa/pipenv/issues/5595#issuecomment-1454769781
-coverage = ">=3.5.4"
-# The dlint less than 0.14.0 limits max version of flake8.
-dlint = ">=0.14.0"
-docformatter = {extras = ["tomli"], version = "*"}
-dodgy = "*"
-# Since Pipenv can't lock for too much combinations to attempt lock:
-# pip._vendor.resolvelib.resolvers.ResolutionTooDeep: 2000000
-# The hacking depends flake8 ~=6.1.0 or ~=5.0.1 or ~=4.0.1.
-flake8 = {version = "!=6.0.0,!=5.0.0,>=4.0.1", markers="python_version >= '3.6'"}
-# To use flake8 --radon-show-closures
-flake8-polyfill = "*"
-# Latest hacking depends on legacy version of flake8, and legacy hacking doesn't narrow flake8 version.
-# When unpin hacking, it has possibility to install too legacy version of hacking.
-hacking = {version = ">=5.0.0", markers="python_version >= '3.8'"}
-invokelint = {version = "*", markers="python_version >= '3.7'"}
-isort = "*"
-mypy = "*"
-pydocstyle = {version = "*", markers="python_version >= '3.6'"}
-pylint = "*"
-pytest = "*"
-radon = "*"
-ruff = {version = "*", markers="python_version >= '3.7'"}
-semgrep = {version = "*", markers="python_version >= '3.6'"}
-tomli = {version = "*", markers="python_version >= '3.6'"}
-xenon = "*"
+[dependency-groups]
+dev = [
+    "autoflake",
+    "bandit; python_version >= '3.7'",
+    "black; python_version >= '3.7'",
+    "build",
+    "bump-my-version",
+    "cohesion",
+    # The coverage==3.5.3 is difficult to analyze its dependencies by dependencies management tool,
+    # so we should avoid 3.5.3 or lower.
+    # - Command: "pipenv install --skip-lock" fails 
+    #   since it tries to parse legacy package metadata and raise InstallError
+    #   · Issue #5595 · pypa/pipenv
+    #   https://github.com/pypa/pipenv/issues/5595
+    "coverage>=3.5.4",
+    # The dlint less than 0.14.0 limits max version of flake8.
+    # - dlint/requirements.txt at 0.13.0 · dlint-py/dlint
+    #   https://github.com/dlint-py/dlint/blob/0.13.0/requirements.txt#L1
+    "dlint>=0.14.0",
+    # To the docformatter load pyproject.toml settings:
+    "docformatter[tomli]; python_version < '3.11' and python_version >= '3.6'",
+    "docformatter; python_version >= '3.11'",
+    "dodgy",
+    # The hacking depends flake8 ~=6.1.0 or ~=5.0.1 or ~=4.0.1.
+    # We should avoid the versions that is not compatible with the hacking,
+    # considering the speed of dependency calculation process
+    "flake8!=6.0.0,!=5.0.0,>=4.0.1; python_version >= '3.6'",
+    # To use flake8 --radon-show-closures
+    "flake8-polyfill",
+    # To use pyproject.toml for Flake8 configuration
+    "Flake8-pyproject",
+    # Latest hacking depends on legacy version of flake8, and legacy hacking doesn't narrow flake8 version.
+    # When unpin hacking, it has possibility to install too legacy version of hacking.
+    "hacking>=5.0.0; python_version >= '3.8'",
+    "invokelint; python_version >= '3.7'",
+    "isort",
+    "mypy",
+    "pydocstyle; python_version >= '3.6'",
+    "pylint",
+    "pytest",
+    # Since the radon can't run when use pytest log format:
+    # - Radon can't run when use pytest log fornat: `$()d` · Issue #251 · rubik/radon
+    #   https://github.com/rubik/radon/issues/251
+    "radon<6.0.0",
+    "ruff; python_version >= '3.7'",
+    "semgrep;python_version>='3.9' or python_version>='3.6' and platform_system=='Linux'",
+    # To resolve type checking for `from invoke import Collection` in tasks.py
+    "types-invoke",
+    "xenon",
+]
 ```
 
 then:
 
 ```console
-pipenv install --dev
-pipenv shell
+uv sync
+source .venv/bin/activate
 ```
 
 ### 2. Implement
@@ -277,7 +283,7 @@ This package was created with [Cookiecutter] and the [yukihiko-shinoda/cookiecut
 [yukihiko-shinoda/cookiecutter-pypackage]: https://github.com/audreyr/cookiecutter-pypackage
 [Invoke]: https://pypi.org/project/invoke/
 [dependency management tools]: https://packaging.python.org/en/latest/tutorials/managing-dependencies/
-[Pipenv]: https://pypi.org/project/pipenv/
+[uv]: https://pypi.org/project/uv/
 [Ruff]: https://pypi.org/project/ruff/
 [Bandit]: https://pypi.org/project/bandit/
 [dodgy]: https://pypi.org/project/dodgy/
