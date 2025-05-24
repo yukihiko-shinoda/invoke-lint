@@ -1,9 +1,9 @@
 """Tasks of clean."""
 
-from contextlib import suppress
-from pathlib import Path
 import shutil
 import sys
+from contextlib import suppress
+from pathlib import Path
 from typing import List
 
 from invoke import Collection, Context, Result, task

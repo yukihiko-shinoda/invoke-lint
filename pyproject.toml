@@ -191,6 +191,8 @@ extend_ignore = [
   # Since it conflicts with Black, Black and its philosophy should be respect than hacking.
   # see: https://github.com/psf/black
   "H301",
+  # 2025-05-24 Now openstack/hacking wasn't introduced into Ruff and sorting imports is mainly considered with isort.
+  "H306",
   # Cohesion may be in experimental.
   "H601",
 ]
@@ -211,17 +213,6 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 119
-# For compatibility with PyLint and Hacking, Google also supports, 
-# Black doesn't have any opinions
-# see:
-# - https://pycqa.github.io/isort/docs/configuration/profiles.html
-# - https://qiita.com/kaityo256/items/5b0b55d105ef2366cb0c
-# - https://www.xn--ebkc7kqd.com/entry/hacking-isort
-force_sort_within_sections = true
-lexicographical = true
-# Google supports, Black doesn't have any opinions
-# see: https://pycqa.github.io/isort/docs/configuration/profiles.html
-order_by_type = false
 
 [tool.mypy]
 strict = true
@@ -332,6 +323,7 @@ ignore = [
 ]
 fixable = [
     "COM812",  # Trailing comma missing
+    "I",  # isort
     "PT001",  # Use `@pytest.fixture()` over `@pytest.fixture`
     "PT006",  # Wrong name(s) type in `@pytest.mark.parametrize`, expected `tuple`
     "SIM108",  # Use ternary operator `extra_context = {} if extra_context is None else request.param` instead of `if`-`else`-block

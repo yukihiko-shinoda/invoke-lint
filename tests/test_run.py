@@ -1,10 +1,10 @@
 """Tests for `run` package."""
 
 import sys
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
-from invoke import Context, Result, task, UnexpectedExit
 import pytest
+from invoke import Context, Result, UnexpectedExit, task
 
 from invokelint.run import run_all
 

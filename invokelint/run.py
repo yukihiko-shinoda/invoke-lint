@@ -1,7 +1,7 @@
 """Functions to run tasks."""
 
 import platform
-from typing import Any, Callable, cast, List, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, List, cast
 
 from invoke import Context, Result, UnexpectedExit
 

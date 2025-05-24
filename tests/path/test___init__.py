@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 from invokelint.path import debug
 
 if TYPE_CHECKING:
-    from invoke import Context
     import pytest
+    from invoke import Context
 
 
 def test(context: "Context", capsys: "pytest.CaptureFixture[str]") -> None:

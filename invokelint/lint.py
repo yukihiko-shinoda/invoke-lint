@@ -1,12 +1,12 @@
 """Tasks of lint."""
 
 import platform
-from typing import Any, List, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, List
 
 from invoke import Collection, Context, Result, task
 
-from invokelint.path import PYTHON_DIRS
 from invokelint import ruff as ruff_commands
+from invokelint.path import PYTHON_DIRS
 from invokelint.run import run_all, run_in_order, run_in_pty
 from invokelint.style import fmt
 

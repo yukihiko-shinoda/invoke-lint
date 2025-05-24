@@ -1,9 +1,9 @@
 """Configuration of pytest."""
 
-from typing import Any, Generator, List, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Generator, List
 
-from invoke import Config, Context
 import pytest
+from invoke import Config, Context
 
 if TYPE_CHECKING:
     from types import ModuleType

@@ -3,9 +3,10 @@
 from typing import Any, List
 
 from invoke import Collection, Context, Result, task
+from invoke.exceptions import Exit
 
-from invokelint.path import PYTHON_DIRS
 from invokelint import ruff as ruff_commands
+from invokelint.path import PYTHON_DIRS
 from invokelint.run import run_in_order, run_in_pty
 
 ns = Collection()
@@ -68,8 +69,8 @@ def call_ruff_fmt(context: Context, *, check: bool = False, **kwargs: Any) -> Li
 def is_ruff(*, by_ruff: bool, no_ruff: bool) -> bool:
     """Determines if Ruff should be used for formatting."""
     if by_ruff and no_ruff:
-        msg = "Cannot use both 'by_ruff' and 'no_ruff' options together."
-        raise ValueError(msg)
+        msg = "Cannot use both '--by-ruff' and '--no-ruff' options together."
+        raise Exit(msg)
     return by_ruff or not no_ruff
 
 

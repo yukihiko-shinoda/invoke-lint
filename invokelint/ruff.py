@@ -1,6 +1,6 @@
 """To unify executing ruff from style and from lint."""
 
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from invokelint.path import PYTHON_DIRS
 from invokelint.run import run_in_pty

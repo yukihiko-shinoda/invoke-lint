@@ -1,6 +1,6 @@
 """Test libraries."""
 
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from invoke import Result
