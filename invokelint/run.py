@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def run_in_pty(context: Context, command: str, **kwargs: Any) -> Result:
-    return cast(Result, context.run(command, pty=platform.system() != "Windows", **kwargs))
+    return cast("Result", context.run(command, pty=platform.system() != "Windows", **kwargs))
 
 
 def run_in_order(list_task: "List[TaskFunction]", context: Context, *args: Any, **kwargs: Any) -> List[Result]:

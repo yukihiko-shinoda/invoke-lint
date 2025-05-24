@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 collect_ignore = ["setup.py"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def context() -> Context:
     defaults = Config.global_defaults()  # type: ignore[no-untyped-call]
     defaults["run"]["pty"] = True
@@ -22,7 +22,7 @@ def context() -> Context:
     return Context(config=Config(defaults=defaults))
 
 
-@pytest.fixture()
+@pytest.fixture
 def _package_not_exists(mocker: "MockerFixture", package_names: List[str]) -> Generator[None, None, None]:
     """See:
 

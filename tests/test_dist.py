@@ -24,12 +24,12 @@ def test_module_exists(parameter: str, *, expect: bool) -> None:
     assert module_exists(parameter) == expect
 
 
-@pytest.mark.slow()
+@pytest.mark.slow
 def test_dist_build(context: "Context") -> None:
     check_result(dist(context), "python -m build")
 
 
-@pytest.mark.slow()
+@pytest.mark.slow
 @pytest.mark.usefixtures("_package_not_exists")
 @pytest.mark.parametrize("package_names", [["build"]])
 def test_dist_setup_py(context: "Context") -> None:

@@ -135,17 +135,17 @@ def test_fast_by_ruff(context: "Context") -> None:
     check_list_result(list_result, LIST_COMMAND_EXPECTED_STYLE_BY_RUFF + LIST_COMMAND_EXPECTED)
 
 
-@pytest.mark.slow()
+@pytest.mark.slow
 def test_mypy(context: "Context") -> None:
     check_list_result(mypy(context), [COMMAND_EXPECTED_MYPY])
 
 
-@pytest.mark.slow()
+@pytest.mark.slow
 def test_pylint(context: "Context") -> None:
     check_list_result(pylint(context), [COMMAND_EXPECTED_PYLINT])
 
 
-@pytest.mark.slow()
+@pytest.mark.slow
 # - semgrep does not work on windows 10 · Issue #4295 · returntocorp/semgrep
 #   https://github.com/returntocorp/semgrep/issues/4295
 # - No module found: resource (ModuleNotFoundError) · Issue #7146 · returntocorp/semgrep
@@ -156,7 +156,7 @@ def test_semgrep(context: "Context") -> None:
     check_list_result(semgrep(context), [COMMAND_EXPECTED_SEMGREP])
 
 
-@pytest.mark.slow()
+@pytest.mark.slow
 def test_deep(context: "Context") -> None:
     """Command should success and run appropriate commands."""
     list_command_expected = [COMMAND_EXPECTED_MYPY, COMMAND_EXPECTED_PYLINT]
