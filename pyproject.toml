@@ -126,9 +126,6 @@ dependencies = [
     "setuptools>=61.0.0",
 ]
 
-[project.optional-dependencies]
-test = []
-
 [project.urls]
 homepage = "https://github.com/yukihiko-shinoda/invoke-lint"
 # documentation = "https://readthedocs.org"
@@ -137,6 +134,9 @@ repository = "https://github.com/yukihiko-shinoda/invoke-lint"
 
 [tool.setuptools]
 zip-safe = false
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
 
 [tool.bandit.assert_used]
 skips = ["tests/*"]
@@ -224,11 +224,6 @@ strict = true
 module = "setuptools.discovery"
 ignore_missing_imports = true
 
-[tool.radon]
-cc_min = "B"
-show_complexity = true
-show_mi = true
-
 [tool.pydocstyle]
 # To add Google convention
 # see:
@@ -267,6 +262,11 @@ min-public-methods = "1"
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
 ]
+
+[tool.radon]
+cc_min = "B"
+show_complexity = true
+show_mi = true
 
 [tool.ruff]
 line-length = 119
