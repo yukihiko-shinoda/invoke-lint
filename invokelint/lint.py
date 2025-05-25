@@ -54,6 +54,18 @@ def cohesion(context: Context) -> List[Result]:
 ns.add_task(cohesion)
 
 
+@task
+def xenon(context: Context) -> List[Result]:
+    """Checks code complexity."""
+    command = ("xenon --max-absolute A --max-modules A --max-average A {}").format(" ".join(PYTHON_DIRS))
+    return [run_in_pty(context, command)]
+
+
+# Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
+def call_xenon(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+    return xenon(context)
+
+
 @task(name="ruff")
 def ruff_task(context: Context) -> List[Result]:
     """Lints code with Ruff."""
@@ -109,18 +121,6 @@ def call_pydocstyle(context: Context, **kwargs: Any) -> List[Result]:  # noqa: A
     return pydocstyle(context)
 
 
-@task
-def xenon(context: Context) -> List[Result]:
-    """Checks code complexity."""
-    command = ("xenon --max-absolute A --max-modules A --max-average A {}").format(" ".join(PYTHON_DIRS))
-    return [run_in_pty(context, command)]
-
-
-# Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_xenon(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
-    return xenon(context)
-
-
 @task(
     help={
         "skip_format": "Lints without format style.",
@@ -147,12 +147,12 @@ def fast(
     return list_result
 
 
+ns.add_task(xenon)
 ns.add_task(ruff_task)
 ns.add_task(bandit)
 ns.add_task(dodgy)
 ns.add_task(flake8)
 ns.add_task(pydocstyle)
-ns.add_task(xenon)
 ns.add_task(fast, default=True)
 
 

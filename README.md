@@ -43,9 +43,10 @@ Linters:
 Formatters:
 
 - [docformatter]
-- [isort]
-- [autoflake]
-- [Black]
+- [Ruff]
+- [autoflake] (If you want to use it instead of Ruff)
+- [isort] (If you want to use it instead of Ruff)
+- [Black] (If you want to use it instead of Ruff)
 
 For test and coverage:
 
@@ -76,17 +77,23 @@ This doesn't pollute your comfortable namespaces of command line tools. Thanks t
 Formats code by following tools at once:
 
 1. [docformatter]
-2. [isort]
-3. [autoflake]
+2. [Ruff] format
+3. [Ruff] check --fix
+
+Optionally, you can use [autoflake], [isort], and [Black] instead of [Ruff] format by `inv style --no-ruff`:
+
+1. [docformatter]
+2. [autoflake]
+3. [isort]
 4. [Black]
-5. [Ruff]
+5. [Ruff] check --fix
 
 - `inv style --check` can only check.
-- `inv style --ruff` can leave Ruff warnings.
+- `inv style --ruff` can skip `ruff check --fix`.
 
 ### `inv lint`
 
-Runs following fast lints at once:
+Runs following fast linters at once:
 
 1. [Xenon]
 2. [Ruff]
@@ -95,11 +102,11 @@ Runs following fast lints at once:
 5. [Flake8]
 6. [pydocstyle]
 
-The format task ([described later](#inv-style)) also run before run above lints. You can skip them by `--skip-format` option.
+The format task ([described later](#inv-style)) also run before running above linters. You can skip them by `--skip-format` option.
 
 ### `inv lint.deep`
 
-Runs following slow but detailed lints at once:
+Runs following slow but detailed linters at once:
 
 1. [mypy]
 2. [Pylint]
@@ -120,9 +127,9 @@ See:
 
 ### `inv test.cov`
 
-Runs all tests and report coverage by [pytest] and [Coverage.py].
+Runs all tests and report those coverage by [pytest] and [Coverage.py].
 
-It also can dump coverage as XML or HTML format.
+It also can dump the coverage as XML or HTML format.
 
 ### `inv dist`
 
@@ -138,15 +145,16 @@ See:
 
 ### 1. Install
 
-It's better to use one of [dependency management tools] to resolve dependencies of many dev tools.
+We should use [uv] or one of the [dependency management tools] to resolve dependencies of many dev tools.
 
-For example, in case when use [uv], `pyproject.toml`:
+For example, in case when we use the [uv], then, `pyproject.toml` is like below:
 
 ```toml
 [dependency-groups]
 dev = [
     "autoflake",
     "bandit; python_version >= '3.7'",
+    # If you want to use not Ruff but Black for formatting
     "black; python_version >= '3.7'",
     "build",
     "bump-my-version",
@@ -178,6 +186,7 @@ dev = [
     # When unpin hacking, it has possibility to install too legacy version of hacking.
     "hacking>=5.0.0; python_version >= '3.8'",
     "invokelint; python_version >= '3.7'",
+    # If you want to use not Ruff but isort for formatting
     "isort",
     "mypy",
     "pydocstyle; python_version >= '3.6'",
