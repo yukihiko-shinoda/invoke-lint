@@ -64,7 +64,7 @@ dev = [
 
 [project]
 name = "invokelint"
-version = "0.12.0"
+version = "0.12.1"
 description = "Invokes Python dev tools at once."
 readme = "README.md"
 # Dependency: setuptools>=61.0.0 requires Python 3.7
@@ -153,7 +153,7 @@ skips = ["tests/*"]
 line-length = 119
 
 [tool.bumpversion]
-current_version = "0.12.0"
+current_version = "0.12.1"
 commit = true
 tag = true
 
