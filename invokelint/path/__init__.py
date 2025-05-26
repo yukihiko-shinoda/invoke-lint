@@ -71,7 +71,7 @@ ns = Collection()
 
 @task
 def debug(_context: Context) -> None:
-    """Builds source and wheel packages into dist/ directory."""
+    """Debugs and displays which path is recognized as project paths."""
     click.echo(f"Setuptools detected packages: {setuptools.packages}")
     click.echo(f"Root packages: {PRODUCTION_PACKAGES}")
     click.echo(f"Setuptools detected Python modules: {SETUPTOOLS_PYTHON_MODULES}")

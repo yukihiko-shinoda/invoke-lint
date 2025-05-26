@@ -1,4 +1,4 @@
-"""To unify executing ruff from style and from lint."""
+"""To unify executing Ruff from style and from lint."""
 
 from typing import TYPE_CHECKING, List
 
