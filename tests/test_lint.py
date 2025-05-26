@@ -6,28 +6,24 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from invokelint.lint import (
-    bandit,
-    cohesion,
-    deep,
-    dodgy,
-    fast,
-    flake8,
-    mypy,
-    pydocstyle,
-    pylint,
-    radon,
-    radon_cc,
-    radon_mi,
-    ruff_task,
-    semgrep,
-    xenon,
-)
-from tests.test_style import (
-    LIST_COMMAND_EXPECTED_STYLE_BY_RUFF,
-    LIST_COMMAND_EXPECTED_STYLE_NO_RUFF,
-    LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF_BY_RUFF,
-)
+from invokelint.lint import bandit
+from invokelint.lint import cohesion
+from invokelint.lint import deep
+from invokelint.lint import dodgy
+from invokelint.lint import fast
+from invokelint.lint import flake8
+from invokelint.lint import mypy
+from invokelint.lint import pydocstyle
+from invokelint.lint import pylint
+from invokelint.lint import radon
+from invokelint.lint import radon_cc
+from invokelint.lint import radon_mi
+from invokelint.lint import ruff_task
+from invokelint.lint import semgrep
+from invokelint.lint import xenon
+from tests.test_style import LIST_COMMAND_EXPECTED_STYLE_BY_RUFF
+from tests.test_style import LIST_COMMAND_EXPECTED_STYLE_NO_RUFF
+from tests.test_style import LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF_BY_RUFF
 from tests.testlibraries import check_list_result
 
 if TYPE_CHECKING:

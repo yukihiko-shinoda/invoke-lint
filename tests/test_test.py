@@ -5,10 +5,15 @@ import re
 from textwrap import dedent
 from typing import TYPE_CHECKING
 
-from invoke import MockContext, Result
+from invoke import MockContext
+from invoke import Result
 
-from invokelint.test import build_coverage_run_command, coverage, fast, run_test_all
-from tests.testlibraries import check_list_result, check_result
+from invokelint.test import build_coverage_run_command
+from invokelint.test import coverage
+from invokelint.test import fast
+from invokelint.test import run_test_all
+from tests.testlibraries import check_list_result
+from tests.testlibraries import check_result
 
 if TYPE_CHECKING:
     from pytest_mock import MockFixture

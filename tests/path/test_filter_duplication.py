@@ -2,7 +2,9 @@
 
 import pytest
 
-from invokelint.path.filter_duplication import _check_subpath, _update_list, filter_duplication
+from invokelint.path.filter_duplication import _check_subpath
+from invokelint.path.filter_duplication import _update_list
+from invokelint.path.filter_duplication import filter_duplication
 
 
 @pytest.mark.parametrize(

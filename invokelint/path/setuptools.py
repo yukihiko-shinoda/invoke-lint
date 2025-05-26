@@ -1,10 +1,13 @@
 """Call Setuptools API to list packages."""
 
+from __future__ import annotations
+
 import os
 from pathlib import Path
-from typing import List, cast
+from typing import cast
 
-from setuptools.discovery import ConfigDiscovery, FlatLayoutModuleFinder
+from setuptools.discovery import ConfigDiscovery
+from setuptools.discovery import FlatLayoutModuleFinder
 from setuptools.dist import Distribution
 
 
@@ -18,15 +21,15 @@ class Setuptools:
         self.config_discovery()
 
     @property
-    def packages(self) -> List[str]:
-        return cast("List[str]", self.config_discovery.dist.packages)
+    def packages(self) -> list[str]:
+        return cast("list[str]", self.config_discovery.dist.packages)
 
-    def find_py_modules(self, modules_to_lint: List[str]) -> List[str]:
+    def find_py_modules(self, modules_to_lint: list[str]) -> list[str]:
         if self.config_discovery.dist.py_modules:
-            return cast("List[str]", self.config_discovery.dist.py_modules)
+            return cast("list[str]", self.config_discovery.dist.py_modules)
         exclude = [module for module in FlatLayoutModuleFinder.DEFAULT_EXCLUDE if module not in modules_to_lint]
         # sorted(): Since Windows returns different order from Linux.
-        return cast("List[str]", sorted(FlatLayoutModuleFinder.find(self.project_root, exclude)))
+        return cast("list[str]", sorted(FlatLayoutModuleFinder.find(self.project_root, exclude)))
 
     @property
     def project_root(self) -> Path:

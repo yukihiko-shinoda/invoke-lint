@@ -4,7 +4,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from invokelint.dist import dist, module_exists
+from invokelint.dist import dist
+from invokelint.dist import module_exists
 from tests.testlibraries import check_result
 
 if TYPE_CHECKING:
