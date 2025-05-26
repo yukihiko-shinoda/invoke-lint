@@ -1,12 +1,17 @@
 """Tasks of test."""
 
+from __future__ import annotations
+
 import webbrowser
 from pathlib import Path
-from typing import List
 
-from invoke import Collection, Context, Result, task
+from invoke import Collection
+from invoke import Context
+from invoke import Result
+from invoke import task
 
-from invokelint.path import PRODUCTION_PACKAGES, PYTHON_DIRS_EXCLUDING_TEST
+from invokelint.path import PRODUCTION_PACKAGES
+from invokelint.path import PYTHON_DIRS_EXCLUDING_TEST
 from invokelint.run import run_in_pty
 
 ns = Collection()
@@ -44,8 +49,8 @@ def build_coverage_run_command(*, is_all: bool = False) -> str:
     #   Use 'coverage help' for help.
     #   Full documentation is at https://coverage.readthedocs.io
     # Reason: Note. pylint: disable=line-too-long
-    # command = "coverage run --concurrency=multiprocessing --source {} -m pytest".format(",".join(targets))  # noqa: ERA001 E501
-    return "coverage run --source {} -m pytest".format(",".join(Path(target).stem for target in targets))
+    # command = "coverage run --concurrency=multiprocessing --source {} -m pytest".format(",".join(targets))  # noqa: ERA001
+    return f"coverage run --source {','.join(Path(target).stem for target in targets)} -m pytest"
 
 
 @task(
@@ -65,7 +70,7 @@ def coverage(
     publish: bool = False,
     xml: bool = False,
     html: bool = False,
-) -> List[Result]:
+) -> list[Result]:
     """Runs all tests and report coverage (options for create xml / html available)."""
     run_in_pty(context, build_coverage_run_command(is_all=all))
     result = []

@@ -2,7 +2,10 @@
 
 import builtins
 
-from invoke import Collection, Context, Result, task
+from invoke import Collection
+from invoke import Context
+from invoke import Result
+from invoke import task
 
 from invokelint._clean import clean_all
 from invokelint.run import run_in_pty

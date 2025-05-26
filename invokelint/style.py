@@ -1,19 +1,25 @@
 """Tasks of format."""
 
-from typing import Any, List
+from __future__ import annotations
 
-from invoke import Collection, Context, Result, task
+from typing import Any
+
+from invoke import Collection
+from invoke import Context
+from invoke import Result
+from invoke import task
 from invoke.exceptions import Exit
 
 from invokelint import ruff as ruff_commands
 from invokelint.path import PYTHON_DIRS
-from invokelint.run import run_in_order, run_in_pty
+from invokelint.run import run_in_order
+from invokelint.run import run_in_pty
 
 ns = Collection()
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     """Runs docformatter.
 
     This function includes hard coding of line length.
@@ -21,33 +27,33 @@ def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> Lis
     - Add pyproject.toml support for config (Issue #10) by weibullguy · Pull Request #77 · PyCQA/docformatter
     https://github.com/PyCQA/docformatter/pull/77
     """
-    docformatter_options = " --recursive {}".format("--check" if check else "--in-place")
-    return [run_in_pty(context, "docformatter{} {}".format(docformatter_options, " ".join(PYTHON_DIRS)), warn=True)]
+    docformatter_options = f" --recursive {'--check' if check else '--in-place'}"
+    return [run_in_pty(context, f"docformatter{docformatter_options} {' '.join(PYTHON_DIRS)}", warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def autoflake(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def autoflake(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     """Runs autoflake."""
-    autoflake_options = " --recursive {}".format("--check" if check else "--in-place")
-    return [run_in_pty(context, "autoflake{} {}".format(autoflake_options, " ".join(PYTHON_DIRS)), warn=True)]
+    autoflake_options = f" --recursive {'--check' if check else '--in-place'}"
+    return [run_in_pty(context, f"autoflake{autoflake_options} {' '.join(PYTHON_DIRS)}", warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def isort(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def isort(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     """Runs isort."""
     isort_options = " --check-only --diff" if check else ""
-    return [run_in_pty(context, "isort{} {}".format(isort_options, " ".join(PYTHON_DIRS)), warn=True)]
+    return [run_in_pty(context, f"isort{isort_options} {' '.join(PYTHON_DIRS)}", warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def black(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def black(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     """Runs Black."""
     black_options = " --check --diff" if check else ""
-    return [run_in_pty(context, "black{} {}".format(black_options, " ".join(PYTHON_DIRS)), warn=True)]
+    return [run_in_pty(context, f"black{black_options} {' '.join(PYTHON_DIRS)}", warn=True)]
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def call_ruff_check(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_ruff_check(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     if check:
         return ruff_commands.chk(context, show_fixes=True)
     result = []
@@ -57,7 +63,7 @@ def call_ruff_check(context: Context, *, check: bool = False, **kwargs: Any) -> 
 
 
 # Reason: Compatibility with semgrep task to be called from lint.fast().. pylint: disable=unused-argument
-def call_ruff_fmt(context: Context, *, check: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_ruff_fmt(context: Context, *, check: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     if check:
         return ruff_commands.fmt(context, diff=check)
     result = []
@@ -89,7 +95,7 @@ def fmt(
     ruff: bool = False,
     by_ruff: bool = False,
     no_ruff: bool = False,
-) -> List[Result]:
+) -> list[Result]:
     """Formats code by docformatter and Ruff (option for only check available)."""
     tasks = [docformatter]
     tasks.extend([call_ruff_fmt] if is_ruff(by_ruff=by_ruff, no_ruff=no_ruff) else [autoflake, isort, black])

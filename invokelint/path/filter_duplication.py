@@ -1,6 +1,6 @@
 """Filter duplicated paths."""
 
-from typing import List
+from __future__ import annotations
 
 
 def _check_subpath(path_a: str, path_b: str) -> int:
@@ -11,7 +11,7 @@ def _check_subpath(path_a: str, path_b: str) -> int:
     return 0
 
 
-def _update_list(path: str, list_filtered: List[str]) -> None:
+def _update_list(path: str, list_filtered: list[str]) -> None:
     for filtered in list_filtered:
         int_subpath = _check_subpath(path, filtered)
         if int_subpath == 1:
@@ -23,8 +23,8 @@ def _update_list(path: str, list_filtered: List[str]) -> None:
     return
 
 
-def filter_duplication(list_path: List[str]) -> List[str]:
-    list_filtered: List[str] = []
+def filter_duplication(list_path: list[str]) -> list[str]:
+    list_filtered: list[str] = []
     for path in list_path:
         _update_list(path, list_filtered)
     return list_filtered

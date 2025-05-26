@@ -1,12 +1,15 @@
 """Paths."""
 
+from __future__ import annotations
+
 import os
 from collections import OrderedDict
 from pathlib import Path
-from typing import List
 
 import click
-from invoke import Collection, Context, task
+from invoke import Collection
+from invoke import Context
+from invoke import task
 
 from invokelint.path.filter_duplication import filter_duplication
 from invokelint.path.setuptools import Setuptools
@@ -49,7 +52,7 @@ TEST_PACKAGES = [
 ]
 
 
-def remove_duplicate(list_str: List[str]) -> List[str]:
+def remove_duplicate(list_str: list[str]) -> list[str]:
     """see:
 
     - Answer: python - Removing duplicates in lists - Stack Overflow

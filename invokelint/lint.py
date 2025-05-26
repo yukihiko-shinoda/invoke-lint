@@ -1,13 +1,21 @@
 """Tasks of lint."""
 
-import platform
-from typing import TYPE_CHECKING, Any, List
+from __future__ import annotations
 
-from invoke import Collection, Context, Result, task
+import platform
+from typing import TYPE_CHECKING
+from typing import Any
+
+from invoke import Collection
+from invoke import Context
+from invoke import Result
+from invoke import task
 
 from invokelint import ruff as ruff_commands
 from invokelint.path import PYTHON_DIRS
-from invokelint.run import run_all, run_in_order, run_in_pty
+from invokelint.run import run_all
+from invokelint.run import run_in_order
+from invokelint.run import run_in_pty
 from invokelint.style import fmt
 
 if TYPE_CHECKING:
@@ -17,19 +25,19 @@ ns = Collection()
 
 
 @task
-def radon_cc(context: Context) -> List[Result]:
+def radon_cc(context: Context) -> list[Result]:
     """Reports code complexity."""
-    return [context.run("radon cc {}".format(" ".join(PYTHON_DIRS)))]
+    return [context.run(f"radon cc {' '.join(PYTHON_DIRS)}")]
 
 
 @task
-def radon_mi(context: Context) -> List[Result]:
+def radon_mi(context: Context) -> list[Result]:
     """Reports maintainability index."""
-    return [context.run("radon mi {}".format(" ".join(PYTHON_DIRS)))]
+    return [context.run(f"radon mi {' '.join(PYTHON_DIRS)}")]
 
 
 @task
-def radon(context: Context) -> List[Result]:
+def radon(context: Context) -> list[Result]:
     """Reports radon both code complexity and maintainability index."""
     return run_all([radon_cc, radon_mi], context)
 
@@ -40,84 +48,81 @@ ns.add_task(radon)
 
 
 @task
-def cohesion(context: Context) -> List[Result]:
+def cohesion(context: Context) -> list[Result]:
     """Lints code with Cohesion."""
     # 2021-10-24:
     # Cohesion doesn't support multiple directories in 1 command.
     # Only the last directory enables when supply multiple --directory options.
-    list_result = []
-    for directory in PYTHON_DIRS:
-        list_result.append(run_in_pty(context, "cohesion --directory {}".format(directory)))
-    return list_result
+    return [run_in_pty(context, f"cohesion --directory {directory}") for directory in PYTHON_DIRS]
 
 
 ns.add_task(cohesion)
 
 
 @task
-def xenon(context: Context) -> List[Result]:
+def xenon(context: Context) -> list[Result]:
     """Checks code complexity."""
-    command = ("xenon --max-absolute A --max-modules A --max-average A {}").format(" ".join(PYTHON_DIRS))
+    command = f"xenon --max-absolute A --max-modules A --max-average A {' '.join(PYTHON_DIRS)}"
     return [run_in_pty(context, command)]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_xenon(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_xenon(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     return xenon(context)
 
 
 @task(name="ruff")
-def ruff_task(context: Context) -> List[Result]:
+def ruff_task(context: Context) -> list[Result]:
     """Lints code with Ruff."""
     return ruff_commands.chk(context)
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_ruff(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_ruff(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     return ruff_task(context)
 
 
 @task
-def bandit(context: Context) -> List[Result]:
+def bandit(context: Context) -> list[Result]:
     """Lints code with bandit."""
-    return [run_in_pty(context, "bandit --configfile pyproject.toml --recursive {}".format(" ".join(PYTHON_DIRS)))]
+    return [run_in_pty(context, f"bandit --configfile pyproject.toml --recursive {' '.join(PYTHON_DIRS)}")]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_bandit(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_bandit(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     return bandit(context)
 
 
 @task
-def dodgy(context: Context) -> List[Result]:
+def dodgy(context: Context) -> list[Result]:
     """Lints code with dodgy."""
     return [run_in_pty(context, "dodgy --ignore-paths csvinput")]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_dodgy(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_dodgy(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     return dodgy(context)
 
 
 @task
-def flake8(context: Context) -> List[Result]:
+def flake8(context: Context) -> list[Result]:
     """Lints code with flake8."""
-    return [run_in_pty(context, "flake8 {} {}".format("--radon-show-closures", " ".join(PYTHON_DIRS)))]
+    return [run_in_pty(context, f"flake8 --radon-show-closures {' '.join(PYTHON_DIRS)}")]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_flake8(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_flake8(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     return flake8(context)
 
 
 @task
-def pydocstyle(context: Context) -> List[Result]:
+def pydocstyle(context: Context) -> list[Result]:
     """Lints code with pydocstyle."""
-    return [run_in_pty(context, "pydocstyle {}".format(" ".join(PYTHON_DIRS)))]
+    return [run_in_pty(context, f"pydocstyle {' '.join(PYTHON_DIRS)}")]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_pydocstyle(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_pydocstyle(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     return pydocstyle(context)
 
 
@@ -136,7 +141,7 @@ def fast(
     ruff: bool = False,
     by_ruff: bool = False,
     no_ruff: bool = False,
-) -> List[Result]:
+) -> list[Result]:
     """Runs fast linting (xenon, ruff, bandit, dodgy, flake8, pydocstyle).
 
     Xenon is prioritized since it effects fundamental coding structure.
@@ -157,44 +162,44 @@ ns.add_task(fast, default=True)
 
 
 @task
-def mypy(context: Context) -> List[Result]:
+def mypy(context: Context) -> list[Result]:
     """Lints code with mypy."""
-    return [run_in_pty(context, "mypy {}".format(" ".join(PYTHON_DIRS)))]
+    return [run_in_pty(context, f"mypy {' '.join(PYTHON_DIRS)}")]
 
 
 # Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def call_mypy(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_mypy(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     return mypy(context)
 
 
 @task
-def pylint(context: Context) -> List[Result]:
+def pylint(context: Context) -> list[Result]:
     """Lints code with Pylint."""
-    return [run_in_pty(context, "pylint {}".format(" ".join(PYTHON_DIRS)))]
+    return [run_in_pty(context, f"pylint {' '.join(PYTHON_DIRS)}")]
 
 
 # Reason: Compatibility with semgrep task to be called from deep(). pylint: disable=unused-argument
-def call_pylint(context: Context, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_pylint(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     return pylint(context)
 
 
 @task(help={"ci": "Run as CI mode."})
-def semgrep(context: Context, *, ci: bool = False) -> List[Result]:
+def semgrep(context: Context, *, ci: bool = False) -> list[Result]:
     """Lints code with Semgrep."""
     command = "ci" if ci else "scan"
-    full_command = "semgrep {} --oss-only --config auto --include {}".format(command, " --include ".join(PYTHON_DIRS))
+    full_command = f"semgrep {command} --oss-only --config auto --include {' --include '.join(PYTHON_DIRS)}"
     return [run_in_pty(context, full_command)]
 
 
 # Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
-def call_semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> List[Result]:  # noqa: ARG001
+def call_semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
     return semgrep(context)
 
 
 @task(help={"ci": "Run as CI mode."})
-def deep(context: Context, *, ci: bool = False) -> List[Result]:
+def deep(context: Context, *, ci: bool = False) -> list[Result]:
     """Runs slow but detailed linting (mypy, Pylint, semgrep)."""
-    list_task: List[TaskFunction] = [call_mypy, call_pylint]
+    list_task: list[TaskFunction] = [call_mypy, call_pylint]
     if platform.system() != "Windows":
         list_task.append(call_semgrep)
     return run_in_order(list_task, context, ci=ci)

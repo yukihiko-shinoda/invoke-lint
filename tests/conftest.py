@@ -1,9 +1,14 @@
 """Configuration of pytest."""
 
-from typing import TYPE_CHECKING, Any, Generator, List
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+from typing import Any
+from typing import Generator
 
 import pytest
-from invoke import Config, Context
+from invoke import Config
+from invoke import Context
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -23,7 +28,7 @@ def context() -> Context:
 
 
 @pytest.fixture
-def _package_not_exists(mocker: "MockerFixture", package_names: List[str]) -> Generator[None, None, None]:
+def _package_not_exists(mocker: MockerFixture, package_names: list[str]) -> Generator[None, None, None]:
     """See:
 
     - Answer: python - How to mock an import - Stack Overflow
@@ -33,7 +38,7 @@ def _package_not_exists(mocker: "MockerFixture", package_names: List[str]) -> Ge
     orig_import = __import__
 
     # Reason: To follow specification of original function.
-    def import_mock(name: str, *args: Any) -> "ModuleType":
+    def import_mock(name: str, *args: Any) -> ModuleType:
         if name in package_names:
             raise ModuleNotFoundError(name)
         return orig_import(name, *args)
