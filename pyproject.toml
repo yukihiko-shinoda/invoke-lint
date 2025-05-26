@@ -164,8 +164,7 @@ search = '__version__ = "{current_version}"'
 replace = '__version__ = "{new_version}"'
 
 [tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
+exclude_also = [
     # Assume `if TYPE_CHECKING: ... else: ...` block is covered · Issue #831 · nedbat/coveragepy
     #   https://github.com/nedbat/coveragepy/issues/831#issuecomment-517778185
     "if TYPE_CHECKING:",

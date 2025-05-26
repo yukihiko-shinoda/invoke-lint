@@ -77,9 +77,9 @@ def is_ruff(*, by_ruff: bool, no_ruff: bool) -> bool:
 @task(
     help={
         "check": "Checks if source is formatted without applying changes",
-        "ruff": "Leave Ruff warnings",
+        "ruff": "Leave Ruff warnings not fixed (not apply `ruff check --fix`, only `ruff format` is applied)",
         "by_ruff": "Formats code by Ruff (default)",
-        "no_ruff": "Formats code without Ruff",
+        "no_ruff": "Formats code by autoflake, isort, and Black (requires to install them)",
     },
 )
 def fmt(
@@ -90,7 +90,7 @@ def fmt(
     by_ruff: bool = False,
     no_ruff: bool = False,
 ) -> List[Result]:
-    """Formats code by docformatter, isort, autoflake, and Black (option for only check available)."""
+    """Formats code by docformatter and Ruff (option for only check available)."""
     tasks = [docformatter]
     tasks.extend([call_ruff_fmt] if is_ruff(by_ruff=by_ruff, no_ruff=no_ruff) else [autoflake, isort, black])
     if check or not ruff:

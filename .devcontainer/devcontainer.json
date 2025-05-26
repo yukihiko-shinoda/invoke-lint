@@ -52,8 +52,6 @@
 					},
 					"editor.formatOnSave": true
 				},
-				// This setting forcibly generate __pycache__.
-				// "python.testing.pytestEnabled": true,
 				"bandit.args": [
 					"--configfile",
 					"pyproject.toml"
@@ -68,10 +66,6 @@
 				},
 				"emeraldwalk.runonsave": {
 					"commands": [
-						{
-							"match": ".*\\.py",
-							"cmd": "uv run autoflake --in-place ${file}"
-						},
 						{
 							"match": ".*\\.py",
 							"cmd": "uv run docformatter --in-place ${file}"

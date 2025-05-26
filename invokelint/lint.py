@@ -124,9 +124,9 @@ def call_pydocstyle(context: Context, **kwargs: Any) -> List[Result]:  # noqa: A
 @task(
     help={
         "skip_format": "Lints without format style.",
-        "ruff": "Leave ruff warnings",
-        "by_ruff": "Formats code by ruff",
-        "no_ruff": "Formats code without Ruff",
+        "ruff": "Leave Ruff warnings not fixed (not apply `ruff check --fix`, only `ruff format` is applied)",
+        "by_ruff": "Formats code by Ruff",
+        "no_ruff": "Formats code by autoflake, isort, and Black (requires to install them)",
     },
 )
 def fast(
