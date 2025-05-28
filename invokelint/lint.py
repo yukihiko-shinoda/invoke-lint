@@ -129,25 +129,31 @@ def call_pydocstyle(context: Context, **kwargs: Any) -> list[Result]:  # noqa: A
 @task(
     help={
         "skip_format": "Lints without format style.",
-        "ruff": "Leave Ruff warnings not fixed (not apply `ruff check --fix`, only `ruff format` is applied)",
+        "ruff": "Leaves Ruff warnings not fixed (not apply `ruff check --fix`, only `ruff format` is applied)",
         "by_ruff": "Formats code by Ruff",
         "no_ruff": "Formats code by autoflake, isort, and Black (requires to install them)",
+        "pydocstyle": "Runs pydocstyle",
     },
 )
-def fast(
+# Reason: For specification  pylint: disable=too-many-arguments
+def fast(  # noqa: PLR0913
     context: Context,
     *,
     skip_format: bool = False,
     ruff: bool = False,
     by_ruff: bool = False,
     no_ruff: bool = False,
+    # Reason: To name command line option.
+    pydocstyle: bool = False,  # pylint: disable=redefined-outer-name
 ) -> list[Result]:
     """Runs fast linting (xenon, ruff, bandit, dodgy, flake8, pydocstyle).
 
     Xenon is prioritized since it effects fundamental coding structure.
     """
     list_result = [] if skip_format else fmt(context, ruff=ruff, by_ruff=by_ruff, no_ruff=no_ruff)
-    tasks = [call_xenon, call_ruff, call_bandit, call_dodgy, call_flake8, call_pydocstyle]
+    tasks = [call_xenon, call_ruff, call_bandit, call_dodgy, call_flake8]
+    if pydocstyle:
+        tasks.append(call_pydocstyle)
     list_result.extend(run_in_order(tasks, context))
     return list_result
 

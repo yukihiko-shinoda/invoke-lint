@@ -83,7 +83,7 @@ def is_ruff(*, by_ruff: bool, no_ruff: bool) -> bool:
 @task(
     help={
         "check": "Checks if source is formatted without applying changes",
-        "ruff": "Leave Ruff warnings not fixed (not apply `ruff check --fix`, only `ruff format` is applied)",
+        "ruff": "Leaves Ruff warnings not fixed (not apply `ruff check --fix`, only `ruff format` is applied)",
         "by_ruff": "Formats code by Ruff (default)",
         "no_ruff": "Formats code by autoflake, isort, and Black (requires to install them)",
     },
