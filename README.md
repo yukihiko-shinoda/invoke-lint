@@ -35,7 +35,7 @@ Linters:
 - [Bandit]
 - [dodgy]
 - [Flake8]
-- [pydocstyle]
+- [pydocstyle] (Optional)
 - [mypy]
 - [Pylint]
 - [Semgrep]
@@ -100,7 +100,7 @@ Runs following fast linters at once:
 3. [Bandit]
 4. [dodgy]
 5. [Flake8]
-6. [pydocstyle]
+6. [pydocstyle] (Optional)
 
 The format task ([described later](#inv-style)) also run before running above linters. You can skip them by `--skip-format` option.
 
@@ -189,6 +189,7 @@ dev = [
     # If you want to use not Ruff but isort for formatting
     "isort",
     "mypy",
+    # If you want to use
     "pydocstyle; python_version >= '3.6'",
     "pylint",
     "pytest",

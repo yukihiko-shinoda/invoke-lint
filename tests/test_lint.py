@@ -103,7 +103,6 @@ LIST_COMMAND_EXPECTED = [
     COMMAND_EXPECTED_BANDIT,
     COMMAND_EXPECTED_DODGY,
     COMMAND_EXPECTED_FLAKE8,
-    COMMAND_EXPECTED_PYDOCSTYLE,
 ]
 
 
@@ -111,6 +110,15 @@ def test_fast(context: "Context") -> None:
     """Command should success and run appropriate commands."""
     list_result = fast(context)
     check_list_result(list_result, LIST_COMMAND_EXPECTED_STYLE_BY_RUFF + LIST_COMMAND_EXPECTED)
+
+
+def test_fast_pydocstyle(context: "Context") -> None:
+    """Command should success and run appropriate commands."""
+    list_result = fast(context, pydocstyle=True)
+    check_list_result(
+        list_result,
+        LIST_COMMAND_EXPECTED_STYLE_BY_RUFF + LIST_COMMAND_EXPECTED + [COMMAND_EXPECTED_PYDOCSTYLE],
+    )
 
 
 def test_fast_ruff(context: "Context") -> None:
