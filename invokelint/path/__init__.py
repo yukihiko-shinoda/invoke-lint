@@ -11,7 +11,7 @@ from invoke import Collection
 from invoke import Context
 from invoke import task
 
-from invokelint.path.filter_duplication import filter_out_sub_modules
+from invokelint.path.filter_duplication import Modules
 from invokelint.path.setuptools import Setuptools
 
 # The following list of directories that setuptools exclude from dist should be added into targets for lint and format.
@@ -62,7 +62,7 @@ def remove_duplicate(list_str: list[str]) -> list[str]:
 
 
 setuptools = Setuptools()
-PRODUCTION_PACKAGES = filter_out_sub_modules([package.replace(".", os.sep) for package in setuptools.packages])
+PRODUCTION_PACKAGES = Modules([package.replace(".", os.sep) for package in setuptools.packages]).list_roots_only
 SETUPTOOLS_PYTHON_MODULES = setuptools.find_py_modules(MODULES_TO_LINT)
 EXISTING_PACKAGES = [package for package in PACKAGES_TO_LINT if Path(package).is_dir()]
 EXISTING_MODULES = [f"{module}.py" for module in SETUPTOOLS_PYTHON_MODULES if Path(f"{module}.py").is_file()]
