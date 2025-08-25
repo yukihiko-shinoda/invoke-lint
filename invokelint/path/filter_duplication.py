@@ -2,29 +2,41 @@
 
 from __future__ import annotations
 
-
-def _check_subpath(path_a: str, path_b: str) -> int:
-    if path_a.startswith(path_b):
-        return 1
-    if path_b.startswith(path_a):
-        return -1
-    return 0
+from dataclasses import dataclass
 
 
-def _update_list(path: str, list_filtered: list[str]) -> None:
-    for filtered in list_filtered:
-        int_subpath = _check_subpath(path, filtered)
-        if int_subpath == 1:
+@dataclass
+class Modules:
+    """Represents a pair of modules."""
+
+    former: str
+    later: str
+
+    def former_is_sub_module_of_later(self) -> bool:
+        return self.former.startswith(self.later)
+
+    def later_is_sub_module_of_former(self) -> bool:
+        return self.later.startswith(self.former)
+
+
+def _append_module_and_unset_any_sub_modules(target_module: str, list_module: list[str]) -> None:
+    """Add path and remove any sub modules."""
+    for module in list_module:
+        paths = Modules(target_module, module)
+        if paths.former_is_sub_module_of_later():
             return
-        if int_subpath == -1:
-            list_filtered.remove(filtered)
+        if paths.later_is_sub_module_of_former():
+            list_module.remove(module)
             break
-    list_filtered.append(path)
-    return
+    list_module.append(target_module)
 
 
-def filter_duplication(list_path: list[str]) -> list[str]:
+def filter_out_sub_modules(list_module: list[str]) -> list[str]:
+    """Filter out sub modules, keeping only the top-level packages."""
+    # This function doesn't use comprehension for speed.
+    # The base of loop is not the list of argument but new list
+    # so the times of loop in the sub function is reduced.
     list_filtered: list[str] = []
-    for path in list_path:
-        _update_list(path, list_filtered)
+    for module in list_module:
+        _append_module_and_unset_any_sub_modules(module, list_filtered)
     return list_filtered
