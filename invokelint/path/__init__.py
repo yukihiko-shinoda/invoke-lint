@@ -10,9 +10,8 @@ import click
 from invoke import Collection
 from invoke import Context
 from invoke import task
-
-from invokelint.path.packages import Packages
-from invokelint.path.setuptools import Setuptools
+from packagediscovery import Packages
+from packagediscovery import Setuptools
 
 # The following list of directories that setuptools exclude from dist should be added into targets for lint and format.
 PACKAGES_TO_LINT = [
@@ -61,9 +60,9 @@ def remove_duplicate(list_str: list[str]) -> list[str]:
     return list(OrderedDict.fromkeys(list_str))
 
 
-setuptools = Setuptools()
+setuptools = Setuptools(modules_to_lint=MODULES_TO_LINT)
 PRODUCTION_PACKAGES = Packages([package.replace(".", os.sep) for package in setuptools.packages]).list_roots_only
-SETUPTOOLS_PYTHON_MODULES = setuptools.find_py_modules(MODULES_TO_LINT)
+SETUPTOOLS_PYTHON_MODULES = setuptools.py_modules
 EXISTING_PACKAGES = [package for package in PACKAGES_TO_LINT if Path(package).is_dir()]
 EXISTING_MODULES = [f"{module}.py" for module in SETUPTOOLS_PYTHON_MODULES if Path(f"{module}.py").is_file()]
 EXISTING_TEST_PACKAGES = [package for package in TEST_PACKAGES if Path(package).is_dir()]

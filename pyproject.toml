@@ -129,8 +129,7 @@ dependencies = [
     #   https://click.palletsprojects.com/en/latest/utils/
     "click",
     "invoke",
-    # To import setuptools.discovery
-    "setuptools>=61.0.0",
+    "packagediscovery>=0.2.0",
 ]
 
 [project.urls]
