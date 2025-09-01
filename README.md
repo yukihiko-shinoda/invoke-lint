@@ -4,7 +4,6 @@
 [![CodeQL](https://github.com/yukihiko-shinoda/invoke-lint/workflows/CodeQL/badge.svg)](https://github.com/yukihiko-shinoda/invoke-lint/actions?query=workflow%3ACodeQL)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/935364d296051fb926c8/test_coverage)](https://codeclimate.com/github/yukihiko-shinoda/invoke-lint/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/935364d296051fb926c8/maintainability)](https://codeclimate.com/github/yukihiko-shinoda/invoke-lint/maintainability)
-[![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/yukihiko-shinoda/invoke-lint)](https://codeclimate.com/github/yukihiko-shinoda/invoke-lint)
 [![Dependabot](https://flat.badgen.net/github/dependabot/yukihiko-shinoda/invoke-lint?icon=dependabot)](https://github.com/yukihiko-shinoda/invoke-lint/security/dependabot)
 [![Python versions](https://img.shields.io/pypi/pyversions/invokelint.svg)](https://pypi.org/project/invokelint)
 [![Twitter URL](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fyukihiko-shinoda%2Finvoke-lint)](http://twitter.com/share?text=Invoke%20Lint&url=https://pypi.org/project/invokelint/&hashtags=python)
