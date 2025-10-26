@@ -40,5 +40,5 @@ def test_dist_setup_py(context: "Context") -> None:
 @pytest.mark.usefixtures("_package_not_exists")
 @pytest.mark.parametrize("package_names", [["build", "wheel"]])
 def test_dist_error(context: "Context") -> None:
-    with pytest.raises(ModuleNotFoundError, match="Neither build nor wheel module exists."):
+    with pytest.raises(ModuleNotFoundError, match=r"Neither build nor wheel module exists\."):
         check_result(dist(context), "python setup.py bdist_wheel")
