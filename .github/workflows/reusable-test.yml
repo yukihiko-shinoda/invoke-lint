@@ -1,0 +1,78 @@
+name: Test
+on:
+  workflow_call:
+    inputs:
+      support-python-versions:
+        type: string
+        default: "[ '3.13', '3.12', '3.11', '3.10' ]"
+      is-supporting-python-3-7-in-linux:
+        type: boolean
+        default: false
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ${{ fromJSON(inputs.support-python-versions) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: uv sync
+      # Invoke currently seems not support PowerShell,
+      # production code of this package doesn't depends on cmd, however test depends on cmd.
+      # - GitHub Actions default shell on Windows runners is changing to PowerShell | GitHub Changelog
+      #   https://github.blog/changelog/2019-10-17-github-actions-default-shell-on-windows-runners-is-changing-to-powershell/
+      - if: runner.os == 'Windows'
+        run: uv run invoke test.all
+        shell: cmd
+      - if: runner.os == 'Linux'
+        run: uv run invoke test.all
+  test_legacy_linux:
+    if: ${{ inputs.is-supporting-python-3-7-in-linux }}
+    # "It mostly works, especially on Linux and macOS, but it’s not officially supported.":
+    # - uv tool run is giving "SyntaxError: Non-UTF-8 code starting with '\xe8' in file..." · Issue #12122 · astral-sh/uv
+    #   https://github.com/astral-sh/uv/issues/12122#issuecomment-2761278707
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: [ '3.7' ]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - run: uv sync --python ${{ matrix.python-version }}
+      - run: uv run invoke test.all
+  check_style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ fromJSON(inputs.support-python-versions)[0] }}
+      - run: uv sync
+      - run: uv run invoke style --check
+  check_lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ fromJSON(inputs.support-python-versions)[0] }}
+      - run: uv sync
+      - run: uv run invoke lint
+  check_lint_deep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ fromJSON(inputs.support-python-versions)[0] }}
+      - run: uv sync
+      - run: uv run invoke lint.deep
