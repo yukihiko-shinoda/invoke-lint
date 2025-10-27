@@ -4,6 +4,9 @@ on:
       python-version:
         type: string
         default: '3.13'
+      add-prefix:
+        type: string
+        default: ''
 jobs:
   analyze:
     permissions:
@@ -22,3 +25,4 @@ jobs:
           oidc: true
           files: coverage.xml
           format: cobertura
+          add-prefix: ${{ inputs.python-version }}
