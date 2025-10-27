@@ -74,8 +74,7 @@ def coverage(
     """Runs all tests and report coverage (options for create xml / html available)."""
     run_in_pty(context, build_coverage_run_command(is_all=all))
     result = []
-    # Reason: Note.
-    # result = run_in_pty(context, "coverage combine")  # noqa: ERA001
+    result.append(run_in_pty(context, "coverage combine"))
     result.append(run_in_pty(context, "coverage report --show-missing"))
     if publish:
         # Publish the results via coveralls
