@@ -21,6 +21,13 @@ jobs:
       - run: uv sync
       - run: uv run invoke test.coverage --xml
       - uses: qltysh/qlty-action/coverage@v2
+        if: inputs.add-prefix == ''
+        with:
+          oidc: true
+          files: coverage.xml
+          format: cobertura
+      - uses: qltysh/qlty-action/coverage@v2
+        if: inputs.add-prefix != ''
         with:
           oidc: true
           files: coverage.xml
