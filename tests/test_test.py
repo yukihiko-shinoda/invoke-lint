@@ -2,6 +2,7 @@
 
 import platform
 import re
+from pathlib import Path
 from textwrap import dedent
 from typing import TYPE_CHECKING
 
@@ -74,7 +75,7 @@ EXPECTED_STDOUT_REPORT = dedent(
     """,
 )
 EXPECTED_COMMAND_RUN = "coverage run --source invokelint -m pytest"
-EXPECTED_COMMAND_COMBINE = "coverage combine --keep"
+EXPECTED_COMMAND_COMBINE = "coverage combine"
 EXPECTED_COMMAND_REPORT = "coverage report --show-missing"
 
 
@@ -83,7 +84,10 @@ def test_build_coverage_run_command() -> None:
 
 
 def test_coverage(mocker: "MockFixture") -> None:
-    """The test task should call coverage."""
+    """The test task should call coverage with combine when .coverage.* files exist."""
+    # Mock Path(".").glob to return multiple coverage files (simulating multiprocessing)
+    mock_glob = mocker.patch("pathlib.Path.glob")
+    mock_glob.return_value = iter([Path(".coverage.12345"), Path(".coverage.67890")])
     context = MockContext(
         run={
             EXPECTED_COMMAND_RUN: Result(EXPECTED_STDOUT),
@@ -104,6 +108,9 @@ def test_coverage(mocker: "MockFixture") -> None:
 
 def test_coverage_publish(mocker: "MockFixture") -> None:
     """The test task should call coveralls."""
+    # Mock Path(".").glob to return multiple coverage files (simulating multiprocessing)
+    mock_glob = mocker.patch("pathlib.Path.glob")
+    mock_glob.return_value = iter([Path(".coverage.12345"), Path(".coverage.67890")])
     expected_command_publish = "coveralls"
     context = MockContext(
         run={
@@ -130,6 +137,9 @@ def test_coverage_publish(mocker: "MockFixture") -> None:
 
 def test_coverage_xml_html(mocker: "MockFixture") -> None:
     """The test task should call coverage xml, coverage html."""
+    # Mock Path(".").glob to return multiple coverage files (simulating multiprocessing)
+    mock_glob = mocker.patch("pathlib.Path.glob")
+    mock_glob.return_value = iter([Path(".coverage.12345"), Path(".coverage.67890")])
     expected_command_xml = "coverage xml"
     expected_command_html = "coverage html"
     expected_pty = platform.system() == "Linux"
@@ -163,20 +173,21 @@ def test_coverage_xml_html(mocker: "MockFixture") -> None:
 
 
 def test_coverage_combine_with_single_coverage_file(mocker: "MockFixture") -> None:
-    """Test coverage combine --keep works with single .coverage file (no multiprocessing)."""
-    # Simulate scenario where only a single .coverage file exists (no multiprocessing)
+    """Test coverage skips combine when only single .coverage file exists (no multiprocessing)."""
+    # Mock Path(".").glob to return empty list (no .coverage.* files, only .coverage)
+    mock_glob = mocker.patch("pathlib.Path.glob")
+    mock_glob.return_value = iter([])
     expected_pty = platform.system() == "Linux"
     context = MockContext(
         run={
             EXPECTED_COMMAND_RUN: Result(EXPECTED_STDOUT),
-            EXPECTED_COMMAND_COMBINE: Result(""),  # No output when combining single file with --keep
             EXPECTED_COMMAND_REPORT: Result(EXPECTED_STDOUT_REPORT),
         },
     )
-    check_list_result(coverage(context), [EXPECTED_COMMAND_COMBINE, EXPECTED_COMMAND_REPORT])
+    # Should only return REPORT, not COMBINE (since combine is skipped)
+    check_list_result(coverage(context), [EXPECTED_COMMAND_REPORT])
     calls = [
         mocker.call(EXPECTED_COMMAND_RUN, pty=expected_pty),
-        mocker.call(EXPECTED_COMMAND_COMBINE, pty=expected_pty),
         mocker.call(EXPECTED_COMMAND_REPORT, pty=expected_pty),
     ]
     # Reason: The invoke-typed not implemented. pylint: disable=no-member
@@ -184,8 +195,10 @@ def test_coverage_combine_with_single_coverage_file(mocker: "MockFixture") -> No
 
 
 def test_coverage_combine_with_multiprocessing_files(mocker: "MockFixture") -> None:
-    """Test coverage combine --keep works with multiple .coverage.* files (multiprocessing)."""
-    # Simulate scenario where multiple .coverage.* files exist (with concurrency=multiprocessing)
+    """Test coverage runs combine when multiple .coverage.* files exist (multiprocessing)."""
+    # Mock Path(".").glob to return multiple coverage files (simulating multiprocessing)
+    mock_glob = mocker.patch("pathlib.Path.glob")
+    mock_glob.return_value = iter([Path(".coverage.12345"), Path(".coverage.67890"), Path(".coverage.11111")])
     expected_combine_output = dedent(
         """\
             Combined data file .coverage.12345
@@ -201,6 +214,7 @@ def test_coverage_combine_with_multiprocessing_files(mocker: "MockFixture") -> N
             EXPECTED_COMMAND_REPORT: Result(EXPECTED_STDOUT_REPORT),
         },
     )
+    # Should return both COMBINE and REPORT
     check_list_result(coverage(context), [EXPECTED_COMMAND_COMBINE, EXPECTED_COMMAND_REPORT])
     calls = [
         mocker.call(EXPECTED_COMMAND_RUN, pty=expected_pty),
