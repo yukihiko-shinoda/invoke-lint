@@ -74,6 +74,7 @@ EXPECTED_STDOUT_REPORT = dedent(
     """,
 )
 EXPECTED_COMMAND_RUN = "coverage run --source invokelint -m pytest"
+EXPECTED_COMMAND_COMBINE = "coverage combine"
 EXPECTED_COMMAND_REPORT = "coverage report --show-missing"
 
 
@@ -86,13 +87,15 @@ def test_coverage(mocker: "MockFixture") -> None:
     context = MockContext(
         run={
             EXPECTED_COMMAND_RUN: Result(EXPECTED_STDOUT),
+            EXPECTED_COMMAND_COMBINE: Result(EXPECTED_STDOUT),
             EXPECTED_COMMAND_REPORT: Result(EXPECTED_STDOUT_REPORT),
         },
     )
     expected_pty = platform.system() == "Linux"
-    check_list_result(coverage(context), [EXPECTED_COMMAND_REPORT])
+    check_list_result(coverage(context), [EXPECTED_COMMAND_COMBINE, EXPECTED_COMMAND_REPORT])
     calls = [
         mocker.call(EXPECTED_COMMAND_RUN, pty=expected_pty),
+        mocker.call(EXPECTED_COMMAND_COMBINE, pty=expected_pty),
         mocker.call(EXPECTED_COMMAND_REPORT, pty=expected_pty),
     ]
     # Reason: The invoke-typed not implemented. pylint: disable=no-member
@@ -105,14 +108,19 @@ def test_coverage_publish(mocker: "MockFixture") -> None:
     context = MockContext(
         run={
             EXPECTED_COMMAND_RUN: Result(EXPECTED_STDOUT),
+            EXPECTED_COMMAND_COMBINE: Result(EXPECTED_STDOUT),
             EXPECTED_COMMAND_REPORT: Result(EXPECTED_STDOUT_REPORT),
             expected_command_publish: Result(EXPECTED_STDOUT_REPORT),
         },
     )
     expected_pty = platform.system() == "Linux"
-    check_list_result(coverage(context, publish=True), [EXPECTED_COMMAND_REPORT, expected_command_publish])
+    check_list_result(
+        coverage(context, publish=True),
+        [EXPECTED_COMMAND_COMBINE, EXPECTED_COMMAND_REPORT, expected_command_publish],
+    )
     calls = [
         mocker.call(EXPECTED_COMMAND_RUN, pty=expected_pty),
+        mocker.call(EXPECTED_COMMAND_COMBINE, pty=expected_pty),
         mocker.call(EXPECTED_COMMAND_REPORT, pty=expected_pty),
         mocker.call(expected_command_publish, pty=expected_pty),
     ]
@@ -130,6 +138,7 @@ def test_coverage_xml_html(mocker: "MockFixture") -> None:
     context = MockContext(
         run={
             EXPECTED_COMMAND_RUN: Result(EXPECTED_STDOUT),
+            EXPECTED_COMMAND_COMBINE: Result(EXPECTED_STDOUT),
             EXPECTED_COMMAND_REPORT: Result(EXPECTED_STDOUT_REPORT),
             expected_command_xml: Result(EXPECTED_STDOUT_REPORT),
             expected_command_html: Result(EXPECTED_STDOUT_REPORT),
@@ -137,10 +146,11 @@ def test_coverage_xml_html(mocker: "MockFixture") -> None:
     )
     check_list_result(
         coverage(context, xml=True, html=True),
-        [EXPECTED_COMMAND_REPORT, expected_command_xml, expected_command_html],
+        [EXPECTED_COMMAND_COMBINE, EXPECTED_COMMAND_REPORT, expected_command_xml, expected_command_html],
     )
     calls = [
         mocker.call(EXPECTED_COMMAND_RUN, pty=expected_pty),
+        mocker.call(EXPECTED_COMMAND_COMBINE, pty=expected_pty),
         mocker.call(EXPECTED_COMMAND_REPORT, pty=expected_pty),
         mocker.call(expected_command_xml, pty=expected_pty),
         mocker.call(expected_command_html, pty=expected_pty),
