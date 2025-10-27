@@ -74,10 +74,12 @@ def coverage(
     """Runs all tests and report coverage (options for create xml / html available)."""
     run_in_pty(context, build_coverage_run_command(is_all=all))
     result = []
-    # coverage combine --keep is safe to run even when there's only a single .coverage file
-    # It will merge multiple .coverage.* files when using concurrency=multiprocessing
-    # and will work silently when there's only one .coverage file
-    result.append(run_in_pty(context, "coverage combine --keep"))
+    # Only run 'coverage combine' when multiple .coverage.* files exist (multiprocessing mode)
+    # In non-multiprocessing mode, only a single .coverage file exists, so combine is not needed
+    # and would fail with "No data to combine" error
+    coverage_files = list(Path().glob(".coverage.*"))
+    if coverage_files:
+        result.append(run_in_pty(context, "coverage combine"))
     result.append(run_in_pty(context, "coverage report --show-missing"))
     if publish:
         # Publish the results via coveralls
