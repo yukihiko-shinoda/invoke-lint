@@ -74,7 +74,7 @@ EXPECTED_STDOUT_REPORT = dedent(
     """,
 )
 EXPECTED_COMMAND_RUN = "coverage run --source invokelint -m pytest"
-EXPECTED_COMMAND_COMBINE = "coverage combine"
+EXPECTED_COMMAND_COMBINE = "coverage combine --keep"
 EXPECTED_COMMAND_REPORT = "coverage report --show-missing"
 
 
@@ -160,3 +160,52 @@ def test_coverage_xml_html(mocker: "MockFixture") -> None:
     args = mock_open.call_args[0]
     assert len(args) == 1
     assert re.fullmatch(r"file:\/\/.*index\.html", args[0])
+
+
+def test_coverage_combine_with_single_coverage_file(mocker: "MockFixture") -> None:
+    """Test coverage combine --keep works with single .coverage file (no multiprocessing)."""
+    # Simulate scenario where only a single .coverage file exists (no multiprocessing)
+    expected_pty = platform.system() == "Linux"
+    context = MockContext(
+        run={
+            EXPECTED_COMMAND_RUN: Result(EXPECTED_STDOUT),
+            EXPECTED_COMMAND_COMBINE: Result(""),  # No output when combining single file with --keep
+            EXPECTED_COMMAND_REPORT: Result(EXPECTED_STDOUT_REPORT),
+        },
+    )
+    check_list_result(coverage(context), [EXPECTED_COMMAND_COMBINE, EXPECTED_COMMAND_REPORT])
+    calls = [
+        mocker.call(EXPECTED_COMMAND_RUN, pty=expected_pty),
+        mocker.call(EXPECTED_COMMAND_COMBINE, pty=expected_pty),
+        mocker.call(EXPECTED_COMMAND_REPORT, pty=expected_pty),
+    ]
+    # Reason: The invoke-typed not implemented. pylint: disable=no-member
+    context.run.assert_has_calls(calls)  # type: ignore[attr-defined]
+
+
+def test_coverage_combine_with_multiprocessing_files(mocker: "MockFixture") -> None:
+    """Test coverage combine --keep works with multiple .coverage.* files (multiprocessing)."""
+    # Simulate scenario where multiple .coverage.* files exist (with concurrency=multiprocessing)
+    expected_combine_output = dedent(
+        """\
+            Combined data file .coverage.12345
+            Combined data file .coverage.67890
+            Combined data file .coverage.11111
+        """,
+    )
+    expected_pty = platform.system() == "Linux"
+    context = MockContext(
+        run={
+            EXPECTED_COMMAND_RUN: Result(EXPECTED_STDOUT),
+            EXPECTED_COMMAND_COMBINE: Result(expected_combine_output),
+            EXPECTED_COMMAND_REPORT: Result(EXPECTED_STDOUT_REPORT),
+        },
+    )
+    check_list_result(coverage(context), [EXPECTED_COMMAND_COMBINE, EXPECTED_COMMAND_REPORT])
+    calls = [
+        mocker.call(EXPECTED_COMMAND_RUN, pty=expected_pty),
+        mocker.call(EXPECTED_COMMAND_COMBINE, pty=expected_pty),
+        mocker.call(EXPECTED_COMMAND_REPORT, pty=expected_pty),
+    ]
+    # Reason: The invoke-typed not implemented. pylint: disable=no-member
+    context.run.assert_has_calls(calls)  # type: ignore[attr-defined]
