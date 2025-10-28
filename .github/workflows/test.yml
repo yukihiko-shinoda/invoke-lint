@@ -7,8 +7,10 @@ on:
     branches:
       - main
 jobs:
-  call-workflow:
+  call-workflow-test:
     uses: ./.github/workflows/reusable-test.yml
     with:
       support-python-versions: "[ '3.13', '3.12', '3.11', '3.10', '3.9', '3.8' ]"
       is-supporting-python-3-7-in-linux: true
+  call-workflow-lint:
+    uses: ./.github/workflows/reusable-lint.yml
