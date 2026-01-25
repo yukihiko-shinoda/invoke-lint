@@ -193,7 +193,9 @@ def call_pylint(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG00
 def semgrep(context: Context, *, ci: bool = False) -> list[Result]:
     """Lints code with Semgrep."""
     command = "ci" if ci else "scan"
-    full_command = f"semgrep {command} --oss-only --config auto --include {' --include '.join(PYTHON_DIRS)}"
+    full_command = (
+        f"semgrep {command} --oss-only --config p/python --metrics off --include {' --include '.join(PYTHON_DIRS)}"
+    )
     return [run_in_pty(context, full_command)]
 
 
