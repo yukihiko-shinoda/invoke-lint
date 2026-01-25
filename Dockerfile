@@ -1,11 +1,4 @@
-FROM futureys/claude-code-python-development:20251026170000
-# gcc: Dependency of semgrep (v1.140.0) which depends on `ruamel-yaml-clib`:
-# - command 'cc' failed: No such file or directory
-# - assert.h: No such file or directory
-RUN apt-get update && apt-get install --no-install-recommends -y \
- build-essential/stable \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+FROM futureys/claude-code-python-development:20260124195000
 COPY pyproject.toml /workspace/
 # - Using uv in Docker | uv
 #   https://docs.astral.sh/uv/guides/integration/docker/#caching
