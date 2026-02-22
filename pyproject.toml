@@ -54,6 +54,11 @@ dev = [
     #   https://github.com/rubik/radon/issues/251
     "radon<6.0.0",
     "ruff; python_version >= '3.7'",
+    # To prevent following error when running semgrep in Python 3.9:
+    # ModuleNotFoundError: No module named 'pkg_resources'
+    # - [BUG] Restore \`pkg\_resources\` · Issue #5174 · pypa/setuptools
+    #   https://github.com/pypa/setuptools/issues/5174
+    "setuptools<82.0.0;python_version=='3.9'",
     "semgrep;python_version>='3.9' or python_version>='3.6' and platform_system=='Linux'",
     "types-invoke",
     "types-setuptools",
