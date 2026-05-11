@@ -314,6 +314,11 @@ fixable = [
 # To follow H301: Do not import more than one module per line (*) in Flake8 + openstack/hacking
 force-single-line = true
 
+[tool.ruff.lint.mccabe]
+# The default value: 10 is too loose,
+# 5 is as same as the default value of Radon for A rank that we use without any problems for a decade.
+max-complexity = 5
+
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
 
