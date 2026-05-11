@@ -132,6 +132,7 @@ def call_pydocstyle(context: Context, **kwargs: Any) -> list[Result]:  # noqa: A
         "ruff": "Leaves Ruff warnings not fixed (not apply `ruff check --fix`, only `ruff format` is applied)",
         "by_ruff": "Formats code by Ruff",
         "no_ruff": "Formats code by autoflake, isort, and Black (requires to install them)",
+        "no_xenon": "Skips Xenon linting.",
         "pydocstyle": "Runs pydocstyle",
     },
 )
@@ -143,15 +144,18 @@ def fast(  # noqa: PLR0913
     ruff: bool = False,
     by_ruff: bool = False,
     no_ruff: bool = False,
+    no_xenon: bool = False,
     # Reason: To name command line option.
     pydocstyle: bool = False,  # pylint: disable=redefined-outer-name
 ) -> list[Result]:
-    """Runs fast linting (xenon, ruff, bandit, dodgy, flake8, pydocstyle).
+    """Runs fast linting (ruff, bandit, dodgy, flake8, xenon, pydocstyle).
 
     Xenon is prioritized since it effects fundamental coding structure.
     """
     list_result = [] if skip_format else fmt(context, ruff=ruff, by_ruff=by_ruff, no_ruff=no_ruff)
-    tasks = [call_xenon, call_ruff, call_bandit, call_dodgy, call_flake8]
+    tasks: list[TaskFunction] = [call_ruff, call_bandit, call_dodgy, call_flake8]
+    if not no_xenon:
+        tasks.insert(0, call_xenon)
     if pydocstyle:
         tasks.append(call_pydocstyle)
     list_result.extend(run_in_order(tasks, context))

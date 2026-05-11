@@ -3,7 +3,7 @@ on:
     inputs:
       python-version:
         type: string
-        default: '3.13'
+        default: '3.14'
       add-prefix:
         type: string
         default: ''

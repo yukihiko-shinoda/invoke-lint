@@ -22,8 +22,14 @@ dev = [
     #   https://github.com/dlint-py/dlint/blob/0.13.0/requirements.txt#L1
     "dlint>=0.14.0",
     # To the docformatter load pyproject.toml settings:
-    "docformatter[tomli]; python_version < '3.11' and python_version >= '3.6'",
-    "docformatter; python_version >= '3.11'",
+    # docformatter < 1.7.8 depends on untokenize==0.1.1, whose setup.py uses ast.Constant.s removed in Python 3.14:
+    # - Installation fails on Python 3.14 · Issue #327 · PyCQA/docformatter
+    #   https://github.com/PyCQA/docformatter/issues/327
+    # uv builds packages using the current interpreter to collect metadata for the lock file, so even a marker
+    # like `python_version < '3.14'` cannot prevent the build from running on Python 3.14 and failing.
+    # docformatter >= 1.7.8 dropped untokenize but requires Python >= 3.10, so Python 3.7-3.9 are excluded.
+    "docformatter[tomli]>=1.7.8; python_version >= '3.10' and python_version < '3.11'",
+    "docformatter>=1.7.8; python_version >= '3.11'",
     "dodgy",
     # The hacking depends flake8 ~=6.1.0 or ~=5.0.1 or ~=4.0.1.
     # We should avoid the versions that is not compatible with the hacking,
@@ -117,6 +123,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Security",
     "Topic :: Software Development",
     "Topic :: Software Development :: Build Tools",
@@ -250,6 +257,11 @@ add_ignore = [
     "D415",  # First line should end with a period, question mark, or exclamation point
 ]
 
+[tool.pylint]
+disable = [
+    # We check line length by flake8-bugbear B950.
+    "line-too-long",
+]
 
 [tool.pylint.basic]
 docstring-min-length = "7"
@@ -308,6 +320,11 @@ fixable = [
 [tool.ruff.lint.isort]
 # To follow H301: Do not import more than one module per line (*) in Flake8 + openstack/hacking
 force-single-line = true
+
+[tool.ruff.lint.mccabe]
+# The default value: 10 is too loose,
+# 5 is as same as the default value of Radon for A rank that we use without any problems for a decade.
+max-complexity = 5
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]

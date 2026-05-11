@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import shutil
 from typing import Any
 
 from invoke import Collection
@@ -27,6 +28,8 @@ def docformatter(context: Context, *, check: bool = False, **kwargs: Any) -> lis
     - Add pyproject.toml support for config (Issue #10) by weibullguy · Pull Request #77 · PyCQA/docformatter
     https://github.com/PyCQA/docformatter/pull/77
     """
+    if not shutil.which("docformatter"):
+        return []
     docformatter_options = f" --recursive {'--check' if check else '--in-place'}"
     return [run_in_pty(context, f"docformatter{docformatter_options} {' '.join(PYTHON_DIRS)}", warn=True)]
 

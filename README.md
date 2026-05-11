@@ -94,14 +94,14 @@ Optionally, you can use [autoflake], [isort], and [Black] instead of [Ruff] form
 
 Runs following fast linters at once:
 
-1. [Xenon]
+1. [Xenon] (Optional)
 2. [Ruff]
 3. [Bandit]
 4. [dodgy]
 5. [Flake8]
 6. [pydocstyle] (Optional)
 
-The format task ([described later](#inv-style)) also run before running above linters. You can skip them by `--skip-format` option.
+The format task ([described later](#inv-style)) also run before running above linters. You can skip them by `--skip-format` option. Use `--no-xenon` to skip Xenon, and `--pydocstyle` to enable pydocstyle.
 
 ### `inv lint.deep`
 
@@ -192,7 +192,8 @@ dev = [
     "pydocstyle; python_version >= '3.6'",
     "pylint",
     "pytest",
-    # Since the radon can't run when use pytest log format:
+    # If you want to use Radon for code complexity and maintainability index checking
+    # Note that the version should be less than 6.0.0 because of the issue of Radon with pytest log format.
     # - Radon can't run when use pytest log fornat: `$()d` · Issue #251 · rubik/radon
     #   https://github.com/rubik/radon/issues/251
     "radon<6.0.0",
@@ -200,6 +201,7 @@ dev = [
     "semgrep;python_version>='3.9' or python_version>='3.6' and platform_system=='Linux'",
     # To resolve type checking for `from invoke import Collection` in tasks.py
     "types-invoke",
+    # If you want to use not Ruff but Xenon for complexity checking
     "xenon",
 ]
 ```

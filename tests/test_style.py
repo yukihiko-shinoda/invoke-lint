@@ -1,5 +1,6 @@
 """Tests for `style` package."""
 
+import sys
 from typing import TYPE_CHECKING
 
 import pytest
@@ -13,9 +14,9 @@ if TYPE_CHECKING:
 
 PYTHON_DIR = "invokelint setup.py tasks.py tests"
 
-LIST_COMMAND_EXPECTED_STYLE_COMMON = [
-    f"docformatter --recursive --in-place {PYTHON_DIR}",
-]
+LIST_COMMAND_EXPECTED_STYLE_COMMON = (
+    [f"docformatter --recursive --in-place {PYTHON_DIR}"] if sys.version_info >= (3, 10) else []
+)
 LIST_COMMAND_EXPECTED_STYLE_WITHOUT_RUFF = [
     *LIST_COMMAND_EXPECTED_STYLE_COMMON,
     f"autoflake --recursive --in-place {PYTHON_DIR}",
@@ -37,9 +38,9 @@ LIST_COMMAND_EXPECTED_STYLE_NO_RUFF = [
     f"ruff check --show-fixes {PYTHON_DIR}",
     f"ruff check --fix --show-fixes {PYTHON_DIR}",
 ]
-LIST_COMMAND_EXPECTED_STYLE_CHECK_COMMON = [
-    f"docformatter --recursive --check {PYTHON_DIR}",
-]
+LIST_COMMAND_EXPECTED_STYLE_CHECK_COMMON = (
+    [f"docformatter --recursive --check {PYTHON_DIR}"] if sys.version_info >= (3, 10) else []
+)
 LIST_COMMAND_EXPECTED_STYLE_CHECK_NO_RUFF = [
     *LIST_COMMAND_EXPECTED_STYLE_CHECK_COMMON,
     f"autoflake --recursive --check {PYTHON_DIR}",
