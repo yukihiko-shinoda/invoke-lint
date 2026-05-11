@@ -19,6 +19,8 @@ from tests.testlibraries import check_result
 if TYPE_CHECKING:
     from pytest_mock import MockFixture
 
+# Reason: Black <=23.x (Python 3.9-) splits closing `"""` onto its own line, triggering ruff COM812.
+# fmt: off
 EXPECTED_STDOUT = dedent("""
     ================== test session starts ====================
     platform linux -- Python 3.11.1, pytest-7.2.1, pluggy-1.0.0
@@ -31,6 +33,7 @@ EXPECTED_STDOUT = dedent("""
     tests/test_test.py ....                              [100%]
     ================== 17 passed in 12.61s ====================
 """)
+# fmt: on
 
 
 def test_fast() -> None:
@@ -58,6 +61,8 @@ def test_run_test_all() -> None:
     context.run.assert_called_with(expected_command, pty=expected_pty)  # type: ignore[attr-defined]
 
 
+# Reason: Black <=23.x (Python 3.9-) splits closing `"""` onto its own line, triggering ruff COM812.
+# fmt: off
 EXPECTED_STDOUT_REPORT = dedent("""
     Name                     Stmts   Miss  Cover   Missing
     ------------------------------------------------------
@@ -70,6 +75,7 @@ EXPECTED_STDOUT_REPORT = dedent("""
     ------------------------------------------------------
     TOTAL                      149     11   100%
 """)
+# fmt: on
 EXPECTED_COMMAND_RUN = "coverage run --source invokelint -m pytest"
 EXPECTED_COMMAND_COMBINE = "coverage combine"
 EXPECTED_COMMAND_REPORT = "coverage report --show-missing"
@@ -195,11 +201,14 @@ def test_coverage_combine_with_multiprocessing_files(mocker: "MockFixture") -> N
     # Mock Path(".").glob to return multiple coverage files (simulating multiprocessing)
     mock_glob = mocker.patch("pathlib.Path.glob")
     mock_glob.return_value = iter([Path(".coverage.12345"), Path(".coverage.67890"), Path(".coverage.11111")])
+    # Reason: Black <=23.x (Python 3.9-) splits closing `"""` onto its own line, triggering ruff COM812.
+    # fmt: off
     expected_combine_output = dedent("""\
         Combined data file .coverage.12345
         Combined data file .coverage.67890
         Combined data file .coverage.11111
     """)
+    # fmt: on
     expected_pty = platform.system() == "Linux"
     context = MockContext(
         run={
