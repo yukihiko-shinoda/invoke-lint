@@ -48,8 +48,6 @@ dev = [
     "hacking>=5.0.0; python_version >= '3.8'",
     "isort",
     "mypy",
-    # Since pytester still use pathlib2 when Python version 3.5
-    "pathlib2",
     "pydocstyle; python_version >= '3.6'",
     "pylint",
     "pytest",
