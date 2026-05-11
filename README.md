@@ -32,6 +32,7 @@ Linters:
 - [Xenon]
 - [Ruff]
 - [Bandit]
+- [Cohesion]
 - [dodgy]
 - [Flake8]
 - [pydocstyle] (Optional)
@@ -111,7 +112,7 @@ Runs following slow but detailed linters at once:
 2. [Pylint]
 3. [Semgrep]
 
-### `inv radon`
+### `inv lint.radon`
 
 Reports [radon] both code complexity and maintainability index.
 
@@ -123,6 +124,10 @@ See:
 
 - [How to mark test functions with attributes — pytest documentation]
 - [Working with custom markers — pytest documentation]
+
+### `inv test.all`
+
+Runs all tests including those marked `@pytest.mark.slow` by [pytest].
 
 ### `inv test.cov`
 
@@ -170,13 +175,19 @@ dev = [
     #   https://github.com/dlint-py/dlint/blob/0.13.0/requirements.txt#L1
     "dlint>=0.14.0",
     # To the docformatter load pyproject.toml settings:
-    "docformatter[tomli]; python_version < '3.11' and python_version >= '3.6'",
-    "docformatter; python_version >= '3.11'",
+    # docformatter < 1.7.8 depends on untokenize==0.1.1, whose setup.py uses ast.Constant.s removed in Python 3.14.
+    # docformatter >= 1.7.8 dropped untokenize but requires Python >= 3.10.
+    "docformatter[tomli]>=1.7.8; python_version >= '3.10' and python_version < '3.11'",
+    "docformatter>=1.7.8; python_version >= '3.11'",
     "dodgy",
     # The hacking depends flake8 ~=6.1.0 or ~=5.0.1 or ~=4.0.1.
     # We should avoid the versions that is not compatible with the hacking,
     # considering the speed of dependency calculation process
     "flake8!=6.0.0,!=5.0.0,>=4.0.1; python_version >= '3.6'",
+    # To replace E501 in pycodestyle with B950 in flake8-bugbear:
+    # - Using Black with other tools - Black 25.1.0 documentation
+    #   https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#bugbear
+    "flake8-bugbear",
     # To use flake8 --radon-show-closures
     "flake8-polyfill",
     # To use pyproject.toml for Flake8 configuration
@@ -297,6 +308,7 @@ This package was created with [Cookiecutter] and the [yukihiko-shinoda/cookiecut
 [uv]: https://pypi.org/project/uv/
 [Ruff]: https://pypi.org/project/ruff/
 [Bandit]: https://pypi.org/project/bandit/
+[Cohesion]: https://pypi.org/project/cohesion/
 [dodgy]: https://pypi.org/project/dodgy/
 [Flake8]: https://pypi.org/project/flake8/
 [pydocstyle]: https://pypi.org/project/pydocstyle/
