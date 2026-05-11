@@ -250,6 +250,11 @@ add_ignore = [
     "D415",  # First line should end with a period, question mark, or exclamation point
 ]
 
+[tool.pylint]
+disable = [
+    # We check line length by flake8-bugbear B950.
+    "line-too-long",
+]
 
 [tool.pylint.basic]
 docstring-min-length = "7"
