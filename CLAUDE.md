@@ -14,33 +14,38 @@ Invoke Lint is a Python package that orchestrates multiple Python development to
   - **style.py**: Code formatting tasks (docformatter, Ruff, autoflake, isort, Black)
   - **test.py**: Testing tasks (fast tests, coverage, HTML reports)
   - **dist.py**: Package building tasks
-  - **_clean.py**: Cleanup tasks
-  - **path/**: Path discovery system using setuptools integration
-    - **setuptools.py**: Setuptools integration for package discovery
-    - **packages.py**: Package handling utilities
+  - **_clean.py**: Cleanup tasks (exposed as `clean` namespace)
+  - **path/**: Path discovery system — a single `__init__.py` that uses the external `packagediscovery` package to detect packages, test dirs, and root Python files
   - **run.py**: Task execution utilities with platform compatibility
-  - **ruff.py**: Ruff-specific command implementations
+  - **ruff.py**: Ruff-specific command implementations shared between lint and style
 
 ### Path Discovery System
-The package uses a sophisticated path discovery system that integrates with setuptools to automatically detect:
+The package uses `packagediscovery.Setuptools` (external dep) to automatically detect:
 - Production packages from setuptools configuration
-- Test directories and modules 
+- Test directories and modules
 - Additional directories to lint (examples, scripts, tools, etc.)
 - Python files in the project root (setup.py, tasks.py, etc.)
 
-Key path constants:
+Key path constants (from `invokelint/path/__init__.py`):
 - `PRODUCTION_PACKAGES`: Root packages for production code
 - `PYTHON_DIRS`: All Python directories/files to process
 - `PYTHON_DIRS_EXCLUDING_TEST`: Production code only
 
 ### Task Organization
-Tasks are organized into collections that can be namespaced:
-- **lint**: Fast linters (Xenon, Ruff, Bandit, dodgy, Flake8, pydocstyle)
-- **lint.deep**: Slow but thorough linters (mypy, Pylint, Semgrep)
-- **style**: Code formatting with Ruff (default) or legacy tools
-- **test**: Fast tests, coverage, and reporting
+Tasks are organized into Invoke Collections (each module exports `ns`):
+- **lint** (default: `fast`): Runs format then fast linters (Xenon, Ruff, Bandit, dodgy, Flake8). `lint.deep` runs mypy, Pylint, Semgrep. `lint.radon` reports complexity and maintainability index.
+- **style** (default: `fmt`): Code formatting with Ruff (default) or legacy tools
+- **test** (default: `fast`): Fast tests, `test.all` for all, `test.coverage`/`test.cov` for coverage
+- **clean** (default: `all`): Removes build artifacts, pyc files, coverage data
 - **dist**: Package building
-- **path**: Path discovery debugging
+- **path** (default: `debug`): Path discovery inspection
+
+### Key Design Patterns
+1. **Task Collections**: Each module exports a `ns = Collection()` and adds tasks to it, then `tasks.py` assembles them with namespace names
+2. **Result Aggregation**: Tasks return `list[Result]` for consistent handling
+3. **Error Handling**: `run_all()` runs all tasks even on failure; `run_in_order()` stops on first failure
+4. **Platform Detection**: `run_in_pty()` enables PTY on non-Windows; `semgrep` is skipped on Windows
+5. **Wrapper functions**: `call_*` wrapper functions (e.g. `call_xenon`) exist to normalize `**kwargs` for use in `run_in_order()` / `run_all()` task lists
 
 ## Development Commands
 
@@ -61,11 +66,20 @@ uv run inv style --check
 # Use legacy formatters instead of Ruff
 uv run inv style --no-ruff
 
-# Run fast linters
+# Run fast linters (also runs format first by default)
 uv run inv lint
+
+# Run fast linters without running format first
+uv run inv lint --skip-format
+
+# Enable pydocstyle in fast lint
+uv run inv lint --pydocstyle
 
 # Run comprehensive linters (slow)
 uv run inv lint.deep
+
+# Report code complexity and maintainability index (radon)
+uv run inv lint.radon
 
 # Run fast tests only (not marked @pytest.mark.slow)
 uv run inv test
@@ -81,6 +95,9 @@ uv run inv test.cov --html
 
 # Build distribution packages
 uv run inv dist
+
+# Clean build artifacts
+uv run inv clean
 
 # Debug path discovery
 uv run inv path
@@ -101,32 +118,24 @@ uv run pytest tests/test_lint.py::TestLint::test_method -vv
 ### Version Management
 ```bash
 # Bump version (uses bump-my-version)
-bump2version patch  # or minor, major
+bump-my-version bump patch  # or minor, major
 git push --tags
 ```
 
 ## Tool Configuration
 
 The project uses pyproject.toml for all tool configurations:
-- **Ruff**: Line length 119, comprehensive rule set with specific ignores
+- **Ruff**: Line length 119, `select = ["ALL"]` with specific ignores, `max-complexity = 5`
 - **Black**: Line length 119 (legacy mode)
-- **Flake8**: Compatible with Black, max line length 108
+- **Flake8**: Max line length 108 (B950 replaces E501), compatible with Black
 - **mypy**: Strict mode enabled
-- **Pylint**: Minimal public methods = 1, max line length 119
-- **Coverage**: Excludes TYPE_CHECKING blocks and NotImplementedError
-- **pytest**: Uses markers for slow tests
+- **Pylint**: `min-public-methods = 1`, max line length 119, `docstring-min-length = 7`
+- **Coverage**: Excludes `TYPE_CHECKING` blocks and `raise NotImplementedError`
+- **pytest**: Defines `slow` marker; deselect with `-m "not slow"`
+- **Bandit**: `assert_used` skips `tests/*`
 
 ## Platform Compatibility
 
-The codebase includes Windows compatibility considerations:
-- PTY handling differs between Windows and Unix systems
-- Command quoting strategies for different shells
-- Path separators handled via os.sep
-
-## Key Design Patterns
-
-1. **Task Collections**: Each module exports a Collection (ns) that can be imported and namespaced
-2. **Result Aggregation**: Tasks return list[Result] for consistent handling
-3. **Error Handling**: Uses run_all() vs run_in_order() for different failure behaviors
-4. **Platform Detection**: Conditional logic for Windows vs Unix environments
-5. **Setuptools Integration**: Automatic discovery of packages and modules to process
+- PTY is enabled on non-Windows only (via `run_in_pty`)
+- `semgrep` task is skipped on Windows in `lint.deep`
+- `inv dist` does not support Windows
