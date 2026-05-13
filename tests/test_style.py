@@ -6,11 +6,13 @@ from typing import TYPE_CHECKING
 import pytest
 from invoke.exceptions import Exit
 
+from invokelint.style import docformatter
 from invokelint.style import fmt
 from tests.testlibraries import check_list_result
 
 if TYPE_CHECKING:
     from invoke import Context
+    from pytest_mock import MockerFixture
 
 PYTHON_DIR = "invokelint setup.py tasks.py tests"
 
@@ -100,3 +102,9 @@ def test_style_ruff_by_ruff_no_ruff(context: "Context") -> None:
     with pytest.raises(Exit) as exc_info:
         fmt(context, ruff=True, by_ruff=True, no_ruff=True)
     assert str(exc_info.value) == "Cannot use both '--by-ruff' and '--no-ruff' options together."
+
+
+def test_docformatter_not_installed(context: "Context", mocker: "MockerFixture") -> None:
+    """Returns empty list when docformatter is not installed."""
+    mocker.patch("shutil.which", return_value=None)
+    assert not docformatter(context)
