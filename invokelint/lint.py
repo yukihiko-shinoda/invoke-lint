@@ -105,14 +105,15 @@ def call_dodgy(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
 
 
 @task
-def flake8(context: Context) -> list[Result]:
+def flake8(context: Context, *, radon_show_closures: bool = True) -> list[Result]:
     """Lints code with flake8."""
-    return [run_in_pty(context, f"flake8 --radon-show-closures {' '.join(PYTHON_DIRS)}")]
+    radon_flag = " --radon-show-closures" if radon_show_closures else ""
+    return [run_in_pty(context, f"flake8{radon_flag} {' '.join(PYTHON_DIRS)}")]
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_flake8(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG001
-    return flake8(context)
+def call_flake8(context: Context, *, no_xenon: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
+    return flake8(context, radon_show_closures=not no_xenon)
 
 
 @task
@@ -158,7 +159,7 @@ def fast(  # noqa: PLR0913
         tasks.insert(0, call_xenon)
     if pydocstyle:
         tasks.append(call_pydocstyle)
-    list_result.extend(run_in_order(tasks, context))
+    list_result.extend(run_in_order(tasks, context, no_xenon=no_xenon))
     return list_result
 
 

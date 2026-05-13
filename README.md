@@ -29,7 +29,8 @@ Supporting tools:
 
 Linters:
 
-- [Xenon]
+- [Xenon] (Optional)
+- [radon] (Optional)
 - [Ruff]
 - [Bandit]
 - [Cohesion]
@@ -114,7 +115,7 @@ Runs following slow but detailed linters at once:
 
 ### `inv lint.radon`
 
-Reports [radon] both code complexity and maintainability index.
+Reports [radon] both code complexity and maintainability index. (Requires [radon] to be installed)
 
 ### `inv test`
 
