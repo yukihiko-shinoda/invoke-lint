@@ -6,11 +6,15 @@ on:
   pull_request:
     branches:
       - main
+permissions:
+  contents: read
 jobs:
   call-workflow-test:
-    uses: ./.github/workflows/reusable-test.yml
+    uses: yukihiko-shinoda/reusable-workflow-invoke-lint-test/.github/workflows/workflow.yml@3deca6708b4c2b623c7eac175a63973c05c64e3b
     with:
       support-python-versions: "[ '3.14', '3.13', '3.12', '3.11', '3.10', '3.9', '3.8' ]"
       is-supporting-python-3-7-in-linux: true
   call-workflow-lint:
-    uses: ./.github/workflows/reusable-lint.yml
+    uses: yukihiko-shinoda/reusable-workflow-invoke-lint-lint/.github/workflows/workflow.yml@0966c64de69c044585bbdca96980a8393c761829
+    with:
+      enable-xenon: true
