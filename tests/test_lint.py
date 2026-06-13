@@ -98,19 +98,20 @@ def test_xenon(context: "Context") -> None:
     check_list_result(xenon(context), [COMMAND_EXPECTED_XENON])
 
 
-LIST_COMMAND_EXPECTED_WITHOUT_XENON = [
+LIST_COMMAND_EXPECTED = [
     COMMAND_EXPECTED_RUFF_CHECK,
     COMMAND_EXPECTED_BANDIT,
     COMMAND_EXPECTED_DODGY,
     COMMAND_EXPECTED_FLAKE8_NO_RADON,
 ]
-LIST_COMMAND_EXPECTED = [
+LIST_COMMAND_EXPECTED_WITH_XENON = [
     COMMAND_EXPECTED_XENON,
     COMMAND_EXPECTED_RUFF_CHECK,
     COMMAND_EXPECTED_BANDIT,
     COMMAND_EXPECTED_DODGY,
     COMMAND_EXPECTED_FLAKE8,
 ]
+LIST_COMMAND_EXPECTED_WITHOUT_XENON = LIST_COMMAND_EXPECTED
 
 
 def test_fast(context: "Context") -> None:
@@ -128,9 +129,15 @@ def test_fast_pydocstyle(context: "Context") -> None:
     )
 
 
+def test_fast_xenon(context: "Context") -> None:
+    """Command should success and run appropriate commands."""
+    list_result = fast(context, xenon=True)
+    check_list_result(list_result, LIST_COMMAND_EXPECTED_STYLE_BY_RUFF + LIST_COMMAND_EXPECTED_WITH_XENON)
+
+
 def test_fast_no_xenon(context: "Context") -> None:
     """Command should success and run appropriate commands."""
-    list_result = fast(context, no_xenon=True)
+    list_result = fast(context, xenon=True, no_xenon=True)
     check_list_result(list_result, LIST_COMMAND_EXPECTED_STYLE_BY_RUFF + LIST_COMMAND_EXPECTED_WITHOUT_XENON)
 
 

@@ -112,8 +112,15 @@ def flake8(context: Context, *, radon_show_closures: bool = True) -> list[Result
 
 
 # Reason: Compatibility with semgrep task to be called from fast().. pylint: disable=unused-argument
-def call_flake8(context: Context, *, no_xenon: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
-    return flake8(context, radon_show_closures=not no_xenon)
+def call_flake8(  # pylint: disable=redefined-outer-name
+    context: Context,
+    *,
+    xenon: bool = False,
+    no_xenon: bool = False,
+    **kwargs: Any,  # noqa: ARG001
+) -> list[Result]:
+    """Calls flake8 with radon_show_closures enabled only when xenon is active."""
+    return flake8(context, radon_show_closures=xenon and not no_xenon)
 
 
 @task
@@ -133,6 +140,7 @@ def call_pydocstyle(context: Context, **kwargs: Any) -> list[Result]:  # noqa: A
         "ruff": "Leaves Ruff warnings not fixed (not apply `ruff check --fix`, only `ruff format` is applied)",
         "by_ruff": "Formats code by Ruff",
         "no_ruff": "Formats code by autoflake, isort, and Black (requires to install them)",
+        "xenon": "Runs xenon",
         "no_xenon": "Skips Xenon linting.",
         "pydocstyle": "Runs pydocstyle",
     },
@@ -145,21 +153,23 @@ def fast(  # noqa: PLR0913
     ruff: bool = False,
     by_ruff: bool = False,
     no_ruff: bool = False,
+    # Reason: To name command line option.
+    xenon: bool = False,  # pylint: disable=redefined-outer-name
     no_xenon: bool = False,
     # Reason: To name command line option.
     pydocstyle: bool = False,  # pylint: disable=redefined-outer-name
 ) -> list[Result]:
-    """Runs fast linting (ruff, bandit, dodgy, flake8, xenon, pydocstyle).
+    """Runs fast linting (ruff, bandit, dodgy, flake8, pydocstyle).
 
-    Xenon is prioritized since it effects fundamental coding structure.
+    Xenon runs when --xenon is given.
     """
     list_result = [] if skip_format else fmt(context, ruff=ruff, by_ruff=by_ruff, no_ruff=no_ruff)
     tasks: list[TaskFunction] = [call_ruff, call_bandit, call_dodgy, call_flake8]
-    if not no_xenon:
+    if xenon and not no_xenon:
         tasks.insert(0, call_xenon)
     if pydocstyle:
         tasks.append(call_pydocstyle)
-    list_result.extend(run_in_order(tasks, context, no_xenon=no_xenon))
+    list_result.extend(run_in_order(tasks, context, xenon=xenon, no_xenon=no_xenon))
     return list_result
 
 
