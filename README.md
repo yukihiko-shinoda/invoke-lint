@@ -103,7 +103,7 @@ Runs following fast linters at once:
 5. [Flake8]
 6. [pydocstyle] (Optional)
 
-The format task ([described later](#inv-style)) also run before running above linters. You can skip them by `--skip-format` option. Use `--no-xenon` to skip Xenon, and `--pydocstyle` to enable pydocstyle.
+The format task ([described later](#inv-style)) also run before running above linters. You can skip them by `--skip-format` option. Use `--xenon` to enable Xenon, and `--pydocstyle` to enable pydocstyle.
 
 ### `inv lint.deep`
 
@@ -210,7 +210,14 @@ dev = [
     #   https://github.com/rubik/radon/issues/251
     "radon<6.0.0",
     "ruff; python_version >= '3.7'",
-    "semgrep;python_version>='3.9' or python_version>='3.6' and platform_system=='Linux'",
+    # If we simply lock as "semgrep; python_version >= '3.9' or python_version>='3.6' and platform_system=='Linux'",
+    # the semgrep 1.121.0 is installed in Python 3.14 and cause following error:
+    #     File "/root/.local/share/uv/python/cpython-3.14.5-linux-aarch64-gnu/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    #       return _bootstrap._gcd_import(name[level:], package, level)
+    #              ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    #   TypeError: Metaclasses with custom tp_new are not supported.
+    "semgrep; python_version >= '3.9' and python_version < '3.10' or python_version>='3.6' and platform_system=='Linux'",
+    "semgrep>=1.122.0;python_version >= '3.10'",
     # To resolve type checking for `from invoke import Collection` in tasks.py
     "types-invoke",
     # If you want to use not Ruff but Xenon for complexity checking
@@ -278,6 +285,76 @@ If result is not your expected, follow official documentation of `setuptools` to
 
 See: [Package Discovery and Namespace Packages - setuptools latest documentation]
 
+### 5. Set up CI/CD workflows
+
+This package provides reusable GitHub Actions workflows. Create the following files in `.github/workflows/`:
+
+**`.github/workflows/test.yml`** — runs tests and linters on push/PR to `main`:
+
+```yaml
+name: Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+jobs:
+  call-workflow-test:
+    uses: yukihiko-shinoda/reusable-workflow-invoke-lint-test/.github/workflows/workflow.yml@v1
+    with:
+      support-python-versions: "[ '3.14', '3.13', '3.12', '3.11', '3.10' ]"
+  call-workflow-lint:
+    uses: yukihiko-shinoda/reusable-workflow-invoke-lint-lint/.github/workflows/workflow.yml@v1
+```
+
+**`.github/workflows/qlty.yml`** — uploads coverage to [Qlty] on push to `main`:
+
+```yaml
+on:
+  push:
+    branches:
+      - main
+# For OIDC token exchange with Qlty:
+# - Configuring OpenID Connect in cloud providers - GitHub Docs
+#   https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-cloud-providers#adding-permissions-settings
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  analyze:
+    uses: yukihiko-shinoda/reusable-workflow-invoke-lint-qlty/.github/workflows/workflow.yml@v1
+    permissions:
+      contents: read
+      id-token: write
+```
+
+**`.github/workflows/deploy.yml`** — publishes to PyPI on version tag push (`v*.*.*`):
+
+```yaml
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+permissions:
+  contents: read
+jobs:
+  call-workflow:
+    uses: yukihiko-shinoda/reusable-workflow-invoke-lint-deploy/.github/workflows/workflow.yml@v1
+    secrets:
+      pypi_password: ${{ secrets.pypi_password }}
+```
+
+Check the respective repositories for the latest commit hashes if you want to use them for lock:
+
+- [reusable-workflow-invoke-lint-test]
+- [reusable-workflow-invoke-lint-lint]
+- [reusable-workflow-invoke-lint-qlty]
+- [reusable-workflow-invoke-lint-deploy]
+
 <!-- markdownlint-disable no-trailing-punctuation -->
 ## How do I...
 <!-- markdownlint-enable no-trailing-punctuation -->
@@ -333,3 +410,8 @@ This package was created with [Cookiecutter] and the [yukihiko-shinoda/cookiecut
 [`B101: assert_used`]: https://bandit.readthedocs.io/en/latest/plugins/b101_assert_used.html
 [`assert (S101)`]: https://docs.astral.sh/ruff/rules/assert/
 [Configuration — Bandit documentation]: https://bandit.readthedocs.io/en/latest/config.html#scanning-behavior
+[Qlty]: https://qlty.sh
+[reusable-workflow-invoke-lint-test]: https://github.com/yukihiko-shinoda/reusable-workflow-invoke-lint-test
+[reusable-workflow-invoke-lint-lint]: https://github.com/yukihiko-shinoda/reusable-workflow-invoke-lint-lint
+[reusable-workflow-invoke-lint-qlty]: https://github.com/yukihiko-shinoda/reusable-workflow-invoke-lint-qlty
+[reusable-workflow-invoke-lint-deploy]: https://github.com/yukihiko-shinoda/reusable-workflow-invoke-lint-deploy
