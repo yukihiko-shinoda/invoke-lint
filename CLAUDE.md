@@ -122,6 +122,27 @@ bump-my-version bump patch  # or minor, major
 git push --tags
 ```
 
+## Pip Extras
+
+The package exposes optional dependency groups via `[project.optional-dependencies]` so consumers can install only what they need:
+
+| Extra | Tools installed |
+| --- | --- |
+| `lint` | Ruff, Bandit, Cohesion, dodgy, Flake8 + plugins |
+| `lint-deep` | mypy, Pylint, Semgrep |
+| `style` | docformatter, Ruff |
+| `style-legacy` | autoflake, Black, isort, pydocstyle |
+| `test` | pytest, Coverage.py |
+| `dist` | build |
+| `xenon` | Xenon, radon |
+| `basic` | Alias for `lint + lint-deep + style + test + dist` |
+
+The project's own `dev` dependency group installs itself with all extras:
+
+```text
+invokelint[lint,lint-deep,style,style-legacy,test,dist,xenon]
+```
+
 ## Tool Configuration
 
 The project uses pyproject.toml for all tool configurations:
