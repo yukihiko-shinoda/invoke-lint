@@ -29,25 +29,25 @@ Supporting tools:
 
 Linters:
 
-- [Xenon] (Optional)
-- [radon] (Optional)
 - [Ruff]
 - [Bandit]
 - [Cohesion]
 - [dodgy]
 - [Flake8]
-- [pydocstyle] (Optional)
 - [mypy]
 - [Pylint]
 - [Semgrep]
+- [Xenon] (Optional, `xenon` extra)
+- [radon] (Optional, `xenon` extra)
+- [pydocstyle] (Optional, `style-legacy` extra)
 
 Formatters:
 
 - [docformatter]
 - [Ruff]
-- [autoflake] (If you want to use it instead of Ruff)
-- [isort] (If you want to use it instead of Ruff)
-- [Black] (If you want to use it instead of Ruff)
+- [autoflake] (If you want to use it instead of Ruff, `style-legacy` extra)
+- [isort] (If you want to use it instead of Ruff, `style-legacy` extra)
+- [Black] (If you want to use it instead of Ruff, `style-legacy` extra)
 
 For test and coverage:
 
@@ -96,14 +96,12 @@ Optionally, you can use [autoflake], [isort], and [Black] instead of [Ruff] form
 
 Runs following fast linters at once:
 
-1. [Xenon] (Optional)
-2. [Ruff]
-3. [Bandit]
-4. [dodgy]
-5. [Flake8]
-6. [pydocstyle] (Optional)
+1. [Ruff]
+2. [Bandit]
+3. [dodgy]
+4. [Flake8]
 
-The format task ([described later](#inv-style)) also run before running above linters. You can skip them by `--skip-format` option. Use `--xenon` to enable Xenon, and `--pydocstyle` to enable pydocstyle.
+The format task ([described later](#inv-style)) also run before running above linters. You can skip them by `--skip-format` option. Use `--xenon` to enable [Xenon] (requires `xenon` extra), and `--pydocstyle` to enable [pydocstyle] (requires `style-legacy` extra).
 
 ### `inv lint.deep`
 
@@ -115,7 +113,7 @@ Runs following slow but detailed linters at once:
 
 ### `inv lint.radon`
 
-Reports [radon] both code complexity and maintainability index. (Requires [radon] to be installed)
+Reports [radon] both code complexity and maintainability index. (Requires `xenon` extra)
 
 ### `inv test`
 
@@ -152,78 +150,27 @@ See:
 
 We should use [uv] or one of the [dependency management tools] to resolve dependencies of many dev tools.
 
-For example, in case when we use the [uv], then, `pyproject.toml` is like below:
+`invokelint` publishes its supported tools as [pip extras], so you can pull them in directly. For example, in case when we use [uv], `pyproject.toml` is like below:
 
 ```toml
 [dependency-groups]
 dev = [
-    "autoflake",
-    "bandit; python_version >= '3.7'",
-    # If you want to use not Ruff but Black for formatting
-    "black; python_version >= '3.7'",
-    "build",
-    "bump-my-version",
-    "cohesion",
-    # The coverage==3.5.3 is difficult to analyze its dependencies by dependencies management tool,
-    # so we should avoid 3.5.3 or lower.
-    # - Command: "pipenv install --skip-lock" fails 
-    #   since it tries to parse legacy package metadata and raise InstallError
-    #   · Issue #5595 · pypa/pipenv
-    #   https://github.com/pypa/pipenv/issues/5595
-    "coverage>=3.5.4",
-    # The dlint less than 0.14.0 limits max version of flake8.
-    # - dlint/requirements.txt at 0.13.0 · dlint-py/dlint
-    #   https://github.com/dlint-py/dlint/blob/0.13.0/requirements.txt#L1
-    "dlint>=0.14.0",
-    # To the docformatter load pyproject.toml settings:
-    # docformatter < 1.7.8 depends on untokenize==0.1.1, whose setup.py uses ast.Constant.s removed in Python 3.14.
-    # docformatter >= 1.7.8 dropped untokenize but requires Python >= 3.10.
-    "docformatter[tomli]>=1.7.8; python_version >= '3.10' and python_version < '3.11'",
-    "docformatter>=1.7.8; python_version >= '3.11'",
-    "dodgy",
-    # The hacking depends flake8 ~=6.1.0 or ~=5.0.1 or ~=4.0.1.
-    # We should avoid the versions that is not compatible with the hacking,
-    # considering the speed of dependency calculation process
-    "flake8!=6.0.0,!=5.0.0,>=4.0.1; python_version >= '3.6'",
-    # To replace E501 in pycodestyle with B950 in flake8-bugbear:
-    # - Using Black with other tools - Black 25.1.0 documentation
-    #   https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#bugbear
-    "flake8-bugbear",
-    # To use flake8 --radon-show-closures
-    "flake8-polyfill",
-    # To use pyproject.toml for Flake8 configuration
-    "Flake8-pyproject",
-    # Latest hacking depends on legacy version of flake8, and legacy hacking doesn't narrow flake8 version.
-    # When unpin hacking, it has possibility to install too legacy version of hacking.
-    "hacking>=5.0.0; python_version >= '3.8'",
-    "invokelint; python_version >= '3.7'",
-    # If you want to use not Ruff but isort for formatting
-    "isort",
-    "mypy",
-    # If you want to use
-    "pydocstyle; python_version >= '3.6'",
-    "pylint",
-    "pytest",
-    # If you want to use Radon for code complexity and maintainability index checking
-    # Note that the version should be less than 6.0.0 because of the issue of Radon with pytest log format.
-    # - Radon can't run when use pytest log fornat: `$()d` · Issue #251 · rubik/radon
-    #   https://github.com/rubik/radon/issues/251
-    "radon<6.0.0",
-    "ruff; python_version >= '3.7'",
-    # If we simply lock as "semgrep; python_version >= '3.9' or python_version>='3.6' and platform_system=='Linux'",
-    # the semgrep 1.121.0 is installed in Python 3.14 and cause following error:
-    #     File "/root/.local/share/uv/python/cpython-3.14.5-linux-aarch64-gnu/lib/python3.14/importlib/__init__.py", line 88, in import_module
-    #       return _bootstrap._gcd_import(name[level:], package, level)
-    #              ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    #   TypeError: Metaclasses with custom tp_new are not supported.
-    "semgrep; python_version >= '3.9' and python_version < '3.10' or python_version>='3.6' and platform_system=='Linux'",
-    "semgrep>=1.122.0;python_version >= '3.10'",
-    # To resolve type checking for `from invoke import Collection` in tasks.py
-    "types-invoke",
-    # If you want to use not Ruff but Xenon for complexity checking
-    "xenon",
+    "invokelint[basic]",
 ]
 ```
+
+Available extras:
+
+| Extra | Invoke task | Tools |
+| --- | --- | --- |
+| `basic` | core tasks | `invokelint[lint,lint-deep,style,test,dist]` |
+| `lint` | `inv lint` | ruff, bandit, cohesion, dodgy, flake8 + plugins |
+| `lint-deep` | `inv lint.deep` | mypy, pylint, semgrep |
+| `style` | `inv style` | docformatter, ruff |
+| `style-legacy` | `inv style --no-ruff`, `inv lint --pydocstyle` | autoflake, isort, black, pydocstyle |
+| `test` | `inv test` / `inv test.cov` | pytest, coverage |
+| `dist` | `inv dist` | build |
+| `xenon` | `inv lint --xenon`, `inv lint.radon` | xenon, radon, flake8-polyfill |
 
 then:
 
@@ -415,3 +362,4 @@ This package was created with [Cookiecutter] and the [yukihiko-shinoda/cookiecut
 [reusable-workflow-invoke-lint-lint]: https://github.com/yukihiko-shinoda/reusable-workflow-invoke-lint-lint
 [reusable-workflow-invoke-lint-qlty]: https://github.com/yukihiko-shinoda/reusable-workflow-invoke-lint-qlty
 [reusable-workflow-invoke-lint-deploy]: https://github.com/yukihiko-shinoda/reusable-workflow-invoke-lint-deploy
+[pip extras]: https://pip.pypa.io/en/stable/cli/pip_install/#extras
