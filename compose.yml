@@ -1,4 +1,0 @@
-services:
-  invoke-lint:
-    build: .
-    image: futureys/invoke-lint:latest
