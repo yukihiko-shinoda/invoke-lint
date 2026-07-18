@@ -1,5 +1,7 @@
 csvinput
 invokelint
+metaclass
+metaclasses
 returntocorp
 semgrep
 testlibraries
