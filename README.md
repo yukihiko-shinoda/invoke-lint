@@ -166,7 +166,7 @@ Available extras:
 | `basic` | core tasks | `invokelint[lint,lint-deep,style,test,dist]` |
 | `lint` | `inv lint` | ruff, bandit, cohesion, dodgy, flake8 + plugins |
 | `lint-deep` | `inv lint.deep` | mypy, pylint |
-| `semgrep` | `inv lint.semgrep`, `inv lint.deep` (runs semgrep only when installed) | semgrep |
+| `semgrep` | `inv lint.semgrep`, `inv lint.deep` (runs semgrep only when installed) | semgrep (not installed on Python 3.15 since semgrep-core crashes there) |
 | `style` | `inv style` | docformatter, ruff |
 | `style-legacy` | `inv style --no-ruff`, `inv lint --pydocstyle` | autoflake, isort, black, pydocstyle |
 | `test` | `inv test` / `inv test.cov` | pytest, coverage |
