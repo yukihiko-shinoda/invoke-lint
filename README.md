@@ -1,7 +1,7 @@
 # Invoke Lint
 
 [![Test](https://github.com/yukihiko-shinoda/invoke-lint/workflows/Test/badge.svg)](https://github.com/yukihiko-shinoda/invoke-lint/actions?query=workflow%3ATest)
-[![CodeQL](https://github.com/yukihiko-shinoda/invoke-lint/workflows/CodeQL/badge.svg)](https://github.com/yukihiko-shinoda/invoke-lint/actions?query=workflow%3ACodeQL)
+[![CodeQL](https://github.com/yukihiko-shinoda/invoke-lint/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/yukihiko-shinoda/invoke-lint/actions/workflows/github-code-scanning/codeql)
 [![Code Coverage](https://qlty.sh/gh/yukihiko-shinoda/projects/invoke-lint/coverage.svg)](https://qlty.sh/gh/yukihiko-shinoda/projects/invoke-lint)
 [![Maintainability](https://qlty.sh/gh/yukihiko-shinoda/projects/invoke-lint/maintainability.svg)](https://qlty.sh/gh/yukihiko-shinoda/projects/invoke-lint)
 [![Dependabot](https://flat.badgen.net/github/dependabot/yukihiko-shinoda/invoke-lint?icon=dependabot)](https://github.com/yukihiko-shinoda/invoke-lint/security/dependabot)
