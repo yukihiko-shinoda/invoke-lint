@@ -216,7 +216,7 @@ def semgrep(context: Context, *, ci: bool = False) -> list[Result]:
 
 # Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
 def call_semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
-    return semgrep(context)
+    return semgrep(context, ci=ci)
 
 
 @task(help={"ci": "Run as CI mode."})
