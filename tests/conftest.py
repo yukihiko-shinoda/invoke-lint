@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import shutil
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Generator
@@ -36,6 +37,18 @@ def _semgrep_rules_unset(monkeypatch: pytest.MonkeyPatch) -> None:
 @pytest.fixture
 def _semgrep_rules_set(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("SEMGREP_RULES", "p/python p/secrets")
+
+
+@pytest.fixture
+def _semgrep_not_installed(mocker: MockerFixture) -> None:
+    # Store original shutil.which
+    orig_which = shutil.which
+
+    # Reason: To follow specification of original function.
+    def which_mock(cmd: str, *args: Any, **kwargs: Any) -> str | None:
+        return None if cmd == "semgrep" else orig_which(cmd, *args, **kwargs)
+
+    mocker.patch("shutil.which", side_effect=which_mock)
 
 
 @pytest.fixture

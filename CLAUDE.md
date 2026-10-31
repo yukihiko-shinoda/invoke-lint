@@ -44,7 +44,7 @@ Tasks are organized into Invoke Collections (each module exports `ns`):
 1. **Task Collections**: Each module exports a `ns = Collection()` and adds tasks to it, then `tasks.py` assembles them with namespace names
 2. **Result Aggregation**: Tasks return `list[Result]` for consistent handling
 3. **Error Handling**: `run_all()` runs all tasks even on failure; `run_in_order()` stops on first failure
-4. **Platform Detection**: `run_in_pty()` enables PTY on non-Windows; `semgrep` is skipped on Windows
+4. **Platform Detection**: `run_in_pty()` enables PTY on non-Windows; `semgrep` is skipped on Windows or when not installed
 5. **Wrapper functions**: `call_*` wrapper functions (e.g. `call_xenon`) exist to normalize `**kwargs` for use in `run_in_order()` / `run_all()` task lists
 
 ## Development Commands
@@ -129,7 +129,8 @@ The package exposes optional dependency groups via `[project.optional-dependenci
 | Extra | Tools installed |
 | --- | --- |
 | `lint` | Ruff, Bandit, Cohesion, dodgy, Flake8 + plugins |
-| `lint-deep` | mypy, Pylint, Semgrep |
+| `lint-deep` | mypy, Pylint |
+| `semgrep` | Semgrep (kept separate because its pinned dependencies such as mcp trigger Code Scanning alerts) |
 | `style` | docformatter, Ruff |
 | `style-legacy` | autoflake, Black, isort, pydocstyle |
 | `test` | pytest, Coverage.py |
@@ -140,7 +141,7 @@ The package exposes optional dependency groups via `[project.optional-dependenci
 The project's own `dev` dependency group installs itself with all extras:
 
 ```text
-invokelint[lint,lint-deep,style,style-legacy,test,dist,xenon]
+invokelint[lint,lint-deep,semgrep,style,style-legacy,test,dist,xenon]
 ```
 
 ## Tool Configuration
@@ -158,5 +159,5 @@ The project uses pyproject.toml for all tool configurations:
 ## Platform Compatibility
 
 - PTY is enabled on non-Windows only (via `run_in_pty`)
-- `semgrep` task is skipped on Windows in `lint.deep`
+- `semgrep` task is skipped on Windows, and when semgrep is not installed, in `lint.deep`
 - `inv dist` does not support Windows

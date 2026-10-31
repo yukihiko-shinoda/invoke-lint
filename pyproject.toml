@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [dependency-groups]
 dev = [
-  "invokelint[lint,lint-deep,style,style-legacy,test,dist,xenon]",
+  "invokelint[lint,lint-deep,semgrep,style,style-legacy,test,dist,xenon]",
   "bump-my-version",
   "pytest-mock",
   "pyvelocity; python_version >= '3.9'",
@@ -118,11 +118,8 @@ lint = [
 lint-deep = [
   "mypy",
   "pylint",
-  # To prevent following error when running semgrep in Python 3.9:
-  # ModuleNotFoundError: No module named 'pkg_resources'
-  # - [BUG] Restore \`pkg\_resources\` · Issue #5174 · pypa/setuptools
-  #   https://github.com/pypa/setuptools/issues/5174
-  "setuptools<82.0.0; python_version == '3.9'",
+]
+semgrep = [
   # To prevent following error when uv lock:
   #   × Failed to build `semgrep==0.86.3`
   # ├─▶ The build backend returned an error

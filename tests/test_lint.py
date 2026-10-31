@@ -205,3 +205,10 @@ def test_deep(context: "Context") -> None:
         list_command_expected.append(COMMAND_EXPECTED_SEMGREP)
     list_result = deep(context)
     check_list_result(list_result, list_command_expected)
+
+
+@pytest.mark.slow
+@pytest.mark.usefixtures("_semgrep_not_installed")
+def test_deep_semgrep_not_installed(context: "Context") -> None:
+    """Command should skip semgrep when it is not installed."""
+    check_list_result(deep(context), [COMMAND_EXPECTED_MYPY, COMMAND_EXPECTED_PYLINT])
