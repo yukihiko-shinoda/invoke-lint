@@ -44,9 +44,9 @@ COMMAND_EXPECTED_PYDOCSTYLE = f"pydocstyle {PYTHON_DIR}"
 COMMAND_EXPECTED_XENON = f"xenon --max-absolute A --max-modules A --max-average A {PYTHON_DIR}"
 COMMAND_EXPECTED_MYPY = f"mypy {PYTHON_DIR}"
 COMMAND_EXPECTED_PYLINT = f"pylint {PYTHON_DIR}"
-COMMAND_EXPECTED_SEMGREP = "semgrep scan --error --oss-only --config p/python --metrics off " + " ".join(
-    [f"--include {code}" for code in PYTHON_DIR.split(" ")],
-)
+SEMGREP_INCLUDES = " ".join([f"--include {code}" for code in PYTHON_DIR.split(" ")])
+COMMAND_EXPECTED_SEMGREP = f"semgrep scan --error --oss-only --config p/python --metrics off {SEMGREP_INCLUDES}"
+COMMAND_EXPECTED_SEMGREP_BY_ENV = f"semgrep scan --error --oss-only --metrics off {SEMGREP_INCLUDES}"
 
 
 def test_radon_cc(context: "Context") -> None:
@@ -182,12 +182,22 @@ def test_pylint(context: "Context") -> None:
 # - No module found: resource (ModuleNotFoundError) · Issue #7146 · returntocorp/semgrep
 #   https://github.com/returntocorp/semgrep/issues/7146
 @pytest.mark.skipif(sys.platform == "win32", reason="Semgrep doesn't support Windows.")
+@pytest.mark.usefixtures("_semgrep_rules_unset")
 def test_semgrep(context: "Context") -> None:
     """Command should success and run appropriate commands."""
     check_list_result(semgrep(context), [COMMAND_EXPECTED_SEMGREP])
 
 
 @pytest.mark.slow
+@pytest.mark.skipif(sys.platform == "win32", reason="Semgrep doesn't support Windows.")
+@pytest.mark.usefixtures("_semgrep_rules_set")
+def test_semgrep_rules_by_env(context: "Context") -> None:
+    """Command should respect SEMGREP_RULES instead of specifying p/python."""
+    check_list_result(semgrep(context), [COMMAND_EXPECTED_SEMGREP_BY_ENV])
+
+
+@pytest.mark.slow
+@pytest.mark.usefixtures("_semgrep_rules_unset")
 def test_deep(context: "Context") -> None:
     """Command should success and run appropriate commands."""
     list_command_expected = [COMMAND_EXPECTED_MYPY, COMMAND_EXPECTED_PYLINT]
