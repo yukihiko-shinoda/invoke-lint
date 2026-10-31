@@ -2,6 +2,7 @@
 """Tests for `lint` package."""
 
 import platform
+import shutil
 import sys
 from typing import TYPE_CHECKING
 
@@ -47,6 +48,8 @@ COMMAND_EXPECTED_PYLINT = f"pylint {PYTHON_DIR}"
 SEMGREP_INCLUDES = " ".join([f"--include {code}" for code in PYTHON_DIR.split(" ")])
 COMMAND_EXPECTED_SEMGREP = f"semgrep scan --error --oss-only --config p/python --metrics off {SEMGREP_INCLUDES}"
 COMMAND_EXPECTED_SEMGREP_BY_ENV = f"semgrep scan --error --oss-only --metrics off {SEMGREP_INCLUDES}"
+# The semgrep extra doesn't install semgrep in Python 3.15 (see pyproject.toml).
+IS_SEMGREP_INSTALLED = shutil.which("semgrep") is not None
 
 
 def test_radon_cc(context: "Context") -> None:
@@ -182,6 +185,7 @@ def test_pylint(context: "Context") -> None:
 # - No module found: resource (ModuleNotFoundError) · Issue #7146 · returntocorp/semgrep
 #   https://github.com/returntocorp/semgrep/issues/7146
 @pytest.mark.skipif(sys.platform == "win32", reason="Semgrep doesn't support Windows.")
+@pytest.mark.skipif(not IS_SEMGREP_INSTALLED, reason="Semgrep is not installed.")
 @pytest.mark.usefixtures("_semgrep_rules_unset")
 def test_semgrep(context: "Context") -> None:
     """Command should success and run appropriate commands."""
@@ -190,6 +194,7 @@ def test_semgrep(context: "Context") -> None:
 
 @pytest.mark.slow
 @pytest.mark.skipif(sys.platform == "win32", reason="Semgrep doesn't support Windows.")
+@pytest.mark.skipif(not IS_SEMGREP_INSTALLED, reason="Semgrep is not installed.")
 @pytest.mark.usefixtures("_semgrep_rules_set")
 def test_semgrep_rules_by_env(context: "Context") -> None:
     """Command should respect SEMGREP_RULES instead of specifying p/python."""
@@ -201,7 +206,7 @@ def test_semgrep_rules_by_env(context: "Context") -> None:
 def test_deep(context: "Context") -> None:
     """Command should success and run appropriate commands."""
     list_command_expected = [COMMAND_EXPECTED_MYPY, COMMAND_EXPECTED_PYLINT]
-    if platform.system() != "Windows":
+    if platform.system() != "Windows" and IS_SEMGREP_INSTALLED:
         list_command_expected.append(COMMAND_EXPECTED_SEMGREP)
     list_result = deep(context)
     check_list_result(list_result, list_command_expected)

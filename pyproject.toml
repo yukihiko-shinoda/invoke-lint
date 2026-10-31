@@ -64,6 +64,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Topic :: Security",
   "Topic :: Software Development",
   "Topic :: Software Development :: Build Tools",
@@ -149,7 +150,7 @@ semgrep = [
   #       return _bootstrap._gcd_import(name[level:], package, level)
   #              ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   #   TypeError: Metaclasses with custom tp_new are not supported.
-  "semgrep>=0.87.0; python_version >= '3.9' and python_version < '3.10' or python_version>='3.6' and platform_system=='Linux'",
+  "semgrep>=0.87.0; python_version >= '3.9' and python_version < '3.10' or python_version>='3.6' and python_version < '3.15' and platform_system=='Linux'",
   "semgrep>=1.122.0; python_version >= '3.10' and python_version < '3.14'",
   # The semgrep 1.122.0 - 1.136.0 also cause the TypeError above in Python 3.14 only:
   # they pin opentelemetry-sdk ~= 1.25.0, whose opentelemetry-proto pins protobuf >=3.19,<5.0,
@@ -157,7 +158,12 @@ semgrep = [
   # (PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python doesn't help
   #  since protobuf 4.25.x reads it after probing the C extension.)
   # The semgrep 1.137.0 bumps to opentelemetry-sdk ~= 1.37.0 which allows protobuf 5.x / 6.x supporting Python 3.14.
-  "semgrep>=1.137.0; python_version >= '3.14'",
+  # The semgrep up to 1.183.0 crashes with "semgrep-core exited with -11!" (SIGSEGV) in Python 3.15:
+  # Python 3.15 changed resource.RLIM_INFINITY from -1 to 2**64 - 1,
+  # so semgrep's setrlimits_preexec_fn() picks int(hard_limit / 3) (about 6 EB) as the stack soft limit
+  # of semgrep-core, which can't start with such a huge stack limit.
+  # The `lint.deep` skips semgrep when it is not installed.
+  "semgrep>=1.137.0; python_version >= '3.14' and python_version < '3.15'",
   # To prevent following error when running semgrep in Python 3.9:
   # ModuleNotFoundError: No module named 'pkg_resources'
   # - [BUG] Restore \`pkg\_resources\` · Issue #5174 · pypa/setuptools
