@@ -1,3 +1,4 @@
+# Copyright (c) 2023 Yukihiko Shinoda
 """Tests for `dist` package."""
 
 from typing import TYPE_CHECKING

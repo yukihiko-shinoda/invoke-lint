@@ -1,3 +1,4 @@
+# Copyright (c) 2023 Yukihiko Shinoda
 """Functions to run tasks."""
 
 from __future__ import annotations

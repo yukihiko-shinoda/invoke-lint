@@ -1,3 +1,4 @@
+# Copyright (c) 2023 Yukihiko Shinoda
 """Tasks of lint."""
 
 from __future__ import annotations
@@ -207,7 +208,8 @@ def call_pylint(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG00
 @task(help={"ci": "Run as CI mode."})
 def semgrep(context: Context, *, ci: bool = False) -> list[Result]:
     """Lints code with Semgrep."""
-    command = "ci" if ci else "scan"
+    # `semgrep ci` exits 1 on blocking findings by itself and doesn't accept `--error`.
+    command = "ci" if ci else "scan --error"
     full_command = (
         f"semgrep {command} --oss-only --config p/python --metrics off --include {' --include '.join(PYTHON_DIRS)}"
     )
@@ -216,7 +218,7 @@ def semgrep(context: Context, *, ci: bool = False) -> list[Result]:
 
 # Reason: Compatibility with semgrep task to be called from deep().. pylint: disable=unused-argument
 def call_semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> list[Result]:  # noqa: ARG001
-    return semgrep(context)
+    return semgrep(context, ci=ci)
 
 
 @task(help={"ci": "Run as CI mode."})

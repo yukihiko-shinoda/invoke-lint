@@ -1,3 +1,4 @@
+# Copyright (c) 2023 Yukihiko Shinoda
 """Tests for `lint` package."""
 
 import platform
@@ -43,7 +44,7 @@ COMMAND_EXPECTED_PYDOCSTYLE = f"pydocstyle {PYTHON_DIR}"
 COMMAND_EXPECTED_XENON = f"xenon --max-absolute A --max-modules A --max-average A {PYTHON_DIR}"
 COMMAND_EXPECTED_MYPY = f"mypy {PYTHON_DIR}"
 COMMAND_EXPECTED_PYLINT = f"pylint {PYTHON_DIR}"
-COMMAND_EXPECTED_SEMGREP = "semgrep scan --oss-only --config p/python --metrics off " + " ".join(
+COMMAND_EXPECTED_SEMGREP = "semgrep scan --error --oss-only --config p/python --metrics off " + " ".join(
     [f"--include {code}" for code in PYTHON_DIR.split(" ")],
 )
 

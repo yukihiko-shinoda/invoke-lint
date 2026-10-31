@@ -1,3 +1,4 @@
+# Copyright (c) 2023 Yukihiko Shinoda
 """Top-level package for Invoke Lint."""
 
 __author__ = """Yukihiko Shinoda"""
