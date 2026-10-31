@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os
 import platform
 from typing import TYPE_CHECKING
 from typing import Any
@@ -207,12 +208,15 @@ def call_pylint(context: Context, **kwargs: Any) -> list[Result]:  # noqa: ARG00
 
 @task(help={"ci": "Run as CI mode."})
 def semgrep(context: Context, *, ci: bool = False) -> list[Result]:
-    """Lints code with Semgrep."""
+    """Lints code with Semgrep.
+
+    Rules come from the SEMGREP_RULES environment variable when it is set, otherwise from p/python.
+    """
     # `semgrep ci` exits 1 on blocking findings by itself and doesn't accept `--error`.
     command = "ci" if ci else "scan --error"
-    full_command = (
-        f"semgrep {command} --oss-only --config p/python --metrics off --include {' --include '.join(PYTHON_DIRS)}"
-    )
+    # Semgrep reads SEMGREP_RULES only when --config is absent.
+    config = "" if os.environ.get("SEMGREP_RULES") else " --config p/python"
+    full_command = f"semgrep {command} --oss-only{config} --metrics off --include {' --include '.join(PYTHON_DIRS)}"
     return [run_in_pty(context, full_command)]
 
 

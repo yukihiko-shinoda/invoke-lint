@@ -29,6 +29,16 @@ def context() -> Context:
 
 
 @pytest.fixture
+def _semgrep_rules_unset(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("SEMGREP_RULES", raising=False)
+
+
+@pytest.fixture
+def _semgrep_rules_set(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("SEMGREP_RULES", "p/python p/secrets")
+
+
+@pytest.fixture
 def _package_not_exists(mocker: MockerFixture, package_names: list[str]) -> Generator[None, None, None]:
     """See:
 
