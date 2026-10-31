@@ -1,3 +1,4 @@
+# Copyright (c) 2023 Yukihiko Shinoda
 """Paths."""
 
 from __future__ import annotations

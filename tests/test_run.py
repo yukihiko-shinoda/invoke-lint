@@ -1,3 +1,4 @@
+# Copyright (c) 2023 Yukihiko Shinoda
 """Tests for `run` package."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# Copyright (c) 2023 Yukihiko Shinoda
 """Tasks of lint."""
 
 from __future__ import annotations

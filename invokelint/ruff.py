@@ -1,3 +1,4 @@
+# Copyright (c) 2023 Yukihiko Shinoda
 """To unify executing Ruff from style and from lint."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# Copyright (c) 2023 Yukihiko Shinoda
 """Tests for `lint` package."""
 
 import platform
