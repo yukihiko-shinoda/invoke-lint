@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import os
 import platform
+import shutil
 from typing import TYPE_CHECKING
 from typing import Any
 
@@ -227,9 +228,12 @@ def call_semgrep(context: Context, *, ci: bool = False, **kwargs: Any) -> list[R
 
 @task(help={"ci": "Run as CI mode."})
 def deep(context: Context, *, ci: bool = False) -> list[Result]:
-    """Runs slow but detailed linting (mypy, Pylint, semgrep)."""
+    """Runs slow but detailed linting (mypy, Pylint, semgrep).
+
+    Semgrep runs only when it is installed (e.g. via the `semgrep` extra).
+    """
     list_task: list[TaskFunction] = [call_mypy, call_pylint]
-    if platform.system() != "Windows":
+    if platform.system() != "Windows" and shutil.which("semgrep"):
         list_task.append(call_semgrep)
     return run_in_order(list_task, context, ci=ci)
 
